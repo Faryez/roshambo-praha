@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roshambo Praha — Šipkový tým</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #141414;
+    --card: #1c1c1c;
+    --border: #2a2a2a;
+    --yellow: #f5c518;
+    --red: #c0392b;
+    --text: #e8e8e8;
+    --muted: #888;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,10,0.95);
+    border-bottom: 2px solid var(--yellow);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 32px;
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--yellow);
+    letter-spacing: 2px;
+  }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--yellow); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 60%),
+      var(--black);
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Šipky na pozadí */
+  .hero::before {
+    content: "🎯";
+    position: absolute;
+    font-size: 320px;
+    opacity: 0.04;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--yellow);
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 14vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .hero-title span { color: var(--yellow); }
+
+  .hero-sub {
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 32px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hero-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(18px, 4vw, 28px);
+    color: var(--yellow);
+    background: rgba(245,197,24,0.08);
+    border-left: 3px solid var(--yellow);
+    padding: 12px 24px;
+    margin: 0 auto 40px;
+    max-width: 680px;
+    letter-spacing: 2px;
+    text-align: left;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: #000;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 2px;
+  }
+
+  /* SEKCE */
+  section { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    margin-bottom: 8px;
+  }
+  .section-line {
+    width: 48px; height: 3px;
+    background: var(--red);
+    margin-bottom: 40px;
+  }
+
+  /* TABULKA ZÁPASŮ */
+  .matches-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .matches-table thead tr {
+    background: var(--yellow);
+    color: #000;
+  }
+  .matches-table th {
+    padding: 10px 12px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .matches-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    color: var(--text);
+  }
+  .matches-table tr:hover td { background: rgba(245,197,24,0.04); }
+  .roshambo { font-weight: 700; color: var(--yellow); }
+  .vs { color: var(--muted); font-size: 11px; }
+  .misto { color: var(--muted); font-size: 12px; text-align: left !important; }
+
+  /* HRÁČI */
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .player-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 16px;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .player-card:hover {
+    border-color: var(--yellow);
+    transform: translateY(-2px);
+  }
+  .player-avatar {
+    width: 56px; height: 56px;
+    background: var(--yellow);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: #000;
+    margin: 0 auto 12px;
+  }
+  .player-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .player-role {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .captain-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: #000;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  /* O NÁS */
+  .about-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--yellow);
+    padding: 32px;
+    border-radius: 4px;
+    max-width: 760px;
+  }
+  .about-box p { color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
+  .about-box p:last-child { margin-bottom: 0; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  footer span { color: var(--yellow); }
+
+  /* DIVIDER */
+  .full-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 12px 16px; }
+    .nav-links { gap: 12px; }
+    .matches-table th:nth-child(6),
+    .matches-table td:nth-child(6) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🎯 Roshambo Praha</div>
+  <div class="nav-links">
+    <a href="#zapasy">Zápasy</a>
+    <a href="#hraci">Hráči</a>
+    <a href="#onas">O nás</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">3. liga C · Sezóna 2026/2027</div>
+  <h1 class="hero-title">ROSHAMBO<br><span>PRAHA</span></h1>
+  <p class="hero-sub">Šipkový tým · Praha · Česká republika</p>
+  <div class="hero-quote">
+    „Screw you guys, I'm going home... but first, one more leg."
+  </div>
+  <span class="hero-badge">Šipky. Pivo. Legenda.</span>
+</div>
+
+<hr class="full-divider">
+
+<!-- ZÁPASY -->
+<section id="zapasy">
+  <div class="section-title">Rozpis zápasů</div>
+  <div class="section-line"></div>
+  <table class="matches-table">
+    <thead>
+      <tr>
+        <th>Kolo</th>
+        <th>Den</th>
+        <th>Datum</th>
+        <th>Čas</th>
+        <th>Domácí</th>
+        <th></th>
+        <th>Hosté</th>
+        <th>Místo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
+      <tr><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
+      <tr><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Grey Bar, Praha 8</td></tr>
+      <tr><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
+      <tr><td>9</td><td>Út</td><td>17.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>10</td><td>Ne</td><td>24.11.2026</td><td>20:00</td><td>Krkavci Kralupy</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
+      <tr><td>12</td><td>Ne</td><td>13.12.2026</td><td>17:00</td><td>Havrani Vrňany B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Na hřišti Vrňany</td></tr>
+      <tr><td>13</td><td>Út</td><td>15.12.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Pedro Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>14</td><td>Ne</td><td>17.1.2027</td><td>18:00</td><td>Hell's Darters Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>15</td><td>Út</td><td>19.1.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Kralupská letka</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>16</td><td>Ne</td><td>31.1.2027</td><td>17:00</td><td>Zdiby DC B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Restaurace U jezera, Zdiby</td></tr>
+      <tr><td>17</td><td>Út</td><td>2.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Los Číčos Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>18</td><td>Út</td><td>9.2.2027</td><td>19:00</td><td>Bohnický kladiva</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Club Troja, Praha 8</td></tr>
+      <tr><td>19</td><td>Út</td><td>16.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Black Diamonds Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>20</td><td>Ne</td><td>28.2.2027</td><td>18:00</td><td>Bocman Club Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>21</td><td>Út</td><td>2.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Figury Libčice</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>22</td><td>Ne</td><td>14.3.2027</td><td>17:00</td><td>Zdiby DC</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Restaurace U jezera, Zdiby</td></tr>
+      <tr><td>23</td><td>Út</td><td>30.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Krkavci Kralupy</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>24</td><td>Út</td><td>13.4.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Havrani Vrňany B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+      <tr><td>26</td><td>Ne</td><td>9.5.2027</td><td>16:00</td><td>Pedro Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Squash Sport Čimice</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="full-divider">
+
+<!-- HRÁČI -->
+<section id="hraci">
+  <div class="section-title">Tým</div>
+  <div class="section-line"></div>
+  <div class="players-grid">
+    <div class="player-card">
+      <div class="player-avatar">JN</div>
+      <div class="player-name">Novák Jakub</div>
+      <div class="player-role">Hráč</div>
+      <div class="captain-badge">⭐ Kapitán</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">JB</div>
+      <div class="player-name">Bajer Josef</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">MB</div>
+      <div class="player-name">Bečka Marek</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">PK</div>
+      <div class="player-name">Kohlíček Petr</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">RP</div>
+      <div class="player-name">Pelech Roman</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">ZR</div>
+      <div class="player-name">Roklová Zuzana</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">AS</div>
+      <div class="player-name">Soliman Alan</div>
+      <div class="player-role">Hráč</div>
+    </div>
+    <div class="player-card">
+      <div class="player-avatar">MT</div>
+      <div class="player-name">Tkáč Marek</div>
+      <div class="player-role">Hráč</div>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider">
+
+<!-- O NÁS -->
+<section id="onas">
+  <div class="section-title">O nás</div>
+  <div class="section-line"></div>
+  <div class="about-box">
+    <p>Roshambo Praha je šipkový tým z hlavního města, jehož název vychází z legendární hry Roshambo — kterou proslavil sám Eric Cartman v South Parku. Jako on, i my hrajeme naplno, bez omluv a s plným nasazením.</p>
+    <p>Hrajeme 3. ligu C a náš domácí bar je <strong style="color: var(--yellow)">Yondu Bar, Praha 8</strong>. Přijďte nás podpořit — pivo bude, šipky taky.</p>
+    <p style="color: var(--yellow); font-style: italic;">"Oh my God, they killed Kenny!" — ale naše šipky cíl nezabíjejí, trefují ho.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>🎯 <span>Roshambo Praha</span> · 3. liga C · Sezóna 2026/2027</p>
+  <p style="margin-top:8px;">Respekt soupeřům. Nula omluv. Šipky do terče.</p>
+</footer>
+
+</body>
+</html>

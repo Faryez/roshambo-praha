@@ -287,14 +287,12 @@
   }
   .player-avatar {
     width: 56px; height: 56px;
-    background: var(--yellow);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: #000;
+    overflow: hidden;
     margin: 0 auto 12px;
   }
+  .player-avatar svg { width: 100%; height: 100%; display: block; }
   .player-name {
     font-weight: 700;
     font-size: 13px;
@@ -440,7 +438,7 @@
   <details class="season-acc" open>
     <summary>
       <span class="season-acc-name">Sezóna 2026/2027</span>
-      <span class="season-acc-meta">sezóna ještě nezačala</span>
+      <span class="season-acc-meta" id="current-season-meta">sezóna ještě nezačala</span>
       <span class="season-acc-arrow">▾</span>
     </summary>
     <div class="season-acc-body">
@@ -459,7 +457,7 @@
               <th>Body</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="current-season-tbody">
             <tr><td class="pos">1.</td><td class="team-name">Black Diamonds Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
             <tr><td class="pos">2.</td><td class="team-name">Bocman Club Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
             <tr><td class="pos">3.</td><td class="team-name">Bohnický kladiva</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
@@ -476,7 +474,7 @@
           </tbody>
         </table>
       </div>
-      <div class="standings-legend">Sezóna 2026/2027 odstartuje <b>1.9.2026</b> — tabulka se naplní po prvních odehraných kolech.</div>
+      <div class="standings-legend" id="current-season-legend">Sezóna 2026/2027 odstartuje <b>1.9.2026</b> — tabulka se naplní po prvních odehraných kolech.</div>
     </div>
   </details>
 
@@ -662,43 +660,59 @@
   <div class="section-line"></div>
   <div class="players-grid">
     <div class="player-card">
-      <div class="player-avatar">JN</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#e8c39e"/><path d="M4 26a24 24 0 0 1 48 0v3H4z" fill="#c0392b"/><circle cx="28" cy="8" r="5" fill="#c0392b"/><circle cx="28" cy="8" r="2.4" fill="#fff"/><rect x="4" y="24" width="48" height="6" fill="#a52f22"/><circle cx="19" cy="30" r="3" fill="#2b2b2b"/><circle cx="37" cy="30" r="3" fill="#2b2b2b"/><path d="M20 40q8 6 16 0" stroke="#7a3d1f" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Novák Jakub</div>
       <div class="player-role">Hráč</div>
       <div class="captain-badge">⭐ Kapitán</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">JB</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#f0d4b0"/><path d="M6 22a22 22 0 0 1 44 0v2H6z" fill="#5a3a22"/><circle cx="19" cy="31" r="6" fill="none" stroke="#2b2b2b" stroke-width="2"/><circle cx="37" cy="31" r="6" fill="none" stroke="#2b2b2b" stroke-width="2"/><line x1="25" y1="31" x2="31" y2="31" stroke="#2b2b2b" stroke-width="2"/><path d="M21 42q7 5 14 0" stroke="#7a3d1f" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Bajer Josef</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">MB</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#e8c39e"/><path d="M9 24a19 19 0 0 1 38 0" fill="#2c5aa0"/><rect x="9" y="17" width="7" height="8" rx="2" fill="#1f4278"/><circle cx="19" cy="31" r="3" fill="#2b2b2b"/><circle cx="37" cy="31" r="3" fill="#2b2b2b"/><path d="M20 41q8 5 16 0" stroke="#7a3d1f" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Bečka Marek</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">PK</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#f0d4b0"/><path d="M8 20a20 20 0 0 1 40 0v1H8z" fill="#4a4a4a"/><circle cx="19" cy="30" r="3" fill="#2b2b2b"/><circle cx="37" cy="30" r="3" fill="#2b2b2b"/><path d="M18 39q10-3 20 0" stroke="#4a4a4a" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Kohlíček Petr</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">RP</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#e8c39e"/><path d="M7 23a21 21 0 0 1 42-1c-6-3-30-3-42 1z" fill="#2b2b2b"/><circle cx="19" cy="31" r="3" fill="#2b2b2b"/><circle cx="37" cy="31" r="3" fill="#2b2b2b"/><path d="M20 41q8 5 16 0" stroke="#7a3d1f" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M12 36q4 6 3 10M44 36q-4 6-3 10" stroke="#c9a377" stroke-width="1.5" opacity="0.5"/></svg>
+      </div>
       <div class="player-name">Pelech Roman</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">ZR</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#f0d4b0"/><path d="M8 24a20 20 0 0 1 40 0c0 4-2 6-2 6H10s-2-2-2-6z" fill="#8a4a2e"/><path d="M42 20c6 0 8 6 6 12-2-3-6-4-8-4z" fill="#8a4a2e"/><circle cx="46" cy="18" r="3.5" fill="#d4457e"/><circle cx="19" cy="31" r="3" fill="#2b2b2b"/><circle cx="37" cy="31" r="3" fill="#2b2b2b"/><path d="M20 40q8 6 16 0" stroke="#a5503a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Roklová Zuzana</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">AS</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#e8c39e"/><path d="M8 20a20 20 0 0 1 40 0v1H8z" fill="#c0392b"/><circle cx="19" cy="30" r="3" fill="#2b2b2b"/><circle cx="37" cy="30" r="3" fill="#2b2b2b"/><path d="M18 39q10-3 20 0" stroke="#4a4a4a" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
       <div class="player-name">Soliman Alan</div>
       <div class="player-role">Hráč</div>
     </div>
     <div class="player-card">
-      <div class="player-avatar">MT</div>
+      <div class="player-avatar">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="#e8c39e"/><path d="M6 24a22 22 0 0 1 44 0v3H6z" fill="#3f7d5c"/><rect x="6" y="23" width="44" height="5" fill="#2e5f45"/><circle cx="19" cy="30" r="3" fill="#2b2b2b"/><circle cx="37" cy="30" r="3" fill="#2b2b2b"/><path d="M14 36c2 10 26 10 28 0-4 4-24 4-28 0z" fill="#5a3a22"/></svg>
+      </div>
       <div class="player-name">Tkáč Marek</div>
       <div class="player-role">Hráč</div>
     </div>
@@ -726,3 +740,4 @@
 
 </body>
 </html>
+nové avatary

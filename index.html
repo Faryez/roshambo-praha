@@ -138,6 +138,13 @@
     background: var(--red);
     margin-bottom: 40px;
   }
+  .section-note {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: -24px 0 32px;
+  }
 
   /* TABULKA ZÁPASŮ */
   .matches-table {
@@ -165,6 +172,100 @@
   .roshambo { font-weight: 700; color: var(--yellow); }
   .vs { color: var(--muted); font-size: 11px; }
   .misto { color: var(--muted); font-size: 12px; text-align: left !important; }
+
+  /* TABULKA LIGY (KONEČNÉ POŘADÍ) */
+  .table-wrap { overflow-x: auto; }
+  .standings-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+    min-width: 720px;
+  }
+  .standings-table thead tr {
+    background: var(--yellow);
+    color: #000;
+  }
+  .standings-table th {
+    padding: 10px 10px;
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .standings-table th:nth-child(2) { text-align: left; }
+  .standings-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .standings-table td:nth-child(2) { text-align: left; }
+  .standings-table tr:hover td { background: rgba(245,197,24,0.04); }
+  .standings-table .team-name { color: var(--text); }
+  .standings-table .pos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .standings-table .pts { font-weight: 700; color: var(--yellow); }
+  .standings-table tr.us td { background: rgba(245,197,24,0.09); }
+  .standings-table tr.us .team-name { color: var(--yellow); font-weight: 700; }
+  .standings-table tr.us .pos { color: var(--yellow); }
+  .standings-table tr.podium .pos { color: var(--text); }
+  .standings-table tr.podium:nth-child(1) .pos { color: #f5c518; }
+  .standings-legend {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+  .standings-legend b { color: var(--text); }
+
+  /* SEZÓNNÍ ACCORDION */
+  .season-acc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .season-acc + .season-acc { margin-top: 16px; }
+  .season-acc summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    user-select: none;
+  }
+  .season-acc summary::-webkit-details-marker { display: none; }
+  .season-acc summary:hover { background: rgba(245,197,24,0.04); }
+  .season-acc-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--yellow);
+  }
+  .season-acc-meta {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+  .season-acc-arrow {
+    color: var(--muted);
+    font-size: 14px;
+    transition: transform 0.2s ease;
+  }
+  .season-acc[open] .season-acc-arrow { transform: rotate(180deg); }
+  .season-acc-body {
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
 
   /* HRÁČI */
   .players-grid {
@@ -264,6 +365,7 @@
   <div class="nav-logo">🎯 Roshambo Praha</div>
   <div class="nav-links">
     <a href="#zapasy">Zápasy</a>
+    <a href="#tabulka">Tabulka</a>
     <a href="#hraci">Hráči</a>
     <a href="#onas">O nás</a>
   </div>
@@ -326,6 +428,230 @@
       <tr><td>26</td><td>Ne</td><td>9.5.2027</td><td>16:00</td><td>Pedro Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Squash Sport Čimice</td></tr>
     </tbody>
   </table>
+</section>
+
+<hr class="full-divider">
+
+<!-- TABULKA -->
+<section id="tabulka">
+  <div class="section-title">Tabulka</div>
+  <div class="section-line"></div>
+
+  <details class="season-acc" open>
+    <summary>
+      <span class="season-acc-name">Sezóna 2026/2027</span>
+      <span class="season-acc-meta">sezóna ještě nezačala</span>
+      <span class="season-acc-arrow">▾</span>
+    </summary>
+    <div class="season-acc-body">
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Družstvo</th>
+              <th>Kol</th>
+              <th>V</th>
+              <th>R</th>
+              <th>P</th>
+              <th>Skóre</th>
+              <th>Legy</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="pos">1.</td><td class="team-name">Black Diamonds Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">2.</td><td class="team-name">Bocman Club Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">3.</td><td class="team-name">Bohnický kladiva</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Figury Libčice</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">Havrani Vrňany B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">6.</td><td class="team-name">Hell's Darters Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">7.</td><td class="team-name">Kralupská letka</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">8.</td><td class="team-name">Krkavci Kralupy</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Los Číčos Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Pedro Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr class="us"><td class="pos">11.</td><td class="team-name">Roshambo Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">12.</td><td class="team-name">Zdiby DC</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">13.</td><td class="team-name">Zdiby DC B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="standings-legend">Sezóna 2026/2027 odstartuje <b>1.9.2026</b> — tabulka se naplní po prvních odehraných kolech.</div>
+    </div>
+  </details>
+
+  <details class="season-acc">
+    <summary>
+      <span class="season-acc-name">Sezóna 2025/2026</span>
+      <span class="season-acc-meta">3. liga C · 6. místo</span>
+      <span class="season-acc-arrow">▾</span>
+    </summary>
+    <div class="season-acc-body">
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Družstvo</th>
+              <th>Kol</th>
+              <th>V</th>
+              <th>R</th>
+              <th>P</th>
+              <th>Skóre</th>
+              <th>Legy</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="podium"><td class="pos">1.</td><td class="team-name">Nikater Praha</td><td>24</td><td>21</td><td>1</td><td>2</td><td>300:132</td><td>649:383</td><td class="pts">64</td></tr>
+            <tr class="podium"><td class="pos">2.</td><td class="team-name">Hardcore Praha</td><td>24</td><td>17</td><td>2</td><td>5</td><td>257:175</td><td>602:463</td><td class="pts">53</td></tr>
+            <tr class="podium"><td class="pos">3.</td><td class="team-name">Patriots darts club Zdiby B</td><td>24</td><td>15</td><td>4</td><td>5</td><td>258:174</td><td>595:462</td><td class="pts">49</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Bocman Club Praha</td><td>24</td><td>15</td><td>2</td><td>7</td><td>246:186</td><td>579:463</td><td class="pts">47</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">The LegenDarts Praha</td><td>24</td><td>13</td><td>2</td><td>9</td><td>219:213</td><td>531:516</td><td class="pts">41</td></tr>
+            <tr class="us"><td class="pos">6.</td><td class="team-name">Roshambo Praha</td><td>24</td><td>12</td><td>2</td><td>10</td><td>217:215</td><td>527:525</td><td class="pts">38</td></tr>
+            <tr><td class="pos">7.</td><td class="team-name">Staří promiň Praha</td><td>24</td><td>10</td><td>6</td><td>8</td><td>219:213</td><td>517:512</td><td class="pts">36</td></tr>
+            <tr><td class="pos">8.</td><td class="team-name">Prosecká Devítka Praha</td><td>24</td><td>11</td><td>1</td><td>12</td><td>210:222</td><td>517:536</td><td class="pts">34</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Bohnická kladiva</td><td>24</td><td>7</td><td>4</td><td>13</td><td>199:233</td><td>507:562</td><td class="pts">25</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Bar On Prosek</td><td>24</td><td>7</td><td>3</td><td>14</td><td>180:252</td><td>463:587</td><td class="pts">24</td></tr>
+            <tr><td class="pos">11.</td><td class="team-name">Hell's Darters Praha</td><td>24</td><td>4</td><td>5</td><td>15</td><td>174:258</td><td>457:591</td><td class="pts">17</td></tr>
+            <tr><td class="pos">12.</td><td class="team-name">Patriots darts club Zdiby</td><td>24</td><td>3</td><td>5</td><td>16</td><td>188:244</td><td>493:570</td><td class="pts">14</td></tr>
+            <tr><td class="pos">13.</td><td class="team-name">Los Číčos Praha</td><td>24</td><td>2</td><td>1</td><td>21</td><td>141:291</td><td>385:652</td><td class="pts">7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="standings-legend">Roshambo Praha skončilo na <b>6. místě</b> ze 13 týmů — solidní střed tabulky, se kterým jde do nové sezóny útočit výš.</div>
+    </div>
+  </details>
+
+  <details class="season-acc">
+    <summary>
+      <span class="season-acc-name">Sezóna 2024/2025</span>
+      <span class="season-acc-meta">3. liga L · 8. místo</span>
+      <span class="season-acc-arrow">▾</span>
+    </summary>
+    <div class="season-acc-body">
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Družstvo</th>
+              <th>Kol</th>
+              <th>V</th>
+              <th>R</th>
+              <th>P</th>
+              <th>Skóre</th>
+              <th>Legy</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="podium"><td class="pos">1.</td><td class="team-name">TŠA Devítka Praha</td><td>24</td><td>21</td><td>0</td><td>3</td><td>293:139</td><td>651:392</td><td class="pts">63</td></tr>
+            <tr class="podium"><td class="pos">2.</td><td class="team-name">Crazy dart Praha</td><td>24</td><td>19</td><td>2</td><td>3</td><td>274:158</td><td>623:417</td><td class="pts">59</td></tr>
+            <tr class="podium"><td class="pos">3.</td><td class="team-name">Worm Gang Praha</td><td>24</td><td>17</td><td>3</td><td>4</td><td>262:170</td><td>619:451</td><td class="pts">54</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Sgt. Pepik's Band Praha C</td><td>24</td><td>15</td><td>3</td><td>6</td><td>268:164</td><td>619:431</td><td class="pts">48</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">Kryplos Praha</td><td>24</td><td>14</td><td>6</td><td>4</td><td>261:171</td><td>609:444</td><td class="pts">48</td></tr>
+            <tr><td class="pos">6.</td><td class="team-name">Monkey z 213 Praha</td><td>24</td><td>12</td><td>1</td><td>11</td><td>224:208</td><td>537:514</td><td class="pts">37</td></tr>
+            <tr><td class="pos">7.</td><td class="team-name">Hostivar Darts Praha</td><td>24</td><td>9</td><td>4</td><td>11</td><td>195:237</td><td>488:565</td><td class="pts">31</td></tr>
+            <tr class="us"><td class="pos">8.</td><td class="team-name">Roshambo Praha</td><td>24</td><td>8</td><td>4</td><td>12</td><td>209:223</td><td>508:545</td><td class="pts">28</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Rychlé hroty Praha B</td><td>24</td><td>6</td><td>3</td><td>15</td><td>184:248</td><td>468:583</td><td class="pts">21</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Los Číčos Praha</td><td>24</td><td>6</td><td>2</td><td>16</td><td>171:261</td><td>436:605</td><td class="pts">20</td></tr>
+            <tr><td class="pos">11.</td><td class="team-name">Alcatraz DSC Praha</td><td>24</td><td>5</td><td>1</td><td>18</td><td>165:267</td><td>433:608</td><td class="pts">16</td></tr>
+            <tr><td class="pos">12.</td><td class="team-name">Future Praha</td><td>24</td><td>4</td><td>2</td><td>18</td><td>176:256</td><td>469:590</td><td class="pts">14</td></tr>
+            <tr><td class="pos">13.</td><td class="team-name">Stiflerova máma Praha</td><td>24</td><td>3</td><td>3</td><td>18</td><td>126:306</td><td>358:673</td><td class="pts">12</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="standings-legend">V sezóně 2024/2025 hrálo Roshambo Praha <b>3. ligu L</b> a skončilo na 8. místě ze 13 týmů.</div>
+    </div>
+  </details>
+
+  <details class="season-acc">
+    <summary>
+      <span class="season-acc-name">Sezóna 2023/2024</span>
+      <span class="season-acc-meta">3. liga J · 7. místo</span>
+      <span class="season-acc-arrow">▾</span>
+    </summary>
+    <div class="season-acc-body">
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Družstvo</th>
+              <th>Kol</th>
+              <th>V</th>
+              <th>R</th>
+              <th>P</th>
+              <th>Skóre</th>
+              <th>Legy</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="podium"><td class="pos">1.</td><td class="team-name">Bocman Club Praha</td><td>22</td><td>18</td><td>2</td><td>2</td><td>265:131</td><td>596:365</td><td class="pts">56</td></tr>
+            <tr class="podium"><td class="pos">2.</td><td class="team-name">Kralupská letka</td><td>22</td><td>17</td><td>2</td><td>3</td><td>255:141</td><td>583:372</td><td class="pts">53</td></tr>
+            <tr class="podium"><td class="pos">3.</td><td class="team-name">Willi Hubert Praha</td><td>22</td><td>15</td><td>2</td><td>5</td><td>236:160</td><td>550:426</td><td class="pts">47</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Kašamba Praha</td><td>22</td><td>13</td><td>4</td><td>5</td><td>238:158</td><td>539:419</td><td class="pts">43</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">Výsost Vysočany Praha</td><td>22</td><td>12</td><td>1</td><td>9</td><td>208:188</td><td>500:463</td><td class="pts">37</td></tr>
+            <tr><td class="pos">6.</td><td class="team-name">Los Číčos Praha</td><td>22</td><td>10</td><td>2</td><td>10</td><td>190:206</td><td>474:492</td><td class="pts">32</td></tr>
+            <tr class="us"><td class="pos">7.</td><td class="team-name">Roshambo Praha</td><td>22</td><td>10</td><td>1</td><td>11</td><td>199:197</td><td>490:483</td><td class="pts">31</td></tr>
+            <tr><td class="pos">8.</td><td class="team-name">Staří promiň Praha</td><td>22</td><td>9</td><td>2</td><td>11</td><td>194:202</td><td>477:499</td><td class="pts">29</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Havrani Vrňany B</td><td>22</td><td>8</td><td>2</td><td>12</td><td>169:227</td><td>440:533</td><td class="pts">26</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Patriots darts club Zdiby</td><td>22</td><td>4</td><td>3</td><td>15</td><td>171:225</td><td>443:540</td><td class="pts">15</td></tr>
+            <tr><td class="pos">11.</td><td class="team-name">Hell's Darters Praha</td><td>22</td><td>1</td><td>6</td><td>15</td><td>148:248</td><td>401:562</td><td class="pts">9</td></tr>
+            <tr><td class="pos">12.</td><td class="team-name">Kašamba Praha II</td><td>22</td><td>1</td><td>1</td><td>20</td><td>103:293</td><td>302:641</td><td class="pts">4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="standings-legend">V sezóně 2023/2024 hrálo Roshambo Praha <b>3. ligu J</b> a skončilo na 7. místě z 12 týmů.</div>
+    </div>
+  </details>
+
+  <details class="season-acc">
+    <summary>
+      <span class="season-acc-name">Sezóna 2022/2023</span>
+      <span class="season-acc-meta">3. liga G · 11. místo</span>
+      <span class="season-acc-arrow">▾</span>
+    </summary>
+    <div class="season-acc-body">
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Družstvo</th>
+              <th>Kol</th>
+              <th>V</th>
+              <th>R</th>
+              <th>P</th>
+              <th>K</th>
+              <th>Skóre</th>
+              <th>Legy</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="podium"><td class="pos">1.</td><td class="team-name">Krkavci Kralupy</td><td>26</td><td>21</td><td>4</td><td>1</td><td>0</td><td>304:164</td><td>689:457</td><td class="pts">67</td></tr>
+            <tr class="podium"><td class="pos">2.</td><td class="team-name">Patriots darts club Zdiby B</td><td>26</td><td>22</td><td>1</td><td>3</td><td>0</td><td>334:134</td><td>740:370</td><td class="pts">67</td></tr>
+            <tr class="podium"><td class="pos">3.</td><td class="team-name">Létající Jeleni Kralupy n/Vlt. B</td><td>26</td><td>19</td><td>4</td><td>3</td><td>0</td><td>315:153</td><td>709:416</td><td class="pts">61</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Kralupská letka Čechie</td><td>26</td><td>18</td><td>3</td><td>5</td><td>0</td><td>318:150</td><td>713:418</td><td class="pts">57</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">Nikater Praha</td><td>26</td><td>16</td><td>2</td><td>8</td><td>0</td><td>261:207</td><td>606:520</td><td class="pts">50</td></tr>
+            <tr><td class="pos">6.</td><td class="team-name">Kašamba Praha</td><td>26</td><td>13</td><td>4</td><td>9</td><td>0</td><td>261:207</td><td>615:532</td><td class="pts">43</td></tr>
+            <tr><td class="pos">7.</td><td class="team-name">Alcatraz DSC Praha</td><td>26</td><td>12</td><td>1</td><td>13</td><td>0</td><td>214:254</td><td>520:602</td><td class="pts">37</td></tr>
+            <tr><td class="pos">8.</td><td class="team-name">Havrani Vrňany B</td><td>26</td><td>9</td><td>2</td><td>15</td><td>0</td><td>220:248</td><td>548:589</td><td class="pts">29</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Kecky Praha</td><td>26</td><td>8</td><td>4</td><td>13</td><td>1</td><td>193:275</td><td>480:622</td><td class="pts">25</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Los Číčos Praha</td><td>26</td><td>7</td><td>2</td><td>17</td><td>0</td><td>202:266</td><td>518:607</td><td class="pts">23</td></tr>
+            <tr class="us"><td class="pos">11.</td><td class="team-name">Roshambo Praha</td><td>26</td><td>9</td><td>1</td><td>14</td><td>2</td><td>196:272</td><td>489:620</td><td class="pts">22</td></tr>
+            <tr><td class="pos">12.</td><td class="team-name">Hell's Darters Praha</td><td>26</td><td>7</td><td>1</td><td>18</td><td>0</td><td>179:289</td><td>457:668</td><td class="pts">22</td></tr>
+            <tr><td class="pos">13.</td><td class="team-name">Patriots darts club Zdiby</td><td>26</td><td>5</td><td>1</td><td>20</td><td>0</td><td>180:288</td><td>471:661</td><td class="pts">16</td></tr>
+            <tr><td class="pos">14.</td><td class="team-name">Kašamba Praha II</td><td>26</td><td>1</td><td>0</td><td>25</td><td>0</td><td>99:369</td><td>314:787</td><td class="pts">3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="standings-legend">V sezóně 2022/2023 hrálo Roshambo Praha <b>3. ligu G</b> a skončilo na 11. místě ze 14 týmů (2× kontumace).</div>
+    </div>
+  </details>
 </section>
 
 <hr class="full-divider">

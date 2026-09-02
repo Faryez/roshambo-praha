@@ -24,7 +24,15 @@ SEASON_LABEL = "3. liga C"
 
 
 def fetch_standings():
-    resp = requests.get(LEAGUE_URL, timeout=30)
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    resp = requests.get(LEAGUE_URL, headers=headers, timeout=30)
     resp.raise_for_status()
     # Stránka je ve windows-1250
     html = resp.content.decode("cp1250", errors="replace")
@@ -148,3 +156,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+Oprava 403

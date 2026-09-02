@@ -45,14 +45,35 @@ def fetch_standings():
     except requests.RequestException:
         html = None
 
-    # Pokus 2: přes veřejnou proxy (jiná IP adresa, obchází blokaci).
+    # Pokus 2: přes několik veřejných proxy (jiná IP adresa, obchází
+    # blokaci). Zkusí je postupně, dokud jedna nezafunguje.
     if html is None:
         import urllib.parse
-        proxy_url = "https://api.allorigins.win/raw?url=" + urllib.parse.quote(LEAGUE_URL, safe="")
-        resp = session.get(proxy_url, timeout=30)
-        resp.raise_for_status()
-        resp.encoding = "cp1250"
-        html = resp.text
+        encoded = urllib.parse.quote(LEAGUE_URL, safe="")
+        proxy_urls = [
+            "https://api.codetabs.com/v1/proxy?quest=" + LEAGUE_URL,
+            "https://api.allorigins.win/raw?url=" + encoded,
+            "https://corsproxy.io/?url=" + encoded,
+        ]
+        last_error = None
+        for proxy_url in proxy_urls:
+            try:
+                resp = session.get(proxy_url, timeout=30)
+                resp.raise_for_status()
+                if not resp.content or len(resp.content) < 500:
+                    raise ValueError("Prázdná nebo příliš krátká odpověď z proxy")
+                resp.encoding = "cp1250"
+                html = resp.text
+                break
+            except (requests.RequestException, ValueError) as e:
+                last_error = e
+                html = None
+                continue
+        if html is None:
+            raise RuntimeError(
+                f"Nepodařilo se stáhnout stránku ani přímo, ani přes žádnou "
+                f"z proxy. Poslední chyba: {last_error}"
+            )
 
     soup = BeautifulSoup(html, "html.parser")
 

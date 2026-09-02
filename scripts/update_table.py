@@ -32,27 +32,28 @@ def fetch_standings():
         ),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "cs-CZ,cs;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-User": "?1",
     })
 
-    # Nejdřív navštívíme hlavní stránku (jako běžný prohlížeč), aby se
-    # případně nastavily potřebné cookies, než sáhneme na tabulku.
-    try:
-        session.get("https://www.sipky.org/", timeout=30)
-    except requests.RequestException:
-        pass
+    html = None
 
-    session.headers["Referer"] = "https://www.sipky.org/"
-    resp = session.get(LEAGUE_URL, timeout=30)
-    resp.raise_for_status()
-    # Stránka je ve windows-1250
-    html = resp.content.decode("cp1250", errors="replace")
+    # Pokus 1: přímý přístup (funguje z běžného prohlížeče, ale sipky.org
+    # blokuje datacentrové IP adresy GitHub Actions runnerů - proto 403).
+    try:
+        resp = session.get(LEAGUE_URL, timeout=20)
+        resp.raise_for_status()
+        html = resp.content.decode("cp1250", errors="replace")
+    except requests.RequestException:
+        html = None
+
+    # Pokus 2: přes veřejnou proxy (jiná IP adresa, obchází blokaci).
+    if html is None:
+        import urllib.parse
+        proxy_url = "https://api.allorigins.win/raw?url=" + urllib.parse.quote(LEAGUE_URL, safe="")
+        resp = session.get(proxy_url, timeout=30)
+        resp.raise_for_status()
+        resp.encoding = "cp1250"
+        html = resp.text
+
     soup = BeautifulSoup(html, "html.parser")
 
     standings_table = None

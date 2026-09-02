@@ -39,6 +39,11 @@ def decode_smart(content):
 def parse_html_standings(html):
     soup = BeautifulSoup(html, "html.parser")
 
+    # Sipky.org sama mění nadpis nad tabulkou z "Tabulka - průběžné pořadí"
+    # na "Tabulka - konečné pořadí", jakmile je sezóna u konce - podle
+    # toho poznáme, jestli ještě probíhá, nebo už skončila.
+    is_final = "konečné pořadí" in html.lower()
+
     standings_table = None
     for table in soup.find_all("table"):
         rows = table.find_all("tr")
@@ -51,7 +56,7 @@ def parse_html_standings(html):
             break
 
     if standings_table is None:
-        return None
+        return None, is_final
 
     teams = []
     for row in standings_table.find_all("tr"):
@@ -76,7 +81,7 @@ def parse_html_standings(html):
             "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
             "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
         })
-    return teams
+    return teams, is_final
 
 
 def parse_markdown_standings(md_text):
@@ -84,6 +89,7 @@ def parse_markdown_standings(md_text):
     Řádky standings tabulky mají přesně 16 sloupců; ostatní tabulky na
     stránce (např. statistika hráčů) mají jiný počet, takže se samy
     přeskočí."""
+    is_final = "konečné pořadí" in md_text.lower()
     link_pattern = re.compile(r"\[([^\]]*)\]\([^)]*\)")
     teams = []
     for line in md_text.splitlines():
@@ -117,7 +123,7 @@ def parse_markdown_standings(md_text):
             "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
             "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
         })
-    return teams if teams else None
+    return (teams if teams else None), is_final
 
 
 def fetch_standings():
@@ -137,11 +143,11 @@ def fetch_standings():
         resp = session.get(LEAGUE_URL, timeout=20)
         resp.raise_for_status()
         html = decode_smart(resp.content)
-        teams = parse_html_standings(html)
+        teams, is_final = parse_html_standings(html)
         if teams is not None:
-            return teams
+            return teams, is_final
         # HTML se stáhlo, ale tabulka tam není -> sezóna asi nezačala
-        return None
+        return None, is_final
     except requests.RequestException:
         pass
 
@@ -159,10 +165,10 @@ def fetch_standings():
             resp = session.get(scraper_url, timeout=60)
             resp.raise_for_status()
             html = decode_smart(resp.content)
-            teams = parse_html_standings(html)
+            teams, is_final = parse_html_standings(html)
             if teams is not None:
-                return teams
-            return None
+                return teams, is_final
+            return None, is_final
         except requests.RequestException:
             pass
 
@@ -173,8 +179,8 @@ def fetch_standings():
         jina_url = "https://r.jina.ai/" + LEAGUE_URL
         resp = session.get(jina_url, timeout=45)
         resp.raise_for_status()
-        teams = parse_markdown_standings(resp.text)
-        return teams
+        teams, is_final = parse_markdown_standings(resp.text)
+        return teams, is_final
     except requests.RequestException as e:
         raise RuntimeError(
             f"Nepodařilo se stáhnout stránku ani přímo, ani přes Jina Reader. "
@@ -289,31 +295,54 @@ def czech_now_str():
     return cz.strftime("%d.%m.%Y %H:%M")
 
 
-def update_index_html(teams, match_results=None):
+def update_index_html(teams, is_final, match_results=None):
     with open(INDEX_FILE, "r", encoding="utf-8") as f:
         html = f.read()
 
     us = next((t for t in teams if t["name"] == OUR_TEAM), None)
     total = len(teams)
 
-    if us:
-        meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · {us['pos']} místo"
-        legend_text = (
-            f'Průběžné pořadí — Roshambo Praha je na <b>{us["pos"]} místě</b> '
-            f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
-        )
+    if is_final:
+        if us:
+            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · {us['pos']} místo"
+            inline_meta_text = f"{SEASON_LABEL} · {us['pos']} místo"
+            legend_text = (
+                f'Sezóna skončila — Roshambo Praha se umístilo na <b>{us["pos"]} místě</b> '
+                f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
+            )
+        else:
+            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · konečné pořadí"
+            inline_meta_text = f"{SEASON_LABEL} · konečné pořadí"
+            legend_text = (
+                f'Sezóna {SEASON_LABEL} skončila. '
+                f'Naposledy aktualizováno automaticky {czech_now_str()}.'
+            )
     else:
-        meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžné pořadí"
-        legend_text = (
-            f'Průběžné pořadí sezóny {SEASON_LABEL}. '
-            f'Naposledy aktualizováno automaticky {czech_now_str()}.'
-        )
+        if us:
+            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžně {us['pos']} místo"
+            inline_meta_text = f"{SEASON_LABEL} · průběžně {us['pos']} místo"
+            legend_text = (
+                f'Průběžné pořadí — Roshambo Praha je na <b>{us["pos"]} místě</b> '
+                f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
+            )
+        else:
+            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžné pořadí"
+            inline_meta_text = f"{SEASON_LABEL} · průběžné pořadí"
+            legend_text = (
+                f'Průběžné pořadí sezóny {SEASON_LABEL}. '
+                f'Naposledy aktualizováno automaticky {czech_now_str()}.'
+            )
 
     new_tbody = build_tbody(teams)
 
     html = re.sub(
         r'(<option value="2026" id="current-season-meta">)(.*?)(</option>)',
         lambda m: m.group(1) + meta_text + m.group(3),
+        html, count=1, flags=re.DOTALL,
+    )
+    html = re.sub(
+        r'(<div class="season-acc-meta" id="current-season-meta-inline"[^>]*>)(.*?)(</div>)',
+        lambda m: m.group(1) + inline_meta_text + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
     html = re.sub(
@@ -342,7 +371,7 @@ def update_index_html(teams, match_results=None):
 
 
 def main():
-    teams = fetch_standings()
+    teams, is_final = fetch_standings()
     if not teams:
         print("Sezóna zatím nemá odehraná kola — tabulka se nemění.")
         sys.exit(0)
@@ -356,8 +385,9 @@ def main():
     })
     match_results = fetch_roshambo_results(session)
 
-    update_index_html(teams, match_results)
-    print(f"Tabulka aktualizována, {len(teams)} týmů, {len(match_results)} výsledků zápasů.")
+    update_index_html(teams, is_final, match_results)
+    stav = "KONEČNÉ" if is_final else "průběžné"
+    print(f"Tabulka aktualizována ({stav}), {len(teams)} týmů, {len(match_results)} výsledků zápasů.")
 
 
 if __name__ == "__main__":

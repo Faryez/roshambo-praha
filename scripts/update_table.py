@@ -24,6 +24,16 @@ INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
 
 
+def decode_smart(content):
+    """Stránka sipky.org je ve windows-1250, ale některé proxy služby
+    (např. ScraperAPI) ji před vrácením samy převedou na UTF-8. Zkusíme
+    proto nejdřív UTF-8 - pokud selže, je to opravdu windows-1250."""
+    try:
+        return content.decode("utf-8")
+    except UnicodeDecodeError:
+        return content.decode("cp1250", errors="replace")
+
+
 def parse_html_standings(html):
     soup = BeautifulSoup(html, "html.parser")
 
@@ -124,7 +134,7 @@ def fetch_standings():
     try:
         resp = session.get(LEAGUE_URL, timeout=20)
         resp.raise_for_status()
-        html = resp.content.decode("cp1250", errors="replace")
+        html = decode_smart(resp.content)
         teams = parse_html_standings(html)
         if teams is not None:
             return teams
@@ -146,7 +156,7 @@ def fetch_standings():
             )
             resp = session.get(scraper_url, timeout=60)
             resp.raise_for_status()
-            html = resp.content.decode("cp1250", errors="replace")
+            html = decode_smart(resp.content)
             teams = parse_html_standings(html)
             if teams is not None:
                 return teams

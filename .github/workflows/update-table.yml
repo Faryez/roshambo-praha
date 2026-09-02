@@ -42,3 +42,4 @@ jobs:
           git add index.html
           git diff --cached --quiet || git commit -m "Automatická aktualizace tabulky"
           git push
+          

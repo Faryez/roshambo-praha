@@ -261,6 +261,26 @@
     transition: transform 0.2s ease;
   }
   .season-acc[open] .season-acc-arrow { transform: rotate(180deg); }
+  .update-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+    background: transparent;
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .update-btn:hover:not(:disabled) { background: var(--yellow); color: #000; }
+  .update-btn:disabled {
+    color: var(--muted);
+    border-color: var(--border);
+    cursor: default;
+    opacity: 0.7;
+  }
   .season-acc-body {
     padding: 0 24px 28px;
     border-top: 1px solid var(--border);
@@ -438,7 +458,8 @@
   <details class="season-acc" open>
     <summary>
       <span class="season-acc-name">Sezóna 2026/2027</span>
-      <span class="season-acc-meta" id="current-season-meta">sezóna ještě nezačala</span>
+      <span class="season-acc-meta" id="current-season-meta">3. liga C · 3. místo</span>
+      <button type="button" class="update-btn" id="manualUpdateBtn">Aktualizovat</button>
       <span class="season-acc-arrow">▾</span>
     </summary>
     <div class="season-acc-body">
@@ -458,23 +479,23 @@
             </tr>
           </thead>
           <tbody id="current-season-tbody">
-            <tr><td class="pos">1.</td><td class="team-name">Black Diamonds Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">2.</td><td class="team-name">Bocman Club Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">3.</td><td class="team-name">Bohnický kladiva</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">4.</td><td class="team-name">Figury Libčice</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">5.</td><td class="team-name">Havrani Vrňany B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">6.</td><td class="team-name">Hell's Darters Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">7.</td><td class="team-name">Kralupská letka</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">8.</td><td class="team-name">Krkavci Kralupy</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">9.</td><td class="team-name">Los Číčos Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr><td class="pos">10.</td><td class="team-name">Pedro Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
-            <tr class="us"><td class="pos">11.</td><td class="team-name">Roshambo Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">1.</td><td class="team-name">Krkavci Kralupy</td><td>1</td><td>1</td><td>0</td><td>0</td><td>12:6</td><td>27:17</td><td class="pts">3</td></tr>
+            <tr><td class="pos">2.</td><td class="team-name">Hell's Darters Praha</td><td>1</td><td>1</td><td>0</td><td>0</td><td>10:8</td><td>23:21</td><td class="pts">3</td></tr>
+            <tr class="us"><td class="pos">3.</td><td class="team-name">Roshambo Praha</td><td>1</td><td>0</td><td>0</td><td>1</td><td>8:10</td><td>21:23</td><td class="pts">0</td></tr>
+            <tr><td class="pos">4.</td><td class="team-name">Los Číčos Praha</td><td>1</td><td>0</td><td>0</td><td>1</td><td>6:12</td><td>17:27</td><td class="pts">0</td></tr>
+            <tr><td class="pos">5.</td><td class="team-name">Black Diamonds Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">6.</td><td class="team-name">Bocman Club Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">7.</td><td class="team-name">Bohnický kladiva</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">8.</td><td class="team-name">Figury Libčice</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">9.</td><td class="team-name">Havrani Vrňany B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">10.</td><td class="team-name">Kralupská letka</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
+            <tr><td class="pos">11.</td><td class="team-name">Pedro Praha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
             <tr><td class="pos">12.</td><td class="team-name">Zdiby DC</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
             <tr><td class="pos">13.</td><td class="team-name">Zdiby DC B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td><td class="pts">0</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="standings-legend" id="current-season-legend">Sezóna 2026/2027 odstartuje <b>1.9.2026</b> — tabulka se naplní po prvních odehraných kolech.</div>
+      <div class="standings-legend" id="current-season-legend">Po 1. kole: Roshambo Praha prohrálo s Hell's Darters Praha 8:10 (na legy 21:23) a je na <b>3. místě</b>. Zbylé zápasy 1. kola se ještě dohrávají.</div>
     </div>
   </details>
 
@@ -738,6 +759,47 @@
   <p style="margin-top:8px;">Respekt soupeřům. Nula omluv. Šipky do terče.</p>
 </footer>
 
+<script>
+(function () {
+  var COOLDOWN_MS = 2 * 60 * 60 * 1000; // 2 hodiny
+  var STORAGE_KEY = 'roshambo_last_manual_update';
+  var ACTIONS_URL = 'https://github.com/Faryez/roshambo-praha/actions/workflows/update-table.yml';
+  var btn = document.getElementById('manualUpdateBtn');
+  if (!btn) return;
+
+  function formatRemaining(ms) {
+    var totalMin = Math.ceil(ms / 60000);
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    if (h > 0) return 'Znovu za ' + h + 'h ' + m + 'm';
+    return 'Znovu za ' + m + 'm';
+  }
+
+  function refreshState() {
+    var last = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+    var elapsed = Date.now() - last;
+    if (last && elapsed < COOLDOWN_MS) {
+      btn.disabled = true;
+      btn.textContent = formatRemaining(COOLDOWN_MS - elapsed);
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Aktualizovat';
+    }
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (btn.disabled) return;
+    localStorage.setItem(STORAGE_KEY, Date.now().toString());
+    window.open(ACTIONS_URL, '_blank');
+    refreshState();
+  });
+
+  refreshState();
+  setInterval(refreshState, 30000);
+})();
+</script>
+
 </body>
 </html>
-nové avatary

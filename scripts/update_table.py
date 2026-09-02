@@ -23,58 +23,7 @@ INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
 
 
-def fetch_standings():
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-        ),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "cs-CZ,cs;q=0.9,en-US;q=0.8,en;q=0.7",
-    })
-
-    html = None
-
-    # Pokus 1: přímý přístup (funguje z běžného prohlížeče, ale sipky.org
-    # blokuje datacentrové IP adresy GitHub Actions runnerů - proto 403).
-    try:
-        resp = session.get(LEAGUE_URL, timeout=20)
-        resp.raise_for_status()
-        html = resp.content.decode("cp1250", errors="replace")
-    except requests.RequestException:
-        html = None
-
-    # Pokus 2: přes několik veřejných proxy (jiná IP adresa, obchází
-    # blokaci). Zkusí je postupně, dokud jedna nezafunguje.
-    if html is None:
-        import urllib.parse
-        encoded = urllib.parse.quote(LEAGUE_URL, safe="")
-        proxy_urls = [
-            "https://api.codetabs.com/v1/proxy?quest=" + LEAGUE_URL,
-            "https://api.allorigins.win/raw?url=" + encoded,
-            "https://corsproxy.io/?url=" + encoded,
-        ]
-        last_error = None
-        for proxy_url in proxy_urls:
-            try:
-                resp = session.get(proxy_url, timeout=30)
-                resp.raise_for_status()
-                if not resp.content or len(resp.content) < 500:
-                    raise ValueError("Prázdná nebo příliš krátká odpověď z proxy")
-                resp.encoding = "cp1250"
-                html = resp.text
-                break
-            except (requests.RequestException, ValueError) as e:
-                last_error = e
-                html = None
-                continue
-        if html is None:
-            raise RuntimeError(
-                f"Nepodařilo se stáhnout stránku ani přímo, ani přes žádnou "
-                f"z proxy. Poslední chyba: {last_error}"
-            )
-
+def parse_html_standings(html):
     soup = BeautifulSoup(html, "html.parser")
 
     standings_table = None
@@ -89,7 +38,7 @@ def fetch_standings():
             break
 
     if standings_table is None:
-        return None  # sezóna ještě nezačala / žádná tabulka k dispozici
+        return None
 
     teams = []
     for row in standings_table.find_all("tr"):
@@ -114,8 +63,89 @@ def fetch_standings():
             "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
             "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
         })
-
     return teams
+
+
+def parse_markdown_standings(md_text):
+    """Parsuje tabulku ze stránky převedené na markdown (přes Jina Reader).
+    Řádky standings tabulky mají přesně 16 sloupců; ostatní tabulky na
+    stránce (např. statistika hráčů) mají jiný počet, takže se samy
+    přeskočí."""
+    link_pattern = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+    teams = []
+    for line in md_text.splitlines():
+        line = line.strip()
+        if not re.match(r"^\|\s*\d+\.\s*\|", line):
+            continue
+        clean = link_pattern.sub(r"\1", line)
+        cells = [c.strip() for c in clean.split("|")]
+        # odstraň prázdné krajní buňky vzniklé úvodní/koncovou svislítkem
+        if cells and cells[0] == "":
+            cells = cells[1:]
+        if cells and cells[-1] == "":
+            cells = cells[:-1]
+        if len(cells) != 16:
+            continue
+        try:
+            pos = cells[0]
+            name = cells[1]
+            kol = cells[2]
+            v = cells[3]
+            r = cells[5]
+            p = cells[7]
+            skore_h = cells[9]
+            skore_a = cells[11]
+            legy_h = cells[12]
+            legy_a = cells[14]
+            body = cells[15]
+        except IndexError:
+            continue
+        teams.append({
+            "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
+            "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
+        })
+    return teams if teams else None
+
+
+def fetch_standings():
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "cs-CZ,cs;q=0.9,en-US;q=0.8,en;q=0.7",
+    })
+
+    # Pokus 1: přímý přístup (funguje z běžného prohlížeče, ale sipky.org
+    # blokuje datacentrové IP adresy GitHub Actions runnerů - proto 403).
+    try:
+        resp = session.get(LEAGUE_URL, timeout=20)
+        resp.raise_for_status()
+        html = resp.content.decode("cp1250", errors="replace")
+        teams = parse_html_standings(html)
+        if teams is not None:
+            return teams
+        # HTML se stáhlo, ale tabulka tam není -> sezóna asi nezačala
+        return None
+    except requests.RequestException:
+        pass
+
+    # Pokus 2: Jina AI Reader - přečte stránku ze své vlastní infrastruktury
+    # (jiná IP adresa než GitHub Actions) a vrátí obsah jako čistý text
+    # včetně tabulek v markdown formátu.
+    try:
+        jina_url = "https://r.jina.ai/" + LEAGUE_URL
+        resp = session.get(jina_url, timeout=45)
+        resp.raise_for_status()
+        teams = parse_markdown_standings(resp.text)
+        return teams
+    except requests.RequestException as e:
+        raise RuntimeError(
+            f"Nepodařilo se stáhnout stránku ani přímo, ani přes Jina Reader. "
+            f"Poslední chyba: {e}"
+        )
 
 
 def build_tbody(teams):

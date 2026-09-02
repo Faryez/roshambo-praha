@@ -282,9 +282,9 @@ def build_tbody(teams):
         rows.append(
             f'<tr{cls}><td class="pos">{t["pos"]}</td>'
             f'<td class="team-name">{t["name"]}</td>'
+            f'<td class="pts">{t["body"]}</td>'
             f'<td>{t["kol"]}</td><td>{t["v"]}</td><td>{t["r"]}</td><td>{t["p"]}</td>'
-            f'<td>{t["skore"]}</td><td>{t["legy"]}</td>'
-            f'<td class="pts">{t["body"]}</td></tr>'
+            f'<td>{t["legy"]}</td><td>{t["skore"]}</td></tr>'
         )
     return "\n            ".join(rows)
 

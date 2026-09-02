@@ -11,6 +11,7 @@ není žádná odehraná kola / tabulka).
 """
 
 import re
+import os
 import sys
 from datetime import datetime, timezone, timedelta
 
@@ -132,7 +133,28 @@ def fetch_standings():
     except requests.RequestException:
         pass
 
-    # Pokus 2: Jina AI Reader - přečte stránku ze své vlastní infrastruktury
+    # Pokus 2: ScraperAPI (placená/bezplatná scraping služba s rotujícími
+    # IP adresami - spolehlivěji obchází ochranu proti botům). Použije se
+    # jen pokud je nastavený tajný klíč SCRAPERAPI_KEY.
+    api_key = os.environ.get("SCRAPERAPI_KEY")
+    if api_key:
+        try:
+            import urllib.parse
+            scraper_url = (
+                "https://api.scraperapi.com?api_key=" + api_key +
+                "&url=" + urllib.parse.quote(LEAGUE_URL, safe="")
+            )
+            resp = session.get(scraper_url, timeout=60)
+            resp.raise_for_status()
+            html = resp.content.decode("cp1250", errors="replace")
+            teams = parse_html_standings(html)
+            if teams is not None:
+                return teams
+            return None
+        except requests.RequestException:
+            pass
+
+    # Pokus 3: Jina AI Reader - přečte stránku ze své vlastní infrastruktury
     # (jiná IP adresa než GitHub Actions) a vrátí obsah jako čistý text
     # včetně tabulek v markdown formátu.
     try:

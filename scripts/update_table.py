@@ -24,15 +24,32 @@ SEASON_LABEL = "3. liga C"
 
 
 def fetch_standings():
-    headers = {
+    session = requests.Session()
+    session.headers.update({
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         ),
-        "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.8",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    }
-    resp = requests.get(LEAGUE_URL, headers=headers, timeout=30)
+        "Accept-Language": "cs-CZ,cs;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+    })
+
+    # Nejdřív navštívíme hlavní stránku (jako běžný prohlížeč), aby se
+    # případně nastavily potřebné cookies, než sáhneme na tabulku.
+    try:
+        session.get("https://www.sipky.org/", timeout=30)
+    except requests.RequestException:
+        pass
+
+    session.headers["Referer"] = "https://www.sipky.org/"
+    resp = session.get(LEAGUE_URL, timeout=30)
     resp.raise_for_status()
     # Stránka je ve windows-1250
     html = resp.content.decode("cp1250", errors="replace")
@@ -156,4 +173,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

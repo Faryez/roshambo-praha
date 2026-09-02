@@ -31,6 +31,8 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Stažení a aktualizace tabulky
+        env:
+          SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: python scripts/update_table.py
 
       - name: Uložení změny (pokud nějaká je)

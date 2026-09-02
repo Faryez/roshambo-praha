@@ -19,9 +19,11 @@ import requests
 from bs4 import BeautifulSoup
 
 LEAGUE_URL = "https://www.sipky.org/?region=stc&page=ligova-skupina&league=228360"
+TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_team=2745352&played=1"
 OUR_TEAM = "Roshambo Praha"
 INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
+CURRENT_SEASON_LABEL = "2026/2027"
 
 
 def decode_smart(content):
@@ -180,6 +182,89 @@ def fetch_standings():
         )
 
 
+def fetch_html_with_fallback(url, session):
+    """Stáhne stránku přímo, a když to selže, zkusí ScraperAPI (pokud je
+    nastavený klíč). Vrátí HTML text, nebo None při úplném selhání."""
+    try:
+        resp = session.get(url, timeout=20)
+        resp.raise_for_status()
+        return decode_smart(resp.content)
+    except requests.RequestException:
+        pass
+
+    api_key = os.environ.get("SCRAPERAPI_KEY")
+    if not api_key:
+        return None
+    try:
+        import urllib.parse
+        scraper_url = (
+            "https://api.scraperapi.com?api_key=" + api_key +
+            "&url=" + urllib.parse.quote(url, safe="")
+        )
+        resp = session.get(scraper_url, timeout=60)
+        resp.raise_for_status()
+        return decode_smart(resp.content)
+    except requests.RequestException:
+        return None
+
+
+def fetch_roshambo_results(session):
+    """Stáhne odehrané zápasy Roshambo Praha a pro každý určí, jestli šlo
+    o výhru/remízu/prohru. Vrátí slovník {"YYYY-MM-DD": "win"/"draw"/"loss"}.
+    Při jakémkoli problému vrátí prázdný slovník - tahle funkce nesmí shodit
+    zbytek skriptu, protože jde jen o doplňkovou vizuální informaci."""
+    try:
+        html = fetch_html_with_fallback(TEAM_MATCHES_URL, session)
+        if not html:
+            return {}
+        soup = BeautifulSoup(html, "html.parser")
+        date_re = re.compile(r"^(\d{1,2})\.(\d{1,2})\.(\d{4})$")
+        results = {}
+
+        for row in soup.find_all("tr"):
+            cells = row.find_all("td")
+            if not cells:
+                continue
+            texts = [c.get_text(strip=True) for c in cells]
+
+            date_idx = next((i for i, t in enumerate(texts) if date_re.match(t)), None)
+            if date_idx is None:
+                continue
+            if not any(OUR_TEAM in t for t in texts):
+                continue
+            if ":" not in texts:
+                continue
+
+            colon_idx = texts.index(":")
+            try:
+                skore_home = int(texts[colon_idx - 1])
+                skore_away = int(texts[colon_idx + 1])
+            except (ValueError, IndexError):
+                continue
+
+            rosh_idx = next((i for i, t in enumerate(texts) if OUR_TEAM in t), None)
+            if rosh_idx is None:
+                continue
+
+            is_home = rosh_idx < colon_idx
+            rosh_score, opp_score = (skore_home, skore_away) if is_home else (skore_away, skore_home)
+
+            if rosh_score > opp_score:
+                result = "win"
+            elif rosh_score < opp_score:
+                result = "loss"
+            else:
+                result = "draw"
+
+            d, mo, y = date_re.match(texts[date_idx]).groups()
+            iso = f"{y}-{int(mo):02d}-{int(d):02d}"
+            results[iso] = result
+
+        return results
+    except Exception:
+        return {}
+
+
 def build_tbody(teams):
     rows = []
     for t in teams:
@@ -204,7 +289,7 @@ def czech_now_str():
     return cz.strftime("%d.%m.%Y %H:%M")
 
 
-def update_index_html(teams):
+def update_index_html(teams, match_results=None):
     with open(INDEX_FILE, "r", encoding="utf-8") as f:
         html = f.read()
 
@@ -212,13 +297,13 @@ def update_index_html(teams):
     total = len(teams)
 
     if us:
-        meta_text = f"{SEASON_LABEL} · {us['pos']} místo"
+        meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · {us['pos']} místo"
         legend_text = (
             f'Průběžné pořadí — Roshambo Praha je na <b>{us["pos"]} místě</b> '
             f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
         )
     else:
-        meta_text = f"{SEASON_LABEL} · průběžné pořadí"
+        meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžné pořadí"
         legend_text = (
             f'Průběžné pořadí sezóny {SEASON_LABEL}. '
             f'Naposledy aktualizováno automaticky {czech_now_str()}.'
@@ -227,7 +312,7 @@ def update_index_html(teams):
     new_tbody = build_tbody(teams)
 
     html = re.sub(
-        r'(<span class="season-acc-meta" id="current-season-meta">)(.*?)(</span>)',
+        r'(<option value="2026" id="current-season-meta">)(.*?)(</option>)',
         lambda m: m.group(1) + meta_text + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
@@ -242,6 +327,16 @@ def update_index_html(teams):
         html, count=1, flags=re.DOTALL,
     )
 
+    if match_results:
+        for iso, result in match_results.items():
+            pattern = re.compile(r'(<tr data-date="' + re.escape(iso) + r'")([^>]*)(>)')
+
+            def repl(m, result=result):
+                attrs = re.sub(r'\s*data-result="[^"]*"', '', m.group(2))
+                return m.group(1) + attrs + f' data-result="{result}"' + m.group(3)
+
+            html = pattern.sub(repl, html, count=1)
+
     with open(INDEX_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
@@ -251,8 +346,18 @@ def main():
     if not teams:
         print("Sezóna zatím nemá odehraná kola — tabulka se nemění.")
         sys.exit(0)
-    update_index_html(teams)
-    print(f"Tabulka aktualizována, {len(teams)} týmů.")
+
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
+    })
+    match_results = fetch_roshambo_results(session)
+
+    update_index_html(teams, match_results)
+    print(f"Tabulka aktualizována, {len(teams)} týmů, {len(match_results)} výsledků zápasů.")
 
 
 if __name__ == "__main__":

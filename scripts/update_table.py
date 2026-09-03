@@ -20,6 +20,7 @@ from bs4 import BeautifulSoup
 
 LEAGUE_URL = "https://www.sipky.org/?region=stc&page=ligova-skupina&league=228360"
 TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_team=2745352&played=1"
+PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_team=2745352"
 OUR_TEAM = "Roshambo Praha"
 INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
@@ -271,6 +272,72 @@ def fetch_roshambo_results(session):
         return {}
 
 
+def fetch_player_stats(session):
+    """Stáhne statistiku hráčů Roshambo Praha pro AKTUÁLNÍ sezónu ze
+    stránky 'statistika-hracu' a pro každého spočítá:
+      - Úspěšnost = Vyhráno / Odehráno * 100
+      - Prospěšnost = (Vyhráno / Odehráno) * Vyhráno   (vzorec dle ČFO)
+    Vrátí seznam slovníků seřazený sestupně podle Prospěšnosti.
+    Při jakémkoli problému vrátí prázdný seznam - je to jen doplňková
+    informace, nesmí shodit zbytek skriptu."""
+    try:
+        html = fetch_html_with_fallback(PLAYER_STATS_URL, session)
+        if not html:
+            return []
+        soup = BeautifulSoup(html, "html.parser")
+
+        table = None
+        for t in soup.find_all("table"):
+            rows = t.find_all("tr")
+            for row in rows:
+                cells = row.find_all("td")
+                if cells and re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
+                    table = t
+                    break
+            if table:
+                break
+        if table is None:
+            return []
+
+        players = []
+        for row in table.find_all("tr"):
+            cells = row.find_all("td")
+            if not cells or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
+                continue
+            # sloupce: Pořadí, Hráč, LKH, %, C, O, V, %, O, V, ... (Zápasy O/V jsou sloupce indexy 5 a 6)
+            try:
+                name = cells[1].get_text(strip=True)
+                o = int(cells[5].get_text(strip=True))
+                v = int(cells[6].get_text(strip=True))
+            except (IndexError, ValueError):
+                continue
+            if o == 0:
+                continue
+            uspesnost = v / o * 100
+            prospesnost = (v / o) * v
+            players.append({
+                "name": name,
+                "uspesnost": uspesnost,
+                "prospesnost": prospesnost,
+            })
+
+        players.sort(key=lambda p: p["prospesnost"], reverse=True)
+        return players
+    except Exception:
+        return []
+
+
+def build_mini_stats_tbody(players):
+    rows = []
+    for p in players:
+        usp = f'{p["uspesnost"]:.2f}'.replace(".", ",") + " %"
+        prosp = f'{p["prospesnost"]:.2f}'.replace(".", ",")
+        rows.append(
+            f'<tr><td>{p["name"]}</td><td class="msu">{usp}</td><td>{prosp}</td></tr>'
+        )
+    return "\n".join(rows)
+
+
 def build_tbody(teams):
     rows = []
     for t in teams:
@@ -295,7 +362,7 @@ def czech_now_str():
     return cz.strftime("%d.%m.%Y %H:%M")
 
 
-def update_index_html(teams, is_final, match_results=None):
+def update_index_html(teams, is_final, match_results=None, player_stats=None):
     with open(INDEX_FILE, "r", encoding="utf-8") as f:
         html = f.read()
 
@@ -366,6 +433,14 @@ def update_index_html(teams, is_final, match_results=None):
 
             html = pattern.sub(repl, html, count=1)
 
+    if player_stats:
+        new_mini_tbody = build_mini_stats_tbody(player_stats)
+        html = re.sub(
+            r'(<tbody id="current-season-mini-stats-tbody">)(.*?)(</tbody>)',
+            lambda m: m.group(1) + "\n" + new_mini_tbody + "\n" + m.group(3),
+            html, count=1, flags=re.DOTALL,
+        )
+
     with open(INDEX_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
@@ -384,10 +459,14 @@ def main():
         ),
     })
     match_results = fetch_roshambo_results(session)
+    player_stats = fetch_player_stats(session)
 
-    update_index_html(teams, is_final, match_results)
+    update_index_html(teams, is_final, match_results, player_stats)
     stav = "KONEČNÉ" if is_final else "průběžné"
-    print(f"Tabulka aktualizována ({stav}), {len(teams)} týmů, {len(match_results)} výsledků zápasů.")
+    print(
+        f"Tabulka aktualizována ({stav}), {len(teams)} týmů, "
+        f"{len(match_results)} výsledků zápasů, {len(player_stats)} hráčů ve statistice."
+    )
 
 
 if __name__ == "__main__":

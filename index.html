@@ -192,6 +192,39 @@
   .matches-legend .dot.win { background: #4a9d6e; }
   .matches-legend .dot.draw { background: #d4a544; }
   .matches-legend .dot.loss { background: #c0392b; }
+  .mini-stats {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .mini-stats-title {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .mini-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .mini-stats-table th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+    padding: 4px 8px 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mini-stats-table td {
+    padding: 5px 8px 5px 0;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .mini-stats-table .msu { color: var(--yellow); font-weight: 700; }
   .matches-legend .dot.next { background: var(--yellow); }
   .matches-table tr:hover td { background: rgba(245,197,24,0.04); }
   .matches-table tr.played td { color: var(--muted); opacity: 0.55; }
@@ -499,14 +532,30 @@
 </tr>
 </thead>
 <tbody id="current-season-tbody">
-            <tr class="podium"><td class="pos">1.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>27:17</td><td>12:6</td></tr>
-            <tr class="podium"><td class="pos">2.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>23:21</td><td>10:8</td></tr>
-            <tr class="us"><td class="pos">3.</td><td class="team-name">Roshambo Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>21:23</td><td>8:10</td></tr>
-            <tr><td class="pos">4.</td><td class="team-name">Los Číčos Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>17:27</td><td>6:12</td></tr>
-          </tbody>
+<tr class="podium"><td class="pos">1.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>27:17</td><td>12:6</td></tr>
+<tr class="podium"><td class="pos">2.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>23:21</td><td>10:8</td></tr>
+<tr class="us"><td class="pos">3.</td><td class="team-name">Roshambo Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>21:23</td><td>8:10</td></tr>
+<tr><td class="pos">4.</td><td class="team-name">Los Číčos Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>17:27</td><td>6:12</td></tr>
+</tbody>
 </table>
 </div>
-<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>3. místě</b> z 4 týmů. Naposledy aktualizováno automaticky 02.09.2026 21:50.</div>
+<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>3. místě</b> z 4 týmů. Naposledy aktualizováno automaticky 02.09.2026 20:18.</div>
+<div class="mini-stats">
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027</div>
+<table class="mini-stats-table">
+<thead>
+<tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr>
+</thead>
+<tbody id="current-season-mini-stats-tbody">
+<tr><td>Kohlíček Petr</td><td class="msu">50 %</td><td>1,00</td></tr>
+<tr><td>Roklová Zuzana</td><td class="msu">50 %</td><td>1,00</td></tr>
+<tr><td>Novák Jakub</td><td class="msu">50 %</td><td>0,50</td></tr>
+<tr><td>Bečka Marek</td><td class="msu">50 %</td><td>0,50</td></tr>
+<tr><td>Soliman Alan</td><td class="msu">25 %</td><td>0,25</td></tr>
+</tbody>
+</table>
+<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
+</div>
 </div>
 <div class="season-panel" id="panel-2025" style="display:none">
 <div class="season-acc-meta" style="margin-bottom:12px;">3. liga C · 6. místo</div>
@@ -542,6 +591,25 @@
 </table>
 </div>
 <div class="standings-legend">Roshambo Praha skončilo na <b>6. místě</b> ze 13 týmů — solidní střed tabulky, se kterým jde do nové sezóny útočit výš.</div>
+<div class="mini-stats">
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2025/2026</div>
+<table class="mini-stats-table">
+<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
+<tbody>
+<tr><td>Kohlíček Petr</td><td class="msu">63,95 %</td><td>35,17</td></tr>
+<tr><td>Roklová Zuzana</td><td class="msu">58,11 %</td><td>25,00</td></tr>
+<tr><td>Bečka Marek</td><td class="msu">64,71 %</td><td>21,35</td></tr>
+<tr><td>Novák Jakub</td><td class="msu">53,57 %</td><td>16,07</td></tr>
+<tr><td>Pelech Roman</td><td class="msu">65,00 %</td><td>8,45</td></tr>
+<tr><td>Tůma Rostislav *</td><td class="msu">21,95 %</td><td>1,98</td></tr>
+<tr><td>Soliman Alan</td><td class="msu">35,71 %</td><td>1,79</td></tr>
+<tr><td>Tkáč Marek</td><td class="msu">21,43 %</td><td>0,64</td></tr>
+<tr><td>Bajer Josef</td><td class="msu">14,29 %</td><td>0,57</td></tr>
+</tbody>
+</table>
+<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
+</div>
+
 </div>
 <div class="season-panel" id="panel-2024" style="display:none">
 <div class="season-acc-meta" style="margin-bottom:12px;">3. liga L · 8. místo</div>
@@ -577,6 +645,25 @@
 </table>
 </div>
 <div class="standings-legend">V sezóně 2024/2025 hrálo Roshambo Praha <b>3. ligu L</b> a skončilo na 8. místě ze 13 týmů.</div>
+<div class="mini-stats">
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2024/2025</div>
+<table class="mini-stats-table">
+<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
+<tbody>
+<tr><td>Kohlíček Petr</td><td class="msu">58,43 %</td><td>30,38</td></tr>
+<tr><td>Roklová Zuzana</td><td class="msu">58,33 %</td><td>24,50</td></tr>
+<tr><td>Pelech Roman</td><td class="msu">66,67 %</td><td>16,00</td></tr>
+<tr><td>Tůma Rostislav *</td><td class="msu">34,29 %</td><td>8,23</td></tr>
+<tr><td>Pik Robert *</td><td class="msu">53,85 %</td><td>7,54</td></tr>
+<tr><td>Bečka Marek</td><td class="msu">46,43 %</td><td>6,04</td></tr>
+<tr><td>Novák Jakub</td><td class="msu">33,33 %</td><td>2,67</td></tr>
+<tr><td>Rajchl Josef *</td><td class="msu">26,67 %</td><td>1,07</td></tr>
+<tr><td>Soliman Alan</td><td class="msu">20,00 %</td><td>0,80</td></tr>
+</tbody>
+</table>
+<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
+</div>
+
 </div>
 <div class="season-panel" id="panel-2023" style="display:none">
 <div class="season-acc-meta" style="margin-bottom:12px;">3. liga J · 7. místo</div>
@@ -611,6 +698,25 @@
 </table>
 </div>
 <div class="standings-legend">V sezóně 2023/2024 hrálo Roshambo Praha <b>3. ligu J</b> a skončilo na 7. místě z 12 týmů.</div>
+<div class="mini-stats">
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2023/2024</div>
+<table class="mini-stats-table">
+<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
+<tbody>
+<tr><td>Roklová Zuzana</td><td class="msu">56,25 %</td><td>25,31</td></tr>
+<tr><td>Kohlíček Petr</td><td class="msu">54,67 %</td><td>22,41</td></tr>
+<tr><td>Pik Robert *</td><td class="msu">52,00 %</td><td>20,28</td></tr>
+<tr><td>Tůma Rostislav *</td><td class="msu">37,93 %</td><td>8,34</td></tr>
+<tr><td>Pelech Roman</td><td class="msu">53,33 %</td><td>4,27</td></tr>
+<tr><td>Soliman Alan</td><td class="msu">33,33 %</td><td>3,00</td></tr>
+<tr><td>Bartoška Zdeněk *</td><td class="msu">75,00 %</td><td>2,25</td></tr>
+<tr><td>Haltuch Štěpán *</td><td class="msu">35,71 %</td><td>1,79</td></tr>
+<tr><td>Rajchl Josef *</td><td class="msu">50,00 %</td><td>1,00</td></tr>
+</tbody>
+</table>
+<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
+</div>
+
 </div>
 <div class="season-panel" id="panel-2022" style="display:none">
 <div class="season-acc-meta" style="margin-bottom:12px;">3. liga G · 11. místo</div>
@@ -648,6 +754,24 @@
 </table>
 </div>
 <div class="standings-legend">V sezóně 2022/2023 hrálo Roshambo Praha <b>3. ligu G</b> a skončilo na 11. místě ze 14 týmů (2× kontumace).</div>
+<div class="mini-stats">
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2022/2023</div>
+<table class="mini-stats-table">
+<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
+<tbody>
+<tr><td>Roklová Zuzana</td><td class="msu">50,67 %</td><td>19,25</td></tr>
+<tr><td>Kohlíček Petr</td><td class="msu">47,30 %</td><td>16,55</td></tr>
+<tr><td>Pik Robert *</td><td class="msu">46,05 %</td><td>16,12</td></tr>
+<tr><td>Bartoška Zdeněk *</td><td class="msu">68,97 %</td><td>13,79</td></tr>
+<tr><td>Soliman Alan</td><td class="msu">33,96 %</td><td>6,11</td></tr>
+<tr><td>Haltuch Štěpán *</td><td class="msu">24,14 %</td><td>1,69</td></tr>
+<tr><td>Tůma Rostislav *</td><td class="msu">25,00 %</td><td>1,50</td></tr>
+<tr><td>Rajchl Josef *</td><td class="msu">12,50 %</td><td>0,13</td></tr>
+</tbody>
+</table>
+<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
+</div>
+
 </div>
 </section>
 <hr class="full-divider"/>

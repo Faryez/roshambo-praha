@@ -403,22 +403,22 @@ def update_index_html(teams, is_final, match_results=None, player_stats=None):
     new_tbody = build_tbody(teams)
 
     html = re.sub(
-        r'(<option value="2026" id="current-season-meta">)(.*?)(</option>)',
+        r'(<option[^>]*\bid="current-season-meta"[^>]*>)(.*?)(</option>)',
         lambda m: m.group(1) + meta_text + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
     html = re.sub(
-        r'(<div class="season-acc-meta" id="current-season-meta-inline"[^>]*>)(.*?)(</div>)',
+        r'(<div[^>]*\bid="current-season-meta-inline"[^>]*>)(.*?)(</div>)',
         lambda m: m.group(1) + inline_meta_text + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
     html = re.sub(
-        r'(<tbody id="current-season-tbody">)(.*?)(</tbody>)',
+        r'(<tbody[^>]*\bid="current-season-tbody"[^>]*>)(.*?)(</tbody>)',
         lambda m: m.group(1) + "\n            " + new_tbody + "\n          " + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
     html = re.sub(
-        r'(<div class="standings-legend" id="current-season-legend">)(.*?)(</div>)',
+        r'(<div[^>]*\bid="current-season-legend"[^>]*>)(.*?)(</div>)',
         lambda m: m.group(1) + legend_text + m.group(3),
         html, count=1, flags=re.DOTALL,
     )
@@ -436,7 +436,7 @@ def update_index_html(teams, is_final, match_results=None, player_stats=None):
     if player_stats:
         new_mini_tbody = build_mini_stats_tbody(player_stats)
         html = re.sub(
-            r'(<tbody id="current-season-mini-stats-tbody">)(.*?)(</tbody>)',
+            r'(<tbody[^>]*\bid="current-season-mini-stats-tbody"[^>]*>)(.*?)(</tbody>)',
             lambda m: m.group(1) + "\n" + new_mini_tbody + "\n" + m.group(3),
             html, count=1, flags=re.DOTALL,
         )

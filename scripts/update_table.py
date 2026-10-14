@@ -13,6 +13,7 @@ není žádná odehraná kola / tabulka).
 import re
 import os
 import sys
+import json
 from decimal import Decimal, ROUND_HALF_UP
 from html import escape as html_escape
 from datetime import datetime, timezone, timedelta
@@ -25,6 +26,8 @@ TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_
 # Statistika hráčů týmu. POZOR: na začátku každé nové sezóny je potřeba změnit
 # číslo season=... (aktuální 2026/2027 = 6243); team=339464 je stálé ID týmu.
 PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_type=611&season=6243&league=&team=339464"
+# Statistika VŠECH hráčů ligy (u každého hráče je odkaz na jeho družstvo s číslem league_team)
+LEAGUE_PLAYERS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league=228360"
 OUR_TEAM = "Roshambo Praha"
 INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
@@ -71,6 +74,9 @@ def parse_html_standings(html):
         try:
             pos = cells[0].get_text(strip=True)
             name = cells[1].get_text(strip=True)
+            a = cells[1].find("a", href=True)
+            m_lt = re.search(r"league_team=(\d+)", a["href"]) if a else None
+            lt = m_lt.group(1) if m_lt else ""
             kol = cells[2].get_text(strip=True)
             v = cells[3].get_text(strip=True)
             r = cells[5].get_text(strip=True)
@@ -83,7 +89,7 @@ def parse_html_standings(html):
         except IndexError:
             continue
         teams.append({
-            "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
+            "pos": pos, "name": name, "lt": lt, "kol": kol, "v": v, "r": r, "p": p,
             "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
         })
     return teams, is_final
@@ -101,6 +107,8 @@ def parse_markdown_standings(md_text):
         line = line.strip()
         if not re.match(r"^\|\s*\d+\.\s*\|", line):
             continue
+        m_lt = re.search(r"league_team=(\d+)", line)
+        lt = m_lt.group(1) if m_lt else ""
         clean = link_pattern.sub(r"\1", line)
         cells = [c.strip() for c in clean.split("|")]
         # odstraň prázdné krajní buňky vzniklé úvodní/koncovou svislítkem
@@ -125,7 +133,7 @@ def parse_markdown_standings(md_text):
         except IndexError:
             continue
         teams.append({
-            "pos": pos, "name": name, "kol": kol, "v": v, "r": r, "p": p,
+            "pos": pos, "name": name, "lt": lt, "kol": kol, "v": v, "r": r, "p": p,
             "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
         })
     return (teams if teams else None), is_final
@@ -346,6 +354,82 @@ def fetch_player_stats(session):
         return []
 
 
+def fetch_league_players(session):
+    """Stáhne statistiku VŠECH hráčů ligy jedním dotazem a každému hráči
+    přiřadí číslo jeho družstva (league_team) z odkazu v tabulce.
+    Při jakémkoli problému vrátí prázdný seznam (detail týmů je jen doplněk)."""
+    try:
+        html = fetch_html_with_fallback(LEAGUE_PLAYERS_URL, session)
+        if not html:
+            return []
+        soup = BeautifulSoup(html, "html.parser")
+        players = []
+        for row in soup.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) < 7 or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
+                continue
+            links = cells[1].find_all("a", href=True)
+            team_link = next((a for a in links if "league_team=" in a["href"]), None)
+            if team_link is None or not links or links[0] is team_link:
+                continue  # není to řádek hráče (např. řádek tabulky družstev)
+            name = links[0].get_text(strip=True)
+            lt = re.search(r"league_team=(\d+)", team_link["href"]).group(1)
+            texts = [c.get_text(strip=True) for c in cells]
+            p = {"name": name, "lt": lt}
+            for i, key in enumerate(STAT_KEYS):
+                p[key] = texts[2 + i] if 2 + i < len(texts) else ""
+            if not p["zo"].isdigit() or not p["zv"].isdigit() or int(p["zo"]) == 0:
+                continue
+            players.append(enrich_player(p))
+        return players
+    except Exception:
+        return []
+
+
+def read_existing_league_data(html):
+    """Přečte dosavadní data týmů ze stránky (záloha, kdyby se něco nestáhlo)."""
+    m = re.search(r'<script[^>]*\bid="league-teams-data"[^>]*>(.*?)</script>', html, re.DOTALL)
+    if not m:
+        return {}
+    try:
+        return json.loads(m.group(1))
+    except ValueError:
+        return {}
+
+
+def build_league_data(teams, league_players, existing=None):
+    """Pro každý tým z tabulky složí seznam jeho hráčů (řazeno podle
+    prospěšnosti). Když se hráči týmu nepodařilo stáhnout, ponechá se
+    předchozí stav ze stránky."""
+    existing = existing or {}
+    by_lt = {}
+    for p in league_players:
+        by_lt.setdefault(p["lt"], []).append(p)
+    data = {}
+    for t in teams:
+        lt = t.get("lt")
+        if not lt:
+            continue
+        plist = by_lt.get(lt)
+        if plist:
+            plist.sort(key=lambda p: p["prospesnost"], reverse=True)
+            players = [
+                {
+                    "n": p["name"], "lkh": p.get("lkh", ""), "zo": p["zo"], "zv": p["zv"],
+                    "usp": fmt2(p["uspesnost"]) + " %", "pro": fmt2(p["prospesnost"]),
+                }
+                for p in plist
+            ]
+            data[lt] = {"name": t["name"], "kol": t["kol"], "players": players}
+        elif lt in existing:
+            old = dict(existing[lt])
+            old["name"], old["kol"] = t["name"], t["kol"]
+            data[lt] = old
+        else:
+            data[lt] = {"name": t["name"], "kol": t["kol"], "players": []}
+    return data
+
+
 def build_mini_stats_tbody(players, former_names=()):
     """Řádky mini-tabulky statistiky hráčů. Každý řádek nese kompletní
     statistiku v data-* atributech - stránka z nich po kliknutí na jméno
@@ -370,14 +454,21 @@ def build_mini_stats_tbody(players, former_names=()):
 def build_tbody(teams):
     rows = []
     for t in teams:
-        cls = ""
+        classes = []
         if t["name"] == OUR_TEAM:
-            cls = ' class="us"'
+            classes.append("us")
         elif t["pos"] in ("1.", "2.", "3."):
-            cls = ' class="podium"'
+            classes.append("podium")
+        lt = t.get("lt", "")
+        attrs, chev = "", ""
+        if lt:  # řádek jde rozkliknout (detail týmu a jeho hráčů)
+            classes.append("team-row")
+            attrs = f' data-lt="{lt}" tabindex="0"'
+            chev = '<span class="mp-chev">&#9656;</span>'
+        cls = f' class="{" ".join(classes)}"' if classes else ""
         rows.append(
-            f'<tr{cls}><td class="pos">{t["pos"]}</td>'
-            f'<td class="team-name">{t["name"]}</td>'
+            f'<tr{cls}{attrs}><td class="pos">{t["pos"]}</td>'
+            f'<td class="team-name">{chev}{html_escape(t["name"])}</td>'
             f'<td class="pts">{t["body"]}</td>'
             f'<td>{t["kol"]}</td><td>{t["v"]}</td><td>{t["r"]}</td><td>{t["p"]}</td>'
             f'<td>{t["legy"]}</td><td>{t["skore"]}</td></tr>'
@@ -391,7 +482,7 @@ def czech_now_str():
     return cz.strftime("%d.%m.%Y %H:%M")
 
 
-def update_index_html(teams, is_final, match_results=None, player_stats=None):
+def update_index_html(teams, is_final, match_results=None, player_stats=None, league_data=None):
     with open(INDEX_FILE, "r", encoding="utf-8") as f:
         html = f.read()
 
@@ -470,6 +561,14 @@ def update_index_html(teams, is_final, match_results=None, player_stats=None):
             html, count=1, flags=re.DOTALL,
         )
 
+    if league_data:
+        payload = json.dumps(league_data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+        html = re.sub(
+            r'(<script[^>]*\bid="league-teams-data"[^>]*>)(.*?)(</script>)',
+            lambda m: m.group(1) + payload + m.group(3),
+            html, count=1, flags=re.DOTALL,
+        )
+
     with open(INDEX_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
@@ -489,12 +588,22 @@ def main():
     })
     match_results = fetch_roshambo_results(session)
     player_stats = fetch_player_stats(session)
+    league_players = fetch_league_players(session)
 
-    update_index_html(teams, is_final, match_results, player_stats)
+    with open(INDEX_FILE, "r", encoding="utf-8") as f:
+        existing = read_existing_league_data(f.read())
+    league_data = build_league_data(teams, league_players, existing)
+
+    update_index_html(teams, is_final, match_results, player_stats, league_data)
     stav = "KONEČNÉ" if is_final else "průběžné"
+    s_hraci = sum(1 for d in league_data.values() if d["players"])
     print(
         f"Tabulka aktualizována ({stav}), {len(teams)} týmů, "
         f"{len(match_results)} výsledků zápasů, {len(player_stats)} hráčů ve statistice."
+    )
+    print(
+        f"Detail týmů: {len(league_players)} hráčů celé ligy, "
+        f"soupisky načteny u {s_hraci} z {len(league_data)} týmů."
     )
 
 

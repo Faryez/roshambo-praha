@@ -4,6 +4,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script>
+  // Stránka se vždy otevře od začátku (ne na posledním místě, kde jsi skončil)
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
 <title>Roshambo Praha — Šipkový tým</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
@@ -445,7 +449,7 @@
     }
     .standings-table th:nth-child(2),
     .standings-table td:nth-child(2) {
-      max-width: 130px;
+      max-width: 150px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -484,6 +488,26 @@
   .cmp-row.cmp-head span { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--yellow); font-weight: 700; }
   .cmp-row.cmp-head span:first-child { color: var(--muted); }
   .cmp-row .better { color: var(--yellow); font-weight: 700; }
+
+  /* ===== Detail týmu v tabulce (aktuální sezóna) ===== */
+  .team-row { cursor: pointer; }
+  .team-row:hover td, .team-row.open td { background: rgba(245,197,24,0.06); }
+  .team-row:focus-visible { outline: 1px solid var(--yellow); outline-offset: -1px; }
+  .team-row.open .mp-chev { transform: rotate(90deg); color: var(--yellow); }
+  .standings-table tr.team-detail td {
+    padding: 0 !important; width: auto !important; max-width: none !important;
+    text-align: left !important; white-space: normal !important; overflow: visible !important;
+    border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015);
+  }
+  .td-wrap { position: sticky; left: 0; box-sizing: border-box; padding: 12px 10px 14px 12px; }
+  .td-title { font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--yellow); margin-bottom: 8px; }
+  .tp-row { display: grid; grid-template-columns: minmax(92px, 1.6fr) .6fr .9fr .9fr .9fr; gap: 6px; padding: 4px 0; font-size: 11px; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .tp-row span { text-align: center; color: var(--text); }
+  .tp-row span:first-child { text-align: left; overflow-wrap: anywhere; }
+  .tp-head span { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; }
+  .tp-row .tp-usp { color: var(--yellow); font-weight: 700; }
+  .td-note { font-size: 9.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  @media (max-width: 600px) { .standings-table { min-width: 600px; } }  /* sloupec Body zůstane celý vidět */
 </style>
 </head>
 <body>
@@ -539,23 +563,23 @@
 </tr>
 </thead>
 <tbody id="current-season-tbody">
-            <tr class="podium"><td class="pos">1.</td><td class="team-name">Bocman Club Praha</td><td class="pts">12</td><td>4</td><td>4</td><td>0</td><td>0</td><td>118:59</td><td>54:18</td></tr>
-            <tr class="podium"><td class="pos">2.</td><td class="team-name">Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
-            <tr class="podium"><td class="pos">3.</td><td class="team-name">Kralupská letka</td><td class="pts">9</td><td>4</td><td>3</td><td>0</td><td>1</td><td>113:73</td><td>48:24</td></tr>
-            <tr><td class="pos">4.</td><td class="team-name">Zdiby DC B</td><td class="pts">9</td><td>3</td><td>3</td><td>0</td><td>0</td><td>80:49</td><td>35:19</td></tr>
-            <tr><td class="pos">5.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">8</td><td>5</td><td>2</td><td>2</td><td>1</td><td>103:116</td><td>42:48</td></tr>
-            <tr class="us"><td class="pos">6.</td><td class="team-name">Roshambo Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>118:101</td><td>47:43</td></tr>
-            <tr><td class="pos">7.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">6</td><td>4</td><td>2</td><td>0</td><td>2</td><td>76:100</td><td>31:41</td></tr>
-            <tr><td class="pos">8.</td><td class="team-name">Black Diamonds Praha</td><td class="pts">4</td><td>3</td><td>1</td><td>1</td><td>1</td><td>63:65</td><td>26:28</td></tr>
-            <tr><td class="pos">9.</td><td class="team-name">Bohnický kladiva</td><td class="pts">4</td><td>4</td><td>1</td><td>1</td><td>2</td><td>83:97</td><td>32:40</td></tr>
-            <tr><td class="pos">10.</td><td class="team-name">Pedro Praha</td><td class="pts">3</td><td>4</td><td>1</td><td>0</td><td>3</td><td>78:101</td><td>31:41</td></tr>
-            <tr><td class="pos">11.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">2</td><td>4</td><td>0</td><td>2</td><td>2</td><td>73:106</td><td>25:47</td></tr>
-            <tr><td class="pos">12.</td><td class="team-name">Los Číčos Praha</td><td class="pts">1</td><td>3</td><td>0</td><td>1</td><td>2</td><td>53:79</td><td>21:33</td></tr>
-            <tr><td class="pos">13.</td><td class="team-name">Zdiby DC</td><td class="pts">0</td><td>4</td><td>0</td><td>0</td><td>4</td><td>58:117</td><td>18:54</td></tr>
+            <tr class="podium team-row" data-lt="2743048" tabindex="0"><td class="pos">1.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bocman Club Praha</td><td class="pts">12</td><td>4</td><td>4</td><td>0</td><td>0</td><td>118:59</td><td>54:18</td></tr>
+            <tr class="podium team-row" data-lt="2743560" tabindex="0"><td class="pos">2.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
+            <tr class="podium team-row" data-lt="2744328" tabindex="0"><td class="pos">3.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Kralupská letka</td><td class="pts">9</td><td>4</td><td>3</td><td>0</td><td>1</td><td>113:73</td><td>48:24</td></tr>
+            <tr class="team-row" data-lt="2745864" tabindex="0"><td class="pos">4.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC B</td><td class="pts">9</td><td>3</td><td>3</td><td>0</td><td>0</td><td>80:49</td><td>35:19</td></tr>
+            <tr class="team-row" data-lt="2744584" tabindex="0"><td class="pos">5.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Krkavci Kralupy</td><td class="pts">8</td><td>5</td><td>2</td><td>2</td><td>1</td><td>103:116</td><td>42:48</td></tr>
+            <tr class="us team-row" data-lt="2745352" tabindex="0"><td class="pos">6.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Roshambo Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>118:101</td><td>47:43</td></tr>
+            <tr class="team-row" data-lt="2744072" tabindex="0"><td class="pos">7.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Hell&#x27;s Darters Praha</td><td class="pts">6</td><td>4</td><td>2</td><td>0</td><td>2</td><td>76:100</td><td>31:41</td></tr>
+            <tr class="team-row" data-lt="2742792" tabindex="0"><td class="pos">8.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Black Diamonds Praha</td><td class="pts">4</td><td>3</td><td>1</td><td>1</td><td>1</td><td>63:65</td><td>26:28</td></tr>
+            <tr class="team-row" data-lt="2743304" tabindex="0"><td class="pos">9.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bohnický kladiva</td><td class="pts">4</td><td>4</td><td>1</td><td>1</td><td>2</td><td>83:97</td><td>32:40</td></tr>
+            <tr class="team-row" data-lt="2745096" tabindex="0"><td class="pos">10.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Pedro Praha</td><td class="pts">3</td><td>4</td><td>1</td><td>0</td><td>3</td><td>78:101</td><td>31:41</td></tr>
+            <tr class="team-row" data-lt="2743816" tabindex="0"><td class="pos">11.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Havrani Vraňany B</td><td class="pts">2</td><td>4</td><td>0</td><td>2</td><td>2</td><td>73:106</td><td>25:47</td></tr>
+            <tr class="team-row" data-lt="2744840" tabindex="0"><td class="pos">12.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Los Číčos Praha</td><td class="pts">1</td><td>3</td><td>0</td><td>1</td><td>2</td><td>53:79</td><td>21:33</td></tr>
+            <tr class="team-row" data-lt="2745608" tabindex="0"><td class="pos">13.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC</td><td class="pts">0</td><td>4</td><td>0</td><td>0</td><td>4</td><td>58:117</td><td>18:54</td></tr>
           </tbody>
 </table>
 </div>
-<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>6. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 14.10.2026 20:46.</div>
+<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>6. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 14.10.2026 22:35.</div>
 <div class="mini-stats">
 <div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
@@ -818,10 +842,10 @@
 </thead>
 <tbody>
 <tr data-date="2026-09-01" data-result="loss"><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-09-20" data-result="loss"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
-<tr data-date="2026-09-22" data-result="loss"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-10-11" data-result="win"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
-<tr data-date="2026-10-13" data-result="win"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+<tr data-date="2026-09-20"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
+<tr data-date="2026-09-22"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+<tr data-date="2026-10-11"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
+<tr data-date="2026-10-13"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
 <tr data-date="2026-10-25"><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Grey Bar, Praha 8</td></tr>
 <tr data-date="2026-11-03"><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
 <tr data-date="2026-11-15"><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
@@ -1109,5 +1133,94 @@
 })();
 </script>
 
+<script>
+(function () {
+  function toTop() {
+    var d = document.documentElement, prev = d.style.scrollBehavior;
+    d.style.scrollBehavior = 'auto';   // bez plynulého posunu, ať to neanimuje dolů
+    window.scrollTo(0, 0);
+    d.style.scrollBehavior = prev;
+  }
+  if (!location.hash) {                 // odkaz s #sekce necháme skočit na danou sekci
+    toTop();
+    window.addEventListener('DOMContentLoaded', toTop);
+  }
+})();
+</script>
+<script type="application/json" id="league-teams-data">{"2743048":{"name":"Bocman Club Praha","kol":"4","players":[]},"2743560":{"name":"Figury Libčice","kol":"5","players":[]},"2744328":{"name":"Kralupská letka","kol":"4","players":[]},"2745864":{"name":"Zdiby DC B","kol":"3","players":[]},"2744584":{"name":"Krkavci Kralupy","kol":"5","players":[]},"2745352":{"name":"Roshambo Praha","kol":"5","players":[{"n":"Kohlíček Petr","lkh":"62,5","zo":"19","zv":"13","usp":"68,42 %","pro":"8,89"},{"n":"Novák Jakub","lkh":"52,1","zo":"14","zv":"8","usp":"57,14 %","pro":"4,57"},{"n":"Bečka Marek","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Roklová Zuzana","lkh":"39,0","zo":"16","zv":"6","usp":"37,50 %","pro":"2,25"},{"n":"Pelech Roman","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Bajer Josef","lkh":"","zo":"8","zv":"3","usp":"37,50 %","pro":"1,13"},{"n":"Tkáč Marek","lkh":"","zo":"9","zv":"2","usp":"22,22 %","pro":"0,44"},{"n":"Soliman Alan","lkh":"","zo":"4","zv":"1","usp":"25,00 %","pro":"0,25"}]},"2744072":{"name":"Hell's Darters Praha","kol":"4","players":[]},"2742792":{"name":"Black Diamonds Praha","kol":"3","players":[]},"2743304":{"name":"Bohnický kladiva","kol":"4","players":[]},"2745096":{"name":"Pedro Praha","kol":"4","players":[]},"2743816":{"name":"Havrani Vraňany B","kol":"4","players":[]},"2744840":{"name":"Los Číčos Praha","kol":"3","players":[]},"2745608":{"name":"Zdiby DC","kol":"4","players":[]}}</script>
+<script>
+(function () {
+  var DATA = {};
+  try { DATA = JSON.parse(document.getElementById('league-teams-data').textContent) || {}; } catch (e) {}
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function line(cols, cls) {
+    var r = el('div', 'tp-row' + (cls ? ' ' + cls : ''));
+    cols.forEach(function (c, i) {
+      var sp = el('span', (i === 3 && !cls) ? 'tp-usp' : '', c);
+      r.appendChild(sp);
+    });
+    return r;
+  }
+
+  function buildDetail(row) {
+    var info = DATA[row.getAttribute('data-lt')] || { players: [] };
+    var tr = el('tr', 'team-detail');
+    var td = el('td'); td.colSpan = row.cells.length;
+    var wrap = el('div', 'td-wrap');
+    var box = row.closest('.table-wrap');
+    if (box) wrap.style.width = Math.max(280, box.clientWidth) + 'px';
+
+    var nameCell = row.querySelector('.team-name');
+    var title = info.name || (nameCell ? nameCell.textContent.trim() : '');
+    wrap.appendChild(el('div', 'td-title', 'Hráči \u00b7 ' + title));
+
+    if (info.players && info.players.length) {
+      var narrow = box && box.clientWidth < 460;
+      wrap.appendChild(line(narrow
+        ? ['Hr\u00e1\u010d', 'LKH', 'Z\u00e1pasy', '\u00dasp.', 'Prosp.']
+        : ['Hr\u00e1\u010d', 'LKH', 'Z\u00e1pasy', '\u00dasp\u011b\u0161nost', 'Prosp\u011b\u0161nost'], 'tp-head'));
+      info.players.forEach(function (p) {
+        wrap.appendChild(line([p.n, p.lkh || '\u2014', p.zv + ' / ' + p.zo, p.usp, p.pro]));
+      });
+      wrap.appendChild(el('div', 'td-note',
+        'Z\u00e1pasy = vyhr\u00e1no / odehr\u00e1no \u00b7 zdroj: U\u0160O \u2014 sipky.org' +
+        (info.partial ? ' \u00b7 N\u00c1HLED: zat\u00edm jen \u010d\u00e1st hr\u00e1\u010d\u016f, kompletn\u00ed soupisky se na\u010dtou p\u0159i prvn\u00ed aktualizaci' : '')));
+    } else {
+      wrap.appendChild(el('div', 'td-note',
+        'Zat\u00edm tu nejsou \u017e\u00e1dn\u00e1 data o hr\u00e1\u010d\u00edch (t\u00fdm je\u0161t\u011b nehr\u00e1l, nebo se na\u010dtou p\u0159i p\u0159\u00ed\u0161t\u00ed aktualizaci).'));
+    }
+    td.appendChild(wrap); tr.appendChild(td);
+    return tr;
+  }
+
+  function closeRow(row) {
+    var next = row.nextElementSibling;
+    row.classList.remove('open');
+    if (next && next.classList.contains('team-detail')) next.parentNode.removeChild(next);
+  }
+  function toggle(row) {
+    if (row.classList.contains('open')) { closeRow(row); return; }
+    Array.prototype.forEach.call(document.querySelectorAll('tr.team-row.open'), closeRow);  // jen jeden otev\u0159en\u00fd
+    row.classList.add('open');
+    row.parentNode.insertBefore(buildDetail(row), row.nextSibling);
+  }
+
+  document.addEventListener('click', function (e) {
+    var row = e.target.closest ? e.target.closest('tr.team-row') : null;
+    if (row) toggle(row);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var row = e.target.closest ? e.target.closest('tr.team-row') : null;
+    if (row && e.target === row) { e.preventDefault(); toggle(row); }
+  });
+})();
+</script>
 </body>
 </html>

@@ -13,6 +13,8 @@ není žádná odehraná kola / tabulka).
 import re
 import os
 import sys
+from decimal import Decimal, ROUND_HALF_UP
+from html import escape as html_escape
 from datetime import datetime, timezone, timedelta
 
 import requests
@@ -20,7 +22,9 @@ from bs4 import BeautifulSoup
 
 LEAGUE_URL = "https://www.sipky.org/?region=stc&page=ligova-skupina&league=228360"
 TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_team=2745352&played=1"
-PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_team=2745352"
+# Statistika hráčů týmu. POZOR: na začátku každé nové sezóny je potřeba změnit
+# číslo season=... (aktuální 2026/2027 = 6243); team=339464 je stálé ID týmu.
+PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_type=611&season=6243&league=&team=339464"
 OUR_TEAM = "Roshambo Praha"
 INDEX_FILE = "index.html"
 SEASON_LABEL = "3. liga C"
@@ -272,11 +276,29 @@ def fetch_roshambo_results(session):
         return {}
 
 
+# Klíče statistik ve stejném pořadí jako sloupce na sipky.org (od sloupce LKH dál)
+STAT_KEYS = ["lkh", "zp", "zc", "zo", "zv", "lp", "lo", "lv",
+             "n95", "n95a", "n133", "n133a", "n170", "n170a",
+             "z64", "z53", "z42", "z3"]
+
+
+def fmt2(x):
+    """Zaokrouhlení na 2 desetinná místa (půl nahoru) s desetinnou čárkou."""
+    return str(Decimal(str(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)).replace(".", ",")
+
+
+def enrich_player(p):
+    """Dopočítá Úspěšnost (V/O*100) a Prospěšnost ((V/O)*V = V^2/O)."""
+    o, v = int(p["zo"]), int(p["zv"])
+    p["uspesnost"] = v / o * 100 if o else 0.0
+    p["prospesnost"] = (v / o) * v if o else 0.0
+    return p
+
+
 def fetch_player_stats(session):
-    """Stáhne statistiku hráčů Roshambo Praha pro AKTUÁLNÍ sezónu ze
-    stránky 'statistika-hracu' a pro každého spočítá:
-      - Úspěšnost = Vyhráno / Odehráno * 100
-      - Prospěšnost = (Vyhráno / Odehráno) * Vyhráno   (vzorec dle ČFO)
+    """Stáhne KOMPLETNÍ statistiku hráčů Roshambo Praha pro aktuální sezónu
+    ze stránky 'statistika-hracu' (LKH, zápasy, legy, náhozy 95+/133+/170+,
+    zavření) a dopočítá Úspěšnost a Prospěšnost (V^2/O).
     Vrátí seznam slovníků seřazený sestupně podle Prospěšnosti.
     Při jakémkoli problému vrátí prázdný seznam - je to jen doplňková
     informace, nesmí shodit zbytek skriptu."""
@@ -288,8 +310,7 @@ def fetch_player_stats(session):
 
         table = None
         for t in soup.find_all("table"):
-            rows = t.find_all("tr")
-            for row in rows:
+            for row in t.find_all("tr"):
                 cells = row.find_all("td")
                 if cells and re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
                     table = t
@@ -304,22 +325,20 @@ def fetch_player_stats(session):
             cells = row.find_all("td")
             if not cells or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
                 continue
-            # sloupce: Pořadí, Hráč, LKH, %, C, O, V, %, O, V, ... (Zápasy O/V jsou sloupce indexy 5 a 6)
+            texts = [c.get_text(strip=True) for c in cells]
+            # sloupce: 0 Pořadí, 1 Hráč, 2 LKH, 3 % zápasů, 4 C, 5 O, 6 V,
+            # 7 % legů, 8 O, 9 V, 10-11 náhozy 95+, 12-13 133+, 14-15 170+, 16-19 zavření
             try:
-                name = cells[1].get_text(strip=True)
-                o = int(cells[5].get_text(strip=True))
-                v = int(cells[6].get_text(strip=True))
-            except (IndexError, ValueError):
+                p = {"name": texts[1]}
+                for i, key in enumerate(STAT_KEYS):
+                    p[key] = texts[2 + i] if 2 + i < len(texts) else ""
+                if not p["zo"].isdigit() or not p["zv"].isdigit():
+                    continue
+                if int(p["zo"]) == 0:
+                    continue
+            except IndexError:
                 continue
-            if o == 0:
-                continue
-            uspesnost = v / o * 100
-            prospesnost = (v / o) * v
-            players.append({
-                "name": name,
-                "uspesnost": uspesnost,
-                "prospesnost": prospesnost,
-            })
+            players.append(enrich_player(p))
 
         players.sort(key=lambda p: p["prospesnost"], reverse=True)
         return players
@@ -327,13 +346,23 @@ def fetch_player_stats(session):
         return []
 
 
-def build_mini_stats_tbody(players):
+def build_mini_stats_tbody(players, former_names=()):
+    """Řádky mini-tabulky statistiky hráčů. Každý řádek nese kompletní
+    statistiku v data-* atributech - stránka z nich po kliknutí na jméno
+    zobrazí detail a umožní porovnání dvou hráčů."""
     rows = []
     for p in players:
-        usp = f'{p["uspesnost"]:.2f}'.replace(".", ",") + " %"
-        prosp = f'{p["prospesnost"]:.2f}'.replace(".", ",")
+        usp = fmt2(p["uspesnost"]) + " %"
+        prosp = fmt2(p["prospesnost"])
+        display = p["name"] + (" *" if p["name"] in former_names else "")
+        attrs = " ".join(
+            f'data-{k}="{html_escape(str(p.get(k, "")), quote=True)}"' for k in STAT_KEYS
+        )
         rows.append(
-            f'<tr><td>{p["name"]}</td><td class="msu">{usp}</td><td>{prosp}</td></tr>'
+            f'<tr class="mini-player" tabindex="0" data-name="{html_escape(display, quote=True)}" '
+            f'data-pro="{prosp}" {attrs}>'
+            f'<td><span class="mp-chev">&#9656;</span>{html_escape(display)}</td>'
+            f'<td class="msu">{usp}</td><td>{prosp}</td></tr>'
         )
     return "\n".join(rows)
 

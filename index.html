@@ -457,6 +457,33 @@
       padding-right: 12px;
     }
   }
+
+  /* ===== Statistika hráčů: detail + porovnání ===== */
+  .mini-hint { text-transform: none; letter-spacing: 0; opacity: .8; }
+  .mini-player { cursor: pointer; }
+  .mini-player:hover td, .mini-player.open td { background: rgba(245,197,24,0.06); }
+  .mini-player:focus-visible { outline: 1px solid var(--yellow); outline-offset: -1px; }
+  .mini-player td:first-child { white-space: nowrap; }
+  .mp-chev { display: inline-block; width: 12px; margin-right: 6px; color: var(--muted); font-size: 10px; transition: transform .15s ease; }
+  .mini-player.open .mp-chev { transform: rotate(90deg); color: var(--yellow); }
+  .mini-stats-table tr.mini-detail td { padding: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); }
+  .md-wrap { padding: 14px 10px 16px 18px; }
+  .md-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 24px; }
+  .md-group-title { font-size: 9.5px; text-transform: uppercase; letter-spacing: .8px; color: var(--yellow); margin-bottom: 6px; }
+  .md-row { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; padding: 2px 0; }
+  .md-row span:first-child { color: var(--muted); }
+  .md-row span:last-child { color: var(--text); font-weight: 600; }
+  .md-compare { margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .cmp-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-right: 8px; }
+  .cmp-select { background: var(--dark); color: var(--yellow); border: 1px solid var(--border); border-radius: 3px; font-size: 11px; padding: 5px 8px; max-width: 100%; }
+  .cmp-select:focus { border-color: var(--yellow); outline: none; }
+  .cmp-out { margin-top: 10px; }
+  .cmp-row { display: grid; grid-template-columns: minmax(110px, 1.5fr) 1fr 1fr; gap: 8px; padding: 4px 0; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .cmp-row span { text-align: center; color: var(--text); }
+  .cmp-row span:first-child { text-align: left; color: var(--muted); }
+  .cmp-row.cmp-head span { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--yellow); font-weight: 700; }
+  .cmp-row.cmp-head span:first-child { color: var(--muted); }
+  .cmp-row .better { color: var(--yellow); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -487,7 +514,7 @@
 <div class="section-line"></div>
 <div class="season-select-row">
 <select class="season-select" id="seasonSelect">
-<option id="current-season-meta" value="2026">Sezóna 2026/2027 · průběžně 6. místo</option>
+<option id="current-season-meta" value="2026">Sezóna 2026/2027 · průběžně 7. místo</option>
 <option value="2025">Sezóna 2025/2026 · 6. místo</option>
 <option value="2024">Sezóna 2024/2025 · 8. místo</option>
 <option value="2023">Sezóna 2023/2024 · 7. místo</option>
@@ -496,7 +523,7 @@
 
 </div>
 <div class="season-panel" id="panel-2026">
-<div class="season-acc-meta" id="current-season-meta-inline" style="margin-bottom:12px;">3. liga C · průběžně 6. místo</div>
+<div class="season-acc-meta" id="current-season-meta-inline" style="margin-bottom:12px;">3. liga C · průběžně 7. místo</div>
 <div class="table-wrap">
 <table class="standings-table">
 <thead>
@@ -512,41 +539,40 @@
 </tr>
 </thead>
 <tbody id="current-season-tbody">
-            <tr class="podium"><td class="pos">1.</td><td class="team-name">Bocman Club Praha</td><td class="pts">12</td><td>4</td><td>4</td><td>0</td><td>0</td><td>118:59</td><td>54:18</td></tr>
-            <tr class="podium"><td class="pos">2.</td><td class="team-name">Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
-            <tr class="podium"><td class="pos">3.</td><td class="team-name">Kralupská letka</td><td class="pts">9</td><td>4</td><td>3</td><td>0</td><td>1</td><td>113:73</td><td>48:24</td></tr>
-            <tr><td class="pos">4.</td><td class="team-name">Zdiby DC B</td><td class="pts">9</td><td>3</td><td>3</td><td>0</td><td>0</td><td>80:49</td><td>35:19</td></tr>
-            <tr><td class="pos">5.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">8</td><td>5</td><td>2</td><td>2</td><td>1</td><td>103:116</td><td>42:48</td></tr>
-            <tr class="us"><td class="pos">6.</td><td class="team-name">Roshambo Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>118:101</td><td>47:43</td></tr>
-            <tr><td class="pos">7.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">6</td><td>4</td><td>2</td><td>0</td><td>2</td><td>76:100</td><td>31:41</td></tr>
-            <tr><td class="pos">8.</td><td class="team-name">Black Diamonds Praha</td><td class="pts">4</td><td>3</td><td>1</td><td>1</td><td>1</td><td>63:65</td><td>26:28</td></tr>
-            <tr><td class="pos">9.</td><td class="team-name">Bohnický kladiva</td><td class="pts">4</td><td>4</td><td>1</td><td>1</td><td>2</td><td>83:97</td><td>32:40</td></tr>
-            <tr><td class="pos">10.</td><td class="team-name">Pedro Praha</td><td class="pts">3</td><td>4</td><td>1</td><td>0</td><td>3</td><td>78:101</td><td>31:41</td></tr>
-            <tr><td class="pos">11.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">2</td><td>4</td><td>0</td><td>2</td><td>2</td><td>73:106</td><td>25:47</td></tr>
-            <tr><td class="pos">12.</td><td class="team-name">Los Číčos Praha</td><td class="pts">1</td><td>3</td><td>0</td><td>1</td><td>2</td><td>53:79</td><td>21:33</td></tr>
-            <tr><td class="pos">13.</td><td class="team-name">Zdiby DC</td><td class="pts">0</td><td>4</td><td>0</td><td>0</td><td>4</td><td>58:117</td><td>18:54</td></tr>
-          </tbody>
+<tr class="podium"><td class="pos">1.</td><td class="team-name">Kralupská letka</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>35:13</td><td>17:1</td></tr>
+<tr class="podium"><td class="pos">2.</td><td class="team-name">Figury Libčice</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>31:12</td><td>15:3</td></tr>
+<tr class="podium"><td class="pos">3.</td><td class="team-name">Bocman Club Praha</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>28:15</td><td>12:6</td></tr>
+<tr><td class="pos">4.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>27:17</td><td>12:6</td></tr>
+<tr><td class="pos">5.</td><td class="team-name">Bohnický kladiva</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>24:21</td><td>10:8</td></tr>
+<tr><td class="pos">6.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">3</td><td>1</td><td>1</td><td>0</td><td>0</td><td>23:21</td><td>10:8</td></tr>
+<tr class="us"><td class="pos">7.</td><td class="team-name">Roshambo Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>21:23</td><td>8:10</td></tr>
+<tr><td class="pos">8.</td><td class="team-name">Zdiby DC</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>21:24</td><td>8:10</td></tr>
+<tr><td class="pos">9.</td><td class="team-name">Los Číčos Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>17:27</td><td>6:12</td></tr>
+<tr><td class="pos">10.</td><td class="team-name">Pedro Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>15:28</td><td>6:12</td></tr>
+<tr><td class="pos">11.</td><td class="team-name">Black Diamonds Praha</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>12:31</td><td>3:15</td></tr>
+<tr><td class="pos">12.</td><td class="team-name">Havrani Vrňany B</td><td class="pts">0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>13:35</td><td>1:17</td></tr>
+<tr><td class="pos">13.</td><td class="team-name">Zdiby DC B</td><td class="pts">0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0:0</td><td>0:0</td></tr>
+</tbody>
 </table>
 </div>
-<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>6. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 14.10.2026 15:15.</div>
+<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>7. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 14.09.2026 09:48.</div>
 <div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027</div>
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
 <thead>
 <tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr>
 </thead>
 <tbody id="current-season-mini-stats-tbody">
-<tr><td>Kohlíček Petr</td><td class="msu">68,42 %</td><td>8,89</td></tr>
-<tr><td>Novák Jakub</td><td class="msu">57,14 %</td><td>4,57</td></tr>
-<tr><td>Bečka Marek</td><td class="msu">66,67 %</td><td>2,67</td></tr>
-<tr><td>Roklová Zuzana</td><td class="msu">37,50 %</td><td>2,25</td></tr>
-<tr><td>Pelech Roman</td><td class="msu">75,00 %</td><td>2,25</td></tr>
-<tr><td>Bajer Josef</td><td class="msu">37,50 %</td><td>1,12</td></tr>
-<tr><td>Tkáč Marek</td><td class="msu">22,22 %</td><td>0,44</td></tr>
-<tr><td>Soliman Alan</td><td class="msu">25,00 %</td><td>0,25</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="8,89" data-lkh="62,5" data-zp="68,42" data-zc="20" data-zo="19" data-zv="13" data-lp="65,91" data-lo="44" data-lv="29" data-n95="27" data-n95a="0,61" data-n133="6" data-n133a="0,14" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">68,42 %</td><td>8,89</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="4,57" data-lkh="52,1" data-zp="57,14" data-zc="20" data-zo="14" data-zv="8" data-lp="57,58" data-lo="33" data-lv="19" data-n95="12" data-n95a="0,36" data-n133="3" data-n133a="0,09" data-n170="1" data-n170a="0,03" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">57,14 %</td><td>4,57</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="2,67" data-lkh="" data-zp="66,67" data-zc="20" data-zo="6" data-zv="4" data-lp="53,33" data-lo="15" data-lv="8" data-n95="0" data-n95a="0,00" data-n133="1" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">66,67 %</td><td>2,67</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="2,25" data-lkh="39,0" data-zp="37,50" data-zc="20" data-zo="16" data-zv="6" data-lp="47,62" data-lo="42" data-lv="20" data-n95="18" data-n95a="0,43" data-n133="2" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">37,50 %</td><td>2,25</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="2,25" data-lkh="" data-zp="75,00" data-zc="20" data-zo="4" data-zv="3" data-lp="75,00" data-lo="8" data-lv="6" data-n95="2" data-n95a="0,25" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">75,00 %</td><td>2,25</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bajer Josef" data-pro="1,13" data-lkh="" data-zp="37,50" data-zc="20" data-zo="8" data-zv="3" data-lp="47,37" data-lo="19" data-lv="9" data-n95="6" data-n95a="0,32" data-n133="1" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bajer Josef</td><td class="msu">37,50 %</td><td>1,13</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tkáč Marek" data-pro="0,44" data-lkh="" data-zp="22,22" data-zc="20" data-zo="9" data-zv="2" data-lp="33,33" data-lo="24" data-lv="8" data-n95="8" data-n95a="0,33" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tkáč Marek</td><td class="msu">22,22 %</td><td>0,44</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="0,25" data-lkh="" data-zp="25,00" data-zc="20" data-zo="4" data-zv="1" data-lp="40,00" data-lo="10" data-lv="4" data-n95="2" data-n95a="0,20" data-n133="1" data-n133a="0,10" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">25,00 %</td><td>0,25</td></tr>
 </tbody>
 </table>
-<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
 </div>
 </div>
 <div class="season-panel" id="panel-2025" style="display:none">
@@ -584,19 +610,19 @@
 </div>
 <div class="standings-legend">Roshambo Praha skončilo na <b>6. místě</b> ze 13 týmů — solidní střed tabulky, se kterým jde do nové sezóny útočit výš.</div>
 <div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2025/2026</div>
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2025/2026 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
 <thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
 <tbody>
-<tr><td>Kohlíček Petr</td><td class="msu">63,95 %</td><td>35,17</td></tr>
-<tr><td>Roklová Zuzana</td><td class="msu">58,11 %</td><td>25,00</td></tr>
-<tr><td>Bečka Marek</td><td class="msu">64,71 %</td><td>21,35</td></tr>
-<tr><td>Novák Jakub</td><td class="msu">53,57 %</td><td>16,07</td></tr>
-<tr><td>Pelech Roman</td><td class="msu">65,00 %</td><td>8,45</td></tr>
-<tr><td>Tůma Rostislav *</td><td class="msu">21,95 %</td><td>1,98</td></tr>
-<tr><td>Soliman Alan</td><td class="msu">35,71 %</td><td>1,79</td></tr>
-<tr><td>Tkáč Marek</td><td class="msu">21,43 %</td><td>0,64</td></tr>
-<tr><td>Bajer Josef</td><td class="msu">14,29 %</td><td>0,57</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="35,17" data-lkh="58,0" data-zp="63,95" data-zc="96" data-zo="86" data-zv="55" data-lp="61,03" data-lo="213" data-lv="130" data-n95="133" data-n95a="0,62" data-n133="32" data-n133a="0,15" data-n170="1" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">63,95 %</td><td>35,17</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="24,99" data-lkh="52,0" data-zp="58,11" data-zc="96" data-zo="74" data-zv="43" data-lp="54,75" data-lo="179" data-lv="98" data-n95="107" data-n95a="0,60" data-n133="15" data-n133a="0,08" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">58,11 %</td><td>24,99</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="21,35" data-lkh="56,7" data-zp="64,71" data-zc="96" data-zo="51" data-zv="33" data-lp="60,16" data-lo="123" data-lv="74" data-n95="54" data-n95a="0,44" data-n133="17" data-n133a="0,14" data-n170="3" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">64,71 %</td><td>21,35</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="16,07" data-lkh="47,6" data-zp="53,57" data-zc="96" data-zo="56" data-zv="30" data-lp="52,17" data-lo="138" data-lv="72" data-n95="64" data-n95a="0,46" data-n133="10" data-n133a="0,07" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">53,57 %</td><td>16,07</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="8,45" data-lkh="" data-zp="65,00" data-zc="96" data-zo="20" data-zv="13" data-lp="62,50" data-lo="48" data-lv="30" data-n95="31" data-n95a="0,65" data-n133="7" data-n133a="0,15" data-n170="1" data-n170a="0,02" data-z64="1" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">65,00 %</td><td>8,45</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="1,98" data-lkh="" data-zp="21,95" data-zc="96" data-zo="41" data-zv="9" data-lp="29,00" data-lo="100" data-lv="29" data-n95="26" data-n95a="0,26" data-n133="5" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">21,95 %</td><td>1,98</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="1,79" data-lkh="" data-zp="35,71" data-zc="96" data-zo="14" data-zv="5" data-lp="41,67" data-lo="36" data-lv="15" data-n95="9" data-n95a="0,25" data-n133="3" data-n133a="0,08" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">35,71 %</td><td>1,79</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tkáč Marek" data-pro="0,64" data-lkh="" data-zp="21,43" data-zc="96" data-zo="14" data-zv="3" data-lp="29,41" data-lo="34" data-lv="10" data-n95="13" data-n95a="0,38" data-n133="1" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tkáč Marek</td><td class="msu">21,43 %</td><td>0,64</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bajer Josef" data-pro="0,57" data-lkh="" data-zp="14,29" data-zc="96" data-zo="28" data-zv="4" data-lp="22,73" data-lo="66" data-lv="15" data-n95="27" data-n95a="0,41" data-n133="1" data-n133a="0,02" data-n170="1" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bajer Josef</td><td class="msu">14,29 %</td><td>0,57</td></tr>
 </tbody>
 </table>
 <div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
@@ -638,19 +664,19 @@
 </div>
 <div class="standings-legend">V sezóně 2024/2025 hrálo Roshambo Praha <b>3. ligu L</b> a skončilo na 8. místě ze 13 týmů.</div>
 <div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2024/2025</div>
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2024/2025 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
 <thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
 <tbody>
-<tr><td>Kohlíček Petr</td><td class="msu">58,43 %</td><td>30,38</td></tr>
-<tr><td>Roklová Zuzana</td><td class="msu">58,33 %</td><td>24,50</td></tr>
-<tr><td>Pelech Roman</td><td class="msu">66,67 %</td><td>16,00</td></tr>
-<tr><td>Tůma Rostislav *</td><td class="msu">34,29 %</td><td>8,23</td></tr>
-<tr><td>Pik Robert *</td><td class="msu">53,85 %</td><td>7,54</td></tr>
-<tr><td>Bečka Marek</td><td class="msu">46,43 %</td><td>6,04</td></tr>
-<tr><td>Novák Jakub</td><td class="msu">33,33 %</td><td>2,67</td></tr>
-<tr><td>Rajchl Josef *</td><td class="msu">26,67 %</td><td>1,07</td></tr>
-<tr><td>Soliman Alan</td><td class="msu">20,00 %</td><td>0,80</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="30,38" data-lkh="50,8" data-zp="58,43" data-zc="96" data-zo="89" data-zv="52" data-lp="55,36" data-lo="224" data-lv="124" data-n95="112" data-n95a="0,50" data-n133="18" data-n133a="0,08" data-n170="2" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">58,43 %</td><td>30,38</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="24,50" data-lkh="49,5" data-zp="58,33" data-zc="96" data-zo="72" data-zv="42" data-lp="55,43" data-lo="184" data-lv="102" data-n95="84" data-n95a="0,46" data-n133="10" data-n133a="0,05" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">58,33 %</td><td>24,50</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="16,00" data-lkh="" data-zp="66,67" data-zc="96" data-zo="36" data-zv="24" data-lp="63,41" data-lo="82" data-lv="52" data-n95="55" data-n95a="0,67" data-n133="10" data-n133a="0,12" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">66,67 %</td><td>16,00</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="8,23" data-lkh="32,7" data-zp="34,29" data-zc="96" data-zo="70" data-zv="24" data-lp="37,04" data-lo="162" data-lv="60" data-n95="53" data-n95a="0,33" data-n133="4" data-n133a="0,02" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">34,29 %</td><td>8,23</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="7,54" data-lkh="" data-zp="53,85" data-zc="96" data-zo="26" data-zv="14" data-lp="50,82" data-lo="61" data-lv="31" data-n95="31" data-n95a="0,51" data-n133="5" data-n133a="0,08" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">53,85 %</td><td>7,54</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="6,04" data-lkh="" data-zp="46,43" data-zc="96" data-zo="28" data-zv="13" data-lp="50,00" data-lo="72" data-lv="36" data-n95="28" data-n95a="0,39" data-n133="9" data-n133a="0,13" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">46,43 %</td><td>6,04</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="2,67" data-lkh="" data-zp="33,33" data-zc="96" data-zo="24" data-zv="8" data-lp="33,90" data-lo="59" data-lv="20" data-n95="20" data-n95a="0,34" data-n133="6" data-n133a="0,10" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">33,33 %</td><td>2,67</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="1,07" data-lkh="" data-zp="26,67" data-zc="96" data-zo="15" data-zv="4" data-lp="32,43" data-lo="37" data-lv="12" data-n95="9" data-n95a="0,24" data-n133="1" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">26,67 %</td><td>1,07</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="0,80" data-lkh="" data-zp="20,00" data-zc="96" data-zo="20" data-zv="4" data-lp="23,91" data-lo="46" data-lv="11" data-n95="13" data-n95a="0,28" data-n133="2" data-n133a="0,04" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">20,00 %</td><td>0,80</td></tr>
 </tbody>
 </table>
 <div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
@@ -691,19 +717,19 @@
 </div>
 <div class="standings-legend">V sezóně 2023/2024 hrálo Roshambo Praha <b>3. ligu J</b> a skončilo na 7. místě z 12 týmů.</div>
 <div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2023/2024</div>
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2023/2024 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
 <thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
 <tbody>
-<tr><td>Roklová Zuzana</td><td class="msu">56,25 %</td><td>25,31</td></tr>
-<tr><td>Kohlíček Petr</td><td class="msu">54,67 %</td><td>22,41</td></tr>
-<tr><td>Pik Robert *</td><td class="msu">52,00 %</td><td>20,28</td></tr>
-<tr><td>Tůma Rostislav *</td><td class="msu">37,93 %</td><td>8,34</td></tr>
-<tr><td>Pelech Roman</td><td class="msu">53,33 %</td><td>4,27</td></tr>
-<tr><td>Soliman Alan</td><td class="msu">33,33 %</td><td>3,00</td></tr>
-<tr><td>Bartoška Zdeněk *</td><td class="msu">75,00 %</td><td>2,25</td></tr>
-<tr><td>Haltuch Štěpán *</td><td class="msu">35,71 %</td><td>1,79</td></tr>
-<tr><td>Rajchl Josef *</td><td class="msu">50,00 %</td><td>1,00</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="25,31" data-lkh="51,1" data-zp="56,25" data-zc="88" data-zo="80" data-zv="45" data-lp="55,10" data-lo="196" data-lv="108" data-n95="109" data-n95a="0,56" data-n133="14" data-n133a="0,07" data-n170="3" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">56,25 %</td><td>25,31</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="22,41" data-lkh="48,8" data-zp="54,67" data-zc="88" data-zo="75" data-zv="41" data-lp="54,59" data-lo="185" data-lv="101" data-n95="92" data-n95a="0,50" data-n133="9" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">54,67 %</td><td>22,41</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="20,28" data-lkh="46,1" data-zp="52,00" data-zc="88" data-zo="75" data-zv="39" data-lp="50,80" data-lo="187" data-lv="95" data-n95="86" data-n95a="0,46" data-n133="13" data-n133a="0,07" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">52,00 %</td><td>20,28</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="8,34" data-lkh="35,6" data-zp="37,93" data-zc="88" data-zo="58" data-zv="22" data-lp="40,85" data-lo="142" data-lv="58" data-n95="41" data-n95a="0,29" data-n133="10" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">37,93 %</td><td>8,34</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="4,27" data-lkh="" data-zp="53,33" data-zc="88" data-zo="15" data-zv="8" data-lp="52,63" data-lo="38" data-lv="20" data-n95="19" data-n95a="0,50" data-n133="2" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">53,33 %</td><td>4,27</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="3,00" data-lkh="" data-zp="33,33" data-zc="88" data-zo="27" data-zv="9" data-lp="35,38" data-lo="65" data-lv="23" data-n95="13" data-n95a="0,20" data-n133="2" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">33,33 %</td><td>3,00</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bartoška Zdeněk *" data-pro="2,25" data-lkh="" data-zp="75,00" data-zc="88" data-zo="4" data-zv="3" data-lp="60,00" data-lo="10" data-lv="6" data-n95="4" data-n95a="0,40" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bartoška Zdeněk *</td><td class="msu">75,00 %</td><td>2,25</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Haltuch Štěpán *" data-pro="1,79" data-lkh="" data-zp="35,71" data-zc="88" data-zo="14" data-zv="5" data-lp="45,45" data-lo="33" data-lv="15" data-n95="5" data-n95a="0,15" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Haltuch Štěpán *</td><td class="msu">35,71 %</td><td>1,79</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="1,00" data-lkh="" data-zp="50,00" data-zc="88" data-zo="4" data-zv="2" data-lp="55,56" data-lo="9" data-lv="5" data-n95="3" data-n95a="0,33" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">50,00 %</td><td>1,00</td></tr>
 </tbody>
 </table>
 <div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
@@ -747,18 +773,18 @@
 </div>
 <div class="standings-legend">V sezóně 2022/2023 hrálo Roshambo Praha <b>3. ligu G</b> a skončilo na 11. místě ze 14 týmů (2× kontumace).</div>
 <div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2022/2023</div>
+<div class="mini-stats-title">Statistika hráčů · Sezóna 2022/2023 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
 <thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
 <tbody>
-<tr><td>Roklová Zuzana</td><td class="msu">50,67 %</td><td>19,25</td></tr>
-<tr><td>Kohlíček Petr</td><td class="msu">47,30 %</td><td>16,55</td></tr>
-<tr><td>Pik Robert *</td><td class="msu">46,05 %</td><td>16,12</td></tr>
-<tr><td>Bartoška Zdeněk *</td><td class="msu">68,97 %</td><td>13,79</td></tr>
-<tr><td>Soliman Alan</td><td class="msu">33,96 %</td><td>6,11</td></tr>
-<tr><td>Haltuch Štěpán *</td><td class="msu">24,14 %</td><td>1,69</td></tr>
-<tr><td>Tůma Rostislav *</td><td class="msu">25,00 %</td><td>1,50</td></tr>
-<tr><td>Rajchl Josef *</td><td class="msu">12,50 %</td><td>0,13</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="19,25" data-lkh="46,6" data-zp="50,67" data-zc="92" data-zo="75" data-zv="38" data-lp="50,00" data-lo="182" data-lv="91" data-n95="83" data-n95a="0,46" data-n133="20" data-n133a="0,11" data-n170="0" data-n170a="0,00" data-z64="1" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">50,67 %</td><td>19,25</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="16,55" data-lkh="41,9" data-zp="47,30" data-zc="92" data-zo="74" data-zv="35" data-lp="47,25" data-lo="182" data-lv="86" data-n95="65" data-n95a="0,36" data-n133="10" data-n133a="0,05" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">47,30 %</td><td>16,55</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="16,12" data-lkh="42,7" data-zp="46,05" data-zc="92" data-zo="76" data-zv="35" data-lp="47,34" data-lo="188" data-lv="89" data-n95="86" data-n95a="0,46" data-n133="13" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">46,05 %</td><td>16,12</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Bartoška Zdeněk *" data-pro="13,79" data-lkh="" data-zp="68,97" data-zc="92" data-zo="29" data-zv="20" data-lp="65,15" data-lo="66" data-lv="43" data-n95="38" data-n95a="0,58" data-n133="6" data-n133a="0,09" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bartoška Zdeněk *</td><td class="msu">68,97 %</td><td>13,79</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="6,11" data-lkh="33,0" data-zp="33,96" data-zc="92" data-zo="53" data-zv="18" data-lp="37,50" data-lo="120" data-lv="45" data-n95="43" data-n95a="0,36" data-n133="1" data-n133a="0,01" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">33,96 %</td><td>6,11</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Haltuch Štěpán *" data-pro="1,69" data-lkh="" data-zp="24,14" data-zc="92" data-zo="29" data-zv="7" data-lp="35,62" data-lo="73" data-lv="26" data-n95="26" data-n95a="0,36" data-n133="3" data-n133a="0,04" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Haltuch Štěpán *</td><td class="msu">24,14 %</td><td>1,69</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="1,50" data-lkh="" data-zp="25,00" data-zc="92" data-zo="24" data-zv="6" data-lp="30,36" data-lo="56" data-lv="17" data-n95="13" data-n95a="0,23" data-n133="1" data-n133a="0,02" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">25,00 %</td><td>1,50</td></tr>
+<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="0,13" data-lkh="" data-zp="12,50" data-zc="92" data-zo="8" data-zv="1" data-lp="21,05" data-lo="19" data-lv="4" data-n95="3" data-n95a="0,16" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">12,50 %</td><td>0,13</td></tr>
 </tbody>
 </table>
 <div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
@@ -792,10 +818,10 @@
 </thead>
 <tbody>
 <tr data-date="2026-09-01" data-result="loss"><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-09-20" data-result="loss"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
-<tr data-date="2026-09-22" data-result="loss"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-10-11" data-result="win"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
-<tr data-date="2026-10-13" data-result="win"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+<tr data-date="2026-09-20"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
+<tr data-date="2026-09-22"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
+<tr data-date="2026-10-11"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
+<tr data-date="2026-10-13"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
 <tr data-date="2026-10-25"><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Grey Bar, Praha 8</td></tr>
 <tr data-date="2026-11-03"><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
 <tr data-date="2026-11-15"><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
@@ -942,5 +968,130 @@
   }
 })();
 </script>
+
+<script>
+(function () {
+  // [klíč v data-* atributu, popisek]
+  var DEFS = [
+    { g: 'Koeficient',     items: [['lkh', 'LKH']] },
+    { g: 'Zápasy',         items: [['zp', 'Úspěšnost'], ['zc', 'Celkem'], ['zo', 'Odehráno'], ['zv', 'Vyhráno'], ['pro', 'Prospěšnost']] },
+    { g: 'Legy',           items: [['lp', 'Úspěšnost'], ['lo', 'Odehráno'], ['lv', 'Vyhráno']] },
+    { g: 'Náhozy 95+',     items: [['n95', 'Počet'], ['n95a', 'Ø na leg']] },
+    { g: 'Náhozy 133+',    items: [['n133', 'Počet'], ['n133a', 'Ø na leg']] },
+    { g: 'Náhozy 170+',    items: [['n170', 'Počet'], ['n170a', 'Ø na leg']] },
+    { g: 'Zavření v kole', items: [['z64', '6. / 4.'], ['z53', '5. / 3.'], ['z42', '4. / 2.'], ['z3', '3.']] }
+  ];
+  var PCT = { zp: 1, lp: 1 };
+  var NO_COMPARE = { zc: 1 };
+
+  function raw(row, k) { var v = row.getAttribute('data-' + k); return v === null ? '' : v; }
+  function fmt(row, k) { var v = raw(row, k); if (v === '') return '\u2014'; return PCT[k] ? v + ' %' : v; }
+  function num(row, k) { var v = raw(row, k); return v === '' ? NaN : parseFloat(v.replace(',', '.')); }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function label(g, it) { return g.items.length === 1 ? it[1] : g.g + ' \u00b7 ' + it[1]; }
+
+  function buildDetail(row) {
+    var tr = el('tr', 'mini-detail');
+    var td = el('td'); td.colSpan = 3;
+    var wrap = el('div', 'md-wrap');
+    var groups = el('div', 'md-groups');
+    DEFS.forEach(function (g) {
+      var box = el('div');
+      box.appendChild(el('div', 'md-group-title', g.g));
+      g.items.forEach(function (it) {
+        var r = el('div', 'md-row');
+        r.appendChild(el('span', '', it[1]));
+        r.appendChild(el('span', '', fmt(row, it[0])));
+        box.appendChild(r);
+      });
+      groups.appendChild(box);
+    });
+    wrap.appendChild(groups);
+
+    var cmp = el('div', 'md-compare');
+    cmp.appendChild(el('span', 'cmp-label', 'Porovnat s:'));
+    var sel = el('select', 'cmp-select');
+    sel.appendChild(new Option('\u2014 vyber hr\u00e1\u010de \u2014', ''));
+    var rows = row.parentNode.querySelectorAll('tr.mini-player');
+    Array.prototype.forEach.call(rows, function (r) {
+      if (r !== row) sel.appendChild(new Option(r.getAttribute('data-name'), r.getAttribute('data-name')));
+    });
+    cmp.appendChild(sel);
+    cmp.appendChild(el('div', 'cmp-out'));
+    wrap.appendChild(cmp);
+
+    td.appendChild(wrap);
+    tr.appendChild(td);
+    return tr;
+  }
+
+  function renderCompare(out, a, b) {
+    out.textContent = '';
+    if (!b) return;
+    var head = el('div', 'cmp-row cmp-head');
+    head.appendChild(el('span', '', ''));
+    head.appendChild(el('span', '', a.getAttribute('data-name')));
+    head.appendChild(el('span', '', b.getAttribute('data-name')));
+    out.appendChild(head);
+    DEFS.forEach(function (g) {
+      g.items.forEach(function (it) {
+        var k = it[0];
+        var r = el('div', 'cmp-row');
+        var sa = el('span', '', fmt(a, k));
+        var sb = el('span', '', fmt(b, k));
+        var na = num(a, k), nb = num(b, k);
+        if (!NO_COMPARE[k] && isFinite(na) && isFinite(nb) && na !== nb) {
+          (na > nb ? sa : sb).className = 'better';
+        }
+        r.appendChild(el('span', '', label(g, it)));
+        r.appendChild(sa);
+        r.appendChild(sb);
+        out.appendChild(r);
+      });
+    });
+  }
+
+  function toggle(row) {
+    var next = row.nextElementSibling;
+    if (row.classList.contains('open')) {
+      row.classList.remove('open');
+      if (next && next.classList.contains('mini-detail')) next.parentNode.removeChild(next);
+    } else {
+      row.classList.add('open');
+      row.parentNode.insertBefore(buildDetail(row), row.nextSibling);
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var row = e.target.closest ? e.target.closest('tr.mini-player') : null;
+    if (row) toggle(row);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var row = e.target.closest ? e.target.closest('tr.mini-player') : null;
+    if (row && e.target === row) { e.preventDefault(); toggle(row); }
+  });
+  document.addEventListener('change', function (e) {
+    var sel = e.target;
+    if (!sel.classList || !sel.classList.contains('cmp-select')) return;
+    var detail = sel.closest('tr.mini-detail');
+    var rowA = detail && detail.previousElementSibling;
+    var out = detail.querySelector('.cmp-out');
+    var rowB = null;
+    if (sel.value) {
+      Array.prototype.forEach.call(rowA.parentNode.querySelectorAll('tr.mini-player'), function (r) {
+        if (r.getAttribute('data-name') === sel.value) rowB = r;
+      });
+    }
+    renderCompare(out, rowA, rowB);
+  });
+})();
+</script>
+
 </body>
 </html>

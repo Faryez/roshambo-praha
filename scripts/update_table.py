@@ -16,7 +16,8 @@ import sys
 import json
 from decimal import Decimal, ROUND_HALF_UP
 from html import escape as html_escape
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
@@ -26,6 +27,22 @@ TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_
 # Statistika hráčů týmu. POZOR: na začátku každé nové sezóny je potřeba změnit
 # číslo season=... (aktuální 2026/2027 = 6243); team=339464 je stálé ID týmu.
 PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_type=611&season=6243&league=&team=339464"
+# Rozpis zápasů Roshamba (data, časy, hrací místa). POZOR: na začátku nové sezóny změnit season=... a league=...
+SCHEDULE_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_type=611&season=6243&league=228360&team=339464&round="
+
+# Známá hrací místa: číslo místa na sipky.org (place=...) -> popisek, souřadnice a přesná adresa pro mapy.
+# Nové místo, které tu není, dostane odkaz na mapy podle názvu ze sipky.org (a ve výpisu se objeví upozornění).
+KNOWN_VENUES = {
+    "175880": ("Yondu Bar, Praha 8", 50.0916469, 14.4525528, "Yondu bar, Thámova 221/7, 186 00 Praha 8-Karlín", "ChIJY5DO2X-VC0cRKaM-Jd-H6uQ"),
+    "416008": ("DAHA bar, Kralupy n. Vlt.", 50.2435833, 14.3108675, "DAHA Bar, U Cukrovaru 1085, 278 01 Kralupy nad Vltavou", "ChIJv9UUagDDC0cRy2-awMk-Qrg"),
+    "285960": ("Stanice Ládví, Praha 8", 50.1272495, 14.4674053, "Stanice Ládví, Kyselova 1657/6, 182 00 Praha 8", "ChIJca0NY2frC0cRLenq0-cheTI"),
+    "283400": ("Bar Na zastávce, Praha 8", 50.1313201, 14.4306638, "BAR na zastávce, Čimická 269, 181 00 Praha 8-Bohnice", "ChIJKwUU8SHrC0cRkcMh_Bl-4yc"),
+    "300552": ("Základna bar, Kralupy", 50.2489163, 14.3152485, "Bar ZÁKLADNA, Hakenova 725, 278 01 Kralupy nad Vltavou", "ChIJAUa8eYHDC0cR-8Ydj6I30Ys"),
+    "374536": ("Na hřišti, Vraňany", 50.3158735, 14.3632078, "Hospoda Na hřišti, Vraňany 97, 277 07 Vraňany", "ChIJ4Rg1EZHcC0cRIhI7VnTEE3I"),
+    "279560": ("Restaurace U jezera, Zdiby", 50.1686630, 14.4289913, "Restaurace u Jezera, Soběslavovo nám. 3, 250 66 Zdiby", "ChIJ5X0RV0_qC0cRiNcxHstH_U8"),
+    "246280": ("Club Troja, Praha 8", 50.1302835, 14.4336183, "Club Troja, Bukolská 775, 181 00 Praha 8", "ChIJVa2RWyLrC0cR2OBTL8aA8N8"),
+    "419592": ("Squash Sport Čimice", 50.1408893, 14.4276854, "Squash Sport Čimice, Čimická 780/61, 181 00 Praha 8", "ChIJBVKPhOLqC0cRRGiU5rqY_F4"),
+}
 # Statistika VŠECH hráčů ligy (u každého hráče je odkaz na jeho družstvo s číslem league_team)
 LEAGUE_PLAYERS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league=228360"
 OUR_TEAM = "Roshambo Praha"
@@ -430,6 +447,116 @@ def build_league_data(teams, league_players, existing=None):
     return data
 
 
+DAYS_CZ = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
+
+
+def fetch_schedule(session):
+    """Stáhne rozpis zápasů Roshamba ze sipky.org: pro každé kolo datum, čas
+    a hrací místo (název + číslo místa). Při problému vrátí prázdný seznam."""
+    try:
+        html = fetch_html_with_fallback(SCHEDULE_URL, session)
+        if not html:
+            return []
+        soup = BeautifulSoup(html, "html.parser")
+        out = {}
+        for a in soup.find_all("a", href=True):
+            if "page=hraci-misto" not in a["href"]:
+                continue
+            tr = a.find_parent("tr")
+            if tr is None:
+                continue
+            round_a = tr.find("a", href=re.compile(r"page=rozpis-utkani.*round=\d+"))
+            if round_a is None:
+                continue
+            kolo = re.search(r"round=(\d+)", round_a["href"]).group(1)
+            text = tr.get_text(" ", strip=True)
+            md = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{4})", text)
+            if not md:
+                continue
+            # čas bývá hned za datem, nebo na začátku následujícího řádku
+            mt = re.search(r"\d{1,2}\.\d{1,2}\.\d{4}\s+(\d{1,2}:\d{2})\b", text)
+            if not mt:
+                nxt = tr.find_next_sibling("tr")
+                if nxt is not None:
+                    mt = re.match(r"\s*(\d{1,2}:\d{2})\b", nxt.get_text(" ", strip=True))
+            m_place = re.search(r"place=(\d+)", a["href"])
+            out[kolo] = {
+                "kolo": kolo,
+                "d": int(md.group(1)), "m": int(md.group(2)), "y": int(md.group(3)),
+                "time": mt.group(1) if mt else "",
+                "venue": a.get_text(strip=True),
+                "place": m_place.group(1) if m_place else "",
+            }
+        return list(out.values())
+    except Exception:
+        return []
+
+
+def venue_cell(name, place):
+    """Buňka 'Místo' s odkazem na mapy (data pro výběr Waze / Google / Apple)."""
+    v = KNOWN_VENUES.get(place)
+    if v:
+        label, lat, lng, q, pid = v
+        url = "https://www.google.com/maps/search/?api=1&query=" + quote(q) + "&query_place_id=" + pid
+        attrs = f'data-place="{place}" data-lat="{lat}" data-lng="{lng}"'
+    else:
+        label = name
+        url = "https://www.google.com/maps/search/?api=1&query=" + quote(name)
+        attrs = f'data-place="{place}" data-q="{html_escape(name, quote=True)}"'
+    return (f'<td class="misto"><a class="map-link" {attrs} href="{html_escape(url, quote=True)}" '
+            f'target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; {html_escape(label)}</a></td>')
+
+
+def apply_schedule(html, schedule):
+    """Podle rozpisu ze sipky.org opraví v tabulce zápasů datum, den, čas
+    a hrací místo (řádky se párují podle čísla kola). Vrací (html, změny)."""
+    if not schedule:
+        return html, []
+    by_kolo = {s["kolo"]: s for s in schedule}
+    changes = []
+
+    def cell_text(c):
+        return re.sub(r"<[^>]+>", "", c).replace("&#128205;", "").strip()
+
+    def fix(m):
+        row = m.group(0)
+        start = re.match(r"<tr[^>]*>", row).group(0)
+        cells = re.findall(r"<td[^>]*>.*?</td>", row, re.S)
+        if len(cells) < 8:
+            return row
+        kolo = cell_text(cells[0])
+        s = by_kolo.get(kolo)
+        if not s:
+            return row
+        old = [cell_text(c) for c in cells]
+        try:
+            day = date(s["y"], s["m"], s["d"])
+        except ValueError:
+            return row
+        iso = day.isoformat()
+        cells[1] = f"<td>{DAYS_CZ[day.weekday()]}</td>"
+        cells[2] = f"<td>{s['d']}.{s['m']}.{s['y']}</td>"
+        if s["time"]:
+            cells[3] = f"<td>{s['time']}</td>"
+        if s["venue"]:
+            cells[7] = venue_cell(s["venue"], s["place"])
+            if s["place"] not in KNOWN_VENUES:
+                changes.append(f"kolo {kolo}: NOVÉ hrací místo '{s['venue']}' (není v KNOWN_VENUES, odkaz jen podle názvu)")
+        start = re.sub(r'data-date="[^"]*"', f'data-date="{iso}"', start, count=1)
+        new = [cell_text(c) for c in cells]
+        for i, what in ((2, "datum"), (3, "čas"), (7, "místo")):
+            if old[i] != new[i]:
+                changes.append(f"kolo {kolo}: {what} {old[i]} -> {new[i]}")
+        return start + "".join(cells) + "</tr>"
+
+    table_start = html.find('class="matches-table"')
+    if table_start < 0:
+        return html, []
+    table_end = html.find("</table>", table_start)
+    part = re.sub(r"<tr[^>]*data-date=[^>]*>.*?</tr>", fix, html[table_start:table_end], flags=re.S)
+    return html[:table_start] + part + html[table_end:], changes
+
+
 def build_mini_stats_tbody(players, former_names=()):
     """Řádky mini-tabulky statistiky hráčů. Každý řádek nese kompletní
     statistiku v data-* atributech - stránka z nich po kliknutí na jméno
@@ -482,9 +609,14 @@ def czech_now_str():
     return cz.strftime("%d.%m.%Y %H:%M")
 
 
-def update_index_html(teams, is_final, match_results=None, player_stats=None, league_data=None):
+def update_index_html(teams, is_final, match_results=None, player_stats=None, league_data=None, schedule=None):
     with open(INDEX_FILE, "r", encoding="utf-8") as f:
         html = f.read()
+
+    # rozpis (datum/čas/místo) nejdřív – výsledky zápasů se pak párují podle aktuálního data
+    html, schedule_changes = apply_schedule(html, schedule)
+    for c in schedule_changes:
+        print("Rozpis:", c)
 
     us = next((t for t in teams if t["name"] == OUR_TEAM), None)
     total = len(teams)
@@ -594,7 +726,10 @@ def main():
         existing = read_existing_league_data(f.read())
     league_data = build_league_data(teams, league_players, existing)
 
-    update_index_html(teams, is_final, match_results, player_stats, league_data)
+    schedule = fetch_schedule(session)
+    print(f"Rozpis ze sipky.org: {len(schedule)} zápasů.")
+
+    update_index_html(teams, is_final, match_results, player_stats, league_data, schedule)
     stav = "KONEČNÉ" if is_final else "průběžné"
     s_hraci = sum(1 for d in league_data.values() if d["players"])
     print(

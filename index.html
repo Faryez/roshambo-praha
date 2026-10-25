@@ -510,6 +510,25 @@
   .tp-row .tp-usp { color: var(--yellow); font-weight: 700; }
   .td-note { font-size: 9.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
   @media (max-width: 600px) { .standings-table { min-width: 600px; } }  /* sloupec Body zůstane celý vidět */
+
+  /* odkaz na trasu v Google Maps (rozpis zápasů) */
+  .misto a.map-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--muted); white-space: nowrap; }
+  .misto a.map-link:hover { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+  /* výběr mapy po kliknutí na místo */
+  .map-sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; }
+  .map-sheet { width: 100%; max-width: 420px; background: var(--card); border: 1px solid var(--border); border-bottom: none;
+    border-radius: 12px 12px 0 0; padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+  @media (min-width: 601px) { .map-sheet-bg { align-items: center; } .map-sheet { border-radius: 12px; border-bottom: 1px solid var(--border); } }
+  .map-sheet-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+  .map-sheet-place { font-size: 15px; color: var(--yellow); font-weight: 700; margin-bottom: 14px; }
+  .map-sheet a, .map-sheet button { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 8px;
+    border-radius: 6px; font-size: 14px; font-weight: 600; text-align: left; text-decoration: none; cursor: pointer;
+    background: var(--dark); color: var(--text); border: 1px solid var(--border); font-family: inherit; }
+  .map-sheet a:hover { border-color: var(--yellow); color: var(--yellow); }
+  .map-sheet a small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .map-sheet button { text-align: center; background: transparent; color: var(--muted); margin-bottom: 0; }
+  .matches-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }  /* rozpis se posouvá sám, stránka ne */
 </style>
 </head>
 <body>
@@ -540,7 +559,7 @@
 <div class="section-line"></div>
 <div class="season-select-row">
 <select class="season-select" id="seasonSelect">
-<option id="current-season-meta" value="2026">Sezóna 2026/2027 · průběžně 8. místo</option>
+<option id="current-season-meta" value="2026">Sezóna 2026/2027 · průběžně 6. místo</option>
 <option value="2025">Sezóna 2025/2026 · 6. místo</option>
 <option value="2024">Sezóna 2024/2025 · 8. místo</option>
 <option value="2023">Sezóna 2023/2024 · 7. místo</option>
@@ -549,7 +568,7 @@
 
 </div>
 <div class="season-panel" id="panel-2026">
-<div class="season-acc-meta" id="current-season-meta-inline" style="margin-bottom:12px;">3. liga C · průběžně 8. místo</div>
+<div class="season-acc-meta" id="current-season-meta-inline" style="margin-bottom:12px;">3. liga C · průběžně 6. místo</div>
 <div class="table-wrap">
 <table class="standings-table">
 <thead>
@@ -566,22 +585,22 @@
 </thead>
 <tbody id="current-season-tbody">
             <tr class="podium team-row" data-lt="2743048" tabindex="0"><td class="pos">1.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bocman Club Praha</td><td class="pts">12</td><td>4</td><td>4</td><td>0</td><td>0</td><td>118:59</td><td>54:18</td></tr>
-            <tr class="podium team-row" data-lt="2745864" tabindex="0"><td class="pos">2.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC B</td><td class="pts">12</td><td>4</td><td>4</td><td>0</td><td>0</td><td>103:71</td><td>45:27</td></tr>
-            <tr class="podium team-row" data-lt="2743560" tabindex="0"><td class="pos">3.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
-            <tr class="team-row" data-lt="2744328" tabindex="0"><td class="pos">4.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Kralupská letka</td><td class="pts">9</td><td>5</td><td>3</td><td>0</td><td>2</td><td>135:96</td><td>56:34</td></tr>
+            <tr class="podium team-row" data-lt="2743560" tabindex="0"><td class="pos">2.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
+            <tr class="podium team-row" data-lt="2744328" tabindex="0"><td class="pos">3.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Kralupská letka</td><td class="pts">9</td><td>4</td><td>3</td><td>0</td><td>1</td><td>113:73</td><td>48:24</td></tr>
+            <tr class="team-row" data-lt="2745864" tabindex="0"><td class="pos">4.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC B</td><td class="pts">9</td><td>3</td><td>3</td><td>0</td><td>0</td><td>80:49</td><td>35:19</td></tr>
             <tr class="team-row" data-lt="2744584" tabindex="0"><td class="pos">5.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Krkavci Kralupy</td><td class="pts">8</td><td>5</td><td>2</td><td>2</td><td>1</td><td>103:116</td><td>42:48</td></tr>
-            <tr class="team-row" data-lt="2742792" tabindex="0"><td class="pos">6.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Black Diamonds Praha</td><td class="pts">7</td><td>4</td><td>2</td><td>1</td><td>1</td><td>91:80</td><td>39:33</td></tr>
-            <tr class="team-row" data-lt="2743304" tabindex="0"><td class="pos">7.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bohnický kladiva</td><td class="pts">7</td><td>5</td><td>2</td><td>1</td><td>2</td><td>109:115</td><td>43:47</td></tr>
-            <tr class="us team-row" data-lt="2745352" tabindex="0"><td class="pos">8.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Roshambo Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>118:101</td><td>47:43</td></tr>
-            <tr class="team-row" data-lt="2745096" tabindex="0"><td class="pos">9.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Pedro Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>100:121</td><td>41:49</td></tr>
-            <tr class="team-row" data-lt="2744072" tabindex="0"><td class="pos">10.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Hell&#x27;s Darters Praha</td><td class="pts">6</td><td>6</td><td>2</td><td>0</td><td>4</td><td>117:152</td><td>46:62</td></tr>
-            <tr class="team-row" data-lt="2744840" tabindex="0"><td class="pos">11.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Los Číčos Praha</td><td class="pts">4</td><td>4</td><td>1</td><td>1</td><td>2</td><td>79:102</td><td>31:41</td></tr>
-            <tr class="team-row" data-lt="2743816" tabindex="0"><td class="pos">12.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Havrani Vraňany B</td><td class="pts">2</td><td>5</td><td>0</td><td>2</td><td>3</td><td>88:134</td><td>30:60</td></tr>
-            <tr class="team-row" data-lt="2745608" tabindex="0"><td class="pos">13.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC</td><td class="pts">0</td><td>5</td><td>0</td><td>0</td><td>5</td><td>78:139</td><td>26:64</td></tr>
+            <tr class="us team-row" data-lt="2745352" tabindex="0"><td class="pos">6.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Roshambo Praha</td><td class="pts">6</td><td>5</td><td>2</td><td>0</td><td>3</td><td>118:101</td><td>47:43</td></tr>
+            <tr class="team-row" data-lt="2744072" tabindex="0"><td class="pos">7.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Hell&#x27;s Darters Praha</td><td class="pts">6</td><td>4</td><td>2</td><td>0</td><td>2</td><td>76:100</td><td>31:41</td></tr>
+            <tr class="team-row" data-lt="2742792" tabindex="0"><td class="pos">8.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Black Diamonds Praha</td><td class="pts">4</td><td>3</td><td>1</td><td>1</td><td>1</td><td>63:65</td><td>26:28</td></tr>
+            <tr class="team-row" data-lt="2743304" tabindex="0"><td class="pos">9.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bohnický kladiva</td><td class="pts">4</td><td>4</td><td>1</td><td>1</td><td>2</td><td>83:97</td><td>32:40</td></tr>
+            <tr class="team-row" data-lt="2745096" tabindex="0"><td class="pos">10.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Pedro Praha</td><td class="pts">3</td><td>4</td><td>1</td><td>0</td><td>3</td><td>78:101</td><td>31:41</td></tr>
+            <tr class="team-row" data-lt="2743816" tabindex="0"><td class="pos">11.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Havrani Vraňany B</td><td class="pts">2</td><td>4</td><td>0</td><td>2</td><td>2</td><td>73:106</td><td>25:47</td></tr>
+            <tr class="team-row" data-lt="2744840" tabindex="0"><td class="pos">12.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Los Číčos Praha</td><td class="pts">1</td><td>3</td><td>0</td><td>1</td><td>2</td><td>53:79</td><td>21:33</td></tr>
+            <tr class="team-row" data-lt="2745608" tabindex="0"><td class="pos">13.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC</td><td class="pts">0</td><td>4</td><td>0</td><td>0</td><td>4</td><td>58:117</td><td>18:54</td></tr>
           </tbody>
 </table>
 </div>
-<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>8. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 25.10.2026 14:29.</div>
+<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>6. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 14.10.2026 22:35.</div>
 <div class="mini-stats">
 <div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
 <table class="mini-stats-table">
@@ -734,7 +753,7 @@
 <tr><td class="pos">6.</td><td class="team-name">Los Číčos Praha</td><td class="pts">32</td><td>22</td><td>10</td><td>2</td><td>10</td><td>474:492</td><td>190:206</td></tr>
 <tr class="us"><td class="pos">7.</td><td class="team-name">Roshambo Praha</td><td class="pts">31</td><td>22</td><td>10</td><td>1</td><td>11</td><td>490:483</td><td>199:197</td></tr>
 <tr><td class="pos">8.</td><td class="team-name">Staří promiň Praha</td><td class="pts">29</td><td>22</td><td>9</td><td>2</td><td>11</td><td>477:499</td><td>194:202</td></tr>
-<tr><td class="pos">9.</td><td class="team-name">Havrani Vrňany B</td><td class="pts">26</td><td>22</td><td>8</td><td>2</td><td>12</td><td>440:533</td><td>169:227</td></tr>
+<tr><td class="pos">9.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">26</td><td>22</td><td>8</td><td>2</td><td>12</td><td>440:533</td><td>169:227</td></tr>
 <tr><td class="pos">10.</td><td class="team-name">Patriots darts club Zdiby</td><td class="pts">15</td><td>22</td><td>4</td><td>3</td><td>15</td><td>443:540</td><td>171:225</td></tr>
 <tr><td class="pos">11.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">9</td><td>22</td><td>1</td><td>6</td><td>15</td><td>401:562</td><td>148:248</td></tr>
 <tr><td class="pos">12.</td><td class="team-name">Kašamba Praha II</td><td class="pts">4</td><td>22</td><td>1</td><td>1</td><td>20</td><td>302:641</td><td>103:293</td></tr>
@@ -787,7 +806,7 @@
 <tr><td class="pos">5.</td><td class="team-name">Nikater Praha</td><td class="pts">50</td><td>26</td><td>16</td><td>2</td><td>8</td><td>0</td><td>606:520</td><td>261:207</td></tr>
 <tr><td class="pos">6.</td><td class="team-name">Kašamba Praha</td><td class="pts">43</td><td>26</td><td>13</td><td>4</td><td>9</td><td>0</td><td>615:532</td><td>261:207</td></tr>
 <tr><td class="pos">7.</td><td class="team-name">Alcatraz DSC Praha</td><td class="pts">37</td><td>26</td><td>12</td><td>1</td><td>13</td><td>0</td><td>520:602</td><td>214:254</td></tr>
-<tr><td class="pos">8.</td><td class="team-name">Havrani Vrňany B</td><td class="pts">29</td><td>26</td><td>9</td><td>2</td><td>15</td><td>0</td><td>548:589</td><td>220:248</td></tr>
+<tr><td class="pos">8.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">29</td><td>26</td><td>9</td><td>2</td><td>15</td><td>0</td><td>548:589</td><td>220:248</td></tr>
 <tr><td class="pos">9.</td><td class="team-name">Kecky Praha</td><td class="pts">25</td><td>26</td><td>8</td><td>4</td><td>13</td><td>1</td><td>480:622</td><td>193:275</td></tr>
 <tr><td class="pos">10.</td><td class="team-name">Los Číčos Praha</td><td class="pts">23</td><td>26</td><td>7</td><td>2</td><td>17</td><td>0</td><td>518:607</td><td>202:266</td></tr>
 <tr class="us"><td class="pos">11.</td><td class="team-name">Roshambo Praha</td><td class="pts">22</td><td>26</td><td>9</td><td>1</td><td>14</td><td>2</td><td>489:620</td><td>196:272</td></tr>
@@ -829,7 +848,7 @@
 <span><span class="dot loss"></span> Prohra</span>
 <span><span class="dot next"></span> Nejbližší zápas</span>
 </div>
-<table class="matches-table">
+<div class="matches-wrap"><table class="matches-table">
 <thead>
 <tr>
 <th>Kolo</th>
@@ -843,32 +862,32 @@
 </tr>
 </thead>
 <tbody>
-<tr data-date="2026-09-01" data-result="loss"><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-09-20" data-result="loss"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">DAHA bar, Kralupy n. Vlt.</td></tr>
-<tr data-date="2026-09-22" data-result="loss"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-10-11" data-result="win"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Stanice Ládví, Praha 8</td></tr>
-<tr data-date="2026-10-13" data-result="win"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-10-25"><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Grey Bar, Praha 8</td></tr>
-<tr data-date="2026-11-03"><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-11-15"><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
-<tr data-date="2026-11-17"><td>9</td><td>Út</td><td>17.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2026-11-24"><td>10</td><td>Ne</td><td>24.11.2026</td><td>20:00</td><td>Krkavci Kralupy</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Základna bar, Kralupy</td></tr>
-<tr data-date="2026-12-13"><td>12</td><td>Ne</td><td>13.12.2026</td><td>17:00</td><td>Havrani Vrňany B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Na hřišti Vrňany</td></tr>
-<tr data-date="2026-12-15"><td>13</td><td>Út</td><td>15.12.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Pedro Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-01-17"><td>14</td><td>Ne</td><td>17.1.2027</td><td>18:00</td><td>Hell's Darters Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-01-19"><td>15</td><td>Út</td><td>19.1.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Kralupská letka</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-01-31"><td>16</td><td>Ne</td><td>31.1.2027</td><td>17:00</td><td>Zdiby DC B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Restaurace U jezera, Zdiby</td></tr>
-<tr data-date="2027-02-02"><td>17</td><td>Út</td><td>2.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Los Číčos Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-02-09"><td>18</td><td>Út</td><td>9.2.2027</td><td>19:00</td><td>Bohnický kladiva</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Club Troja, Praha 8</td></tr>
-<tr data-date="2027-02-16"><td>19</td><td>Út</td><td>16.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Black Diamonds Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-02-28"><td>20</td><td>Ne</td><td>28.2.2027</td><td>18:00</td><td>Bocman Club Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-03-02"><td>21</td><td>Út</td><td>2.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Figury Libčice</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-03-14"><td>22</td><td>Ne</td><td>14.3.2027</td><td>17:00</td><td>Zdiby DC</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Restaurace U jezera, Zdiby</td></tr>
-<tr data-date="2027-03-30"><td>23</td><td>Út</td><td>30.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Krkavci Kralupy</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-04-13"><td>24</td><td>Út</td><td>13.4.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Havrani Vrňany B</td><td class="misto">Yondu Bar, Praha 8</td></tr>
-<tr data-date="2027-05-09"><td>26</td><td>Ne</td><td>9.5.2027</td><td>16:00</td><td>Pedro Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto">Squash Sport Čimice</td></tr>
+<tr data-date="2026-09-01" data-result="loss"><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2026-09-20"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.2435833" data-lng="14.3108675" href="https://www.google.com/maps/search/?api=1&amp;query=DAHA%20Bar%2C%20U%20Cukrovaru%201085%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJv9UUagDDC0cRy2-awMk-Qrg" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; DAHA bar, Kralupy n. Vlt.</a></td></tr>
+<tr data-date="2026-09-22"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2026-10-11"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.1272495" data-lng="14.4674053" href="https://www.google.com/maps/search/?api=1&amp;query=Stanice%20L%C3%A1dv%C3%AD%2C%20Kyselova%201657/6%2C%20182%2000%20Praha%208&amp;query_place_id=ChIJca0NY2frC0cRLenq0-cheTI" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Stanice Ládví, Praha 8</a></td></tr>
+<tr data-date="2026-10-13"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2026-10-25"><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.1314212" data-lng="14.4244455" href="https://www.google.com/maps/search/?api=1&amp;query=Grey%2C%20Katovick%C3%A1%20412%2C%20181%2000%20Praha%208-Bohnice&amp;query_place_id=ChIJl8NqdCDrC0cRcF8wcR7N7qo" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Grey Bar, Praha 8</a></td></tr>
+<tr data-date="2026-11-03"><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2026-11-15"><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.2489163" data-lng="14.3152485" href="https://www.google.com/maps/search/?api=1&amp;query=Bar%20Z%C3%81KLADNA%2C%20Hakenova%20725%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJAUa8eYHDC0cR-8Ydj6I30Ys" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Základna bar, Kralupy</a></td></tr>
+<tr data-date="2026-11-17"><td>9</td><td>Út</td><td>17.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2026-11-24"><td>10</td><td>Ne</td><td>24.11.2026</td><td>20:00</td><td>Krkavci Kralupy</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.2489163" data-lng="14.3152485" href="https://www.google.com/maps/search/?api=1&amp;query=Bar%20Z%C3%81KLADNA%2C%20Hakenova%20725%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJAUa8eYHDC0cR-8Ydj6I30Ys" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Základna bar, Kralupy</a></td></tr>
+<tr data-date="2026-12-13"><td>12</td><td>Ne</td><td>13.12.2026</td><td>17:00</td><td>Havrani Vraňany B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.3158735" data-lng="14.3632078" href="https://www.google.com/maps/search/?api=1&amp;query=Hospoda%20Na%20h%C5%99i%C5%A1ti%2C%20Vra%C5%88any%2097%2C%20277%2007%20Vra%C5%88any&amp;query_place_id=ChIJ4Rg1EZHcC0cRIhI7VnTEE3I" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Na hřišti, Vraňany</a></td></tr>
+<tr data-date="2026-12-15"><td>13</td><td>Út</td><td>15.12.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Pedro Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-01-17"><td>14</td><td>Ne</td><td>17.1.2027</td><td>18:00</td><td>Hell's Darters Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-01-19"><td>15</td><td>Út</td><td>19.1.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Kralupská letka</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-01-31"><td>16</td><td>Ne</td><td>31.1.2027</td><td>17:00</td><td>Zdiby DC B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.168663" data-lng="14.4289913" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace%20u%20Jezera%2C%20Sob%C4%9Bslavovo%20n%C3%A1m.%203%2C%20250%2066%20Zdiby&amp;query_place_id=ChIJ5X0RV0_qC0cRiNcxHstH_U8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Restaurace U jezera, Zdiby</a></td></tr>
+<tr data-date="2027-02-02"><td>17</td><td>Út</td><td>2.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Los Číčos Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-02-09"><td>18</td><td>Út</td><td>9.2.2027</td><td>19:00</td><td>Bohnický kladiva</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.1302835" data-lng="14.4336183" href="https://www.google.com/maps/search/?api=1&amp;query=Club%20Troja%2C%20Bukolsk%C3%A1%20775%2C%20181%2000%20Praha%208&amp;query_place_id=ChIJVa2RWyLrC0cR2OBTL8aA8N8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Club Troja, Praha 8</a></td></tr>
+<tr data-date="2027-02-16"><td>19</td><td>Út</td><td>16.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Black Diamonds Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-02-28"><td>20</td><td>Ne</td><td>28.2.2027</td><td>18:00</td><td>Bocman Club Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-03-02"><td>21</td><td>Út</td><td>2.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Figury Libčice</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-03-14"><td>22</td><td>Ne</td><td>14.3.2027</td><td>17:00</td><td>Zdiby DC</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.168663" data-lng="14.4289913" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace%20u%20Jezera%2C%20Sob%C4%9Bslavovo%20n%C3%A1m.%203%2C%20250%2066%20Zdiby&amp;query_place_id=ChIJ5X0RV0_qC0cRiNcxHstH_U8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Restaurace U jezera, Zdiby</a></td></tr>
+<tr data-date="2027-03-30"><td>23</td><td>Út</td><td>30.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Krkavci Kralupy</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-04-13"><td>24</td><td>Út</td><td>13.4.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Havrani Vraňany B</td><td class="misto"><a class="map-link" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
+<tr data-date="2027-05-09"><td>26</td><td>Ne</td><td>9.5.2027</td><td>16:00</td><td>Pedro Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-lat="50.1408893" data-lng="14.4276854" href="https://www.google.com/maps/search/?api=1&amp;query=Squash%20Sport%20%C4%8Cimice%2C%20%C4%8Cimick%C3%A1%20780/61%2C%20181%2000%20Praha%208&amp;query_place_id=ChIJBVKPhOLqC0cRRGiU5rqY_F4" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Squash Sport Čimice</a></td></tr>
 </tbody>
-</table>
+</table></div>
 </section>
 <hr class="full-divider"/>
 <!-- HRÁČI -->
@@ -1152,7 +1171,7 @@
   });
 })();
 </script>
-<script type="application/json" id="league-teams-data">{"2743048":{"name":"Bocman Club Praha","kol":"4","players":[{"n":"Janouch Martin","lkh":"80,0","zo":"16","zv":"13","usp":"81,25 %","pro":"10,56"},{"n":"Šalplachta Tomáš","lkh":"66,3","zo":"16","zv":"12","usp":"75,00 %","pro":"9,00"},{"n":"Kahoun Pavel","lkh":"63,8","zo":"14","zv":"11","usp":"78,57 %","pro":"8,64"},{"n":"Bárta Josef","lkh":"76,2","zo":"10","zv":"8","usp":"80,00 %","pro":"6,40"},{"n":"Rezek Jan","lkh":"","zo":"7","zv":"3","usp":"42,86 %","pro":"1,29"},{"n":"Píchová Dita","lkh":"","zo":"1","zv":"1","usp":"100,00 %","pro":"1,00"}]},"2745864":{"name":"Zdiby DC B","kol":"4","players":[{"n":"Sekula Martin","lkh":"85,4","zo":"12","zv":"11","usp":"91,67 %","pro":"10,08"},{"n":"Novák Tomáš","lkh":"59,0","zo":"16","zv":"11","usp":"68,75 %","pro":"7,56"},{"n":"Kotrba Mikuláš","lkh":"51,5","zo":"16","zv":"9","usp":"56,25 %","pro":"5,06"},{"n":"Šprincl Petr","lkh":"47,1","zo":"13","zv":"7","usp":"53,85 %","pro":"3,77"},{"n":"Nicek Pavel","lkh":"","zo":"7","zv":"4","usp":"57,14 %","pro":"2,29"}]},"2743560":{"name":"Figury Libčice","kol":"5","players":[{"n":"Souček Libor","lkh":"60,7","zo":"18","zv":"13","usp":"72,22 %","pro":"9,39"},{"n":"Krečun Ivan","lkh":"65,1","zo":"16","zv":"12","usp":"75,00 %","pro":"9,00"},{"n":"Barnet Martin","lkh":"56,9","zo":"20","zv":"13","usp":"65,00 %","pro":"8,45"},{"n":"Weinfurtner Michal","lkh":"47,2","zo":"17","zv":"8","usp":"47,06 %","pro":"3,76"},{"n":"Koš Martin","lkh":"","zo":"8","zv":"4","usp":"50,00 %","pro":"2,00"},{"n":"Kašpar Tomáš","lkh":"","zo":"1","zv":"1","usp":"100,00 %","pro":"1,00"}]},"2744328":{"name":"Kralupská letka","kol":"5","players":[{"n":"Pospíšil Milan","lkh":"61,8","zo":"19","zv":"14","usp":"73,68 %","pro":"10,32"},{"n":"Jurik Pavel","lkh":"66,0","zo":"14","zv":"11","usp":"78,57 %","pro":"8,64"},{"n":"Panocha Václav","lkh":"58,4","zo":"19","zv":"12","usp":"63,16 %","pro":"7,58"},{"n":"Dvorský Martin","lkh":"","zo":"9","zv":"4","usp":"44,44 %","pro":"1,78"},{"n":"Číhalík Josef","lkh":"","zo":"4","zv":"2","usp":"50,00 %","pro":"1,00"},{"n":"Suk Jiří","lkh":"","zo":"9","zv":"3","usp":"33,33 %","pro":"1,00"},{"n":"Hájek Miroslav","lkh":"","zo":"2","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2744584":{"name":"Krkavci Kralupy","kol":"5","players":[{"n":"Macháček Jiří","lkh":"57,8","zo":"18","zv":"12","usp":"66,67 %","pro":"8,00"},{"n":"Adamíra Jan","lkh":"49,6","zo":"19","zv":"10","usp":"52,63 %","pro":"5,26"},{"n":"Novák Jiří","lkh":"42,8","zo":"12","zv":"6","usp":"50,00 %","pro":"3,00"},{"n":"Šlechta Martin","lkh":"34,0","zo":"11","zv":"4","usp":"36,36 %","pro":"1,45"},{"n":"Kolátor Petr","lkh":"27,2","zo":"11","zv":"3","usp":"27,27 %","pro":"0,82"},{"n":"Rosáková Kateřina","lkh":"","zo":"6","zv":"2","usp":"33,33 %","pro":"0,67"},{"n":"Mrhal František","lkh":"","zo":"3","zv":"1","usp":"33,33 %","pro":"0,33"}]},"2742792":{"name":"Black Diamonds Praha","kol":"4","players":[{"n":"Eger Patrik","lkh":"66,2","zo":"16","zv":"12","usp":"75,00 %","pro":"9,00"},{"n":"Vácha David","lkh":"56,3","zo":"12","zv":"8","usp":"66,67 %","pro":"5,33"},{"n":"Podolák Roman","lkh":"51,5","zo":"8","zv":"5","usp":"62,50 %","pro":"3,13"},{"n":"Medek Zdeněk","lkh":"51,4","zo":"12","zv":"6","usp":"50,00 %","pro":"3,00"},{"n":"Ševčík Radim","lkh":"19,5","zo":"10","zv":"2","usp":"20,00 %","pro":"0,40"},{"n":"Marek Jan","lkh":"","zo":"6","zv":"1","usp":"16,67 %","pro":"0,17"}]},"2743304":{"name":"Bohnický kladiva","kol":"5","players":[{"n":"Čedík Tomáš","lkh":"66,6","zo":"14","zv":"11","usp":"78,57 %","pro":"8,64"},{"n":"Gruzdz Antony","lkh":"45,3","zo":"18","zv":"8","usp":"44,44 %","pro":"3,56"},{"n":"Heller Martin","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Sofron Michal","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Štefek Pavel","lkh":"","zo":"4","zv":"2","usp":"50,00 %","pro":"1,00"},{"n":"Žoltak Vladimír","lkh":"","zo":"4","zv":"2","usp":"50,00 %","pro":"1,00"},{"n":"Vyskočil Martin","lkh":"33,8","zo":"10","zv":"3","usp":"30,00 %","pro":"0,90"},{"n":"Burda Michal","lkh":"33,3","zo":"10","zv":"3","usp":"30,00 %","pro":"0,90"},{"n":"Šebl Ondřej","lkh":"","zo":"6","zv":"2","usp":"33,33 %","pro":"0,67"},{"n":"Brdek David","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2745352":{"name":"Roshambo Praha","kol":"5","players":[{"n":"Kohlíček Petr","lkh":"62,5","zo":"19","zv":"13","usp":"68,42 %","pro":"8,89"},{"n":"Novák Jakub","lkh":"52,1","zo":"14","zv":"8","usp":"57,14 %","pro":"4,57"},{"n":"Bečka Marek","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Roklová Zuzana","lkh":"39,0","zo":"16","zv":"6","usp":"37,50 %","pro":"2,25"},{"n":"Pelech Roman","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Bajer Josef","lkh":"","zo":"8","zv":"3","usp":"37,50 %","pro":"1,13"},{"n":"Tkáč Marek","lkh":"","zo":"9","zv":"2","usp":"22,22 %","pro":"0,44"},{"n":"Soliman Alan","lkh":"","zo":"4","zv":"1","usp":"25,00 %","pro":"0,25"}]},"2745096":{"name":"Pedro Praha","kol":"5","players":[{"n":"Janeček Jan","lkh":"61,6","zo":"20","zv":"14","usp":"70,00 %","pro":"9,80"},{"n":"Fazekaš Radek","lkh":"53,8","zo":"20","zv":"10","usp":"50,00 %","pro":"5,00"},{"n":"Stolec Jiří","lkh":"32,2","zo":"19","zv":"6","usp":"31,58 %","pro":"1,89"},{"n":"Brejla Radek","lkh":"31,7","zo":"12","zv":"4","usp":"33,33 %","pro":"1,33"},{"n":"Srazil Jaroslav","lkh":"","zo":"9","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2744072":{"name":"Hell's Darters Praha","kol":"6","players":[{"n":"Opletal Jan","lkh":"54,6","zo":"16","zv":"11","usp":"68,75 %","pro":"7,56"},{"n":"Lacina Jiří","lkh":"37,9","zo":"23","zv":"9","usp":"39,13 %","pro":"3,52"},{"n":"Uher Daniel","lkh":"39,8","zo":"24","zv":"9","usp":"37,50 %","pro":"3,38"},{"n":"Rozporka Jiří","lkh":"32,4","zo":"22","zv":"7","usp":"31,82 %","pro":"2,23"},{"n":"Pokorný Jan","lkh":"","zo":"6","zv":"3","usp":"50,00 %","pro":"1,50"},{"n":"Černík Jan","lkh":"","zo":"1","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2744840":{"name":"Los Číčos Praha","kol":"4","players":[{"n":"Kubinová Nina","lkh":"62,6","zo":"12","zv":"9","usp":"75,00 %","pro":"6,75"},{"n":"Rozkovcová Hana","lkh":"48,5","zo":"16","zv":"9","usp":"56,25 %","pro":"5,06"},{"n":"Rudolf Stanislav","lkh":"30,8","zo":"16","zv":"5","usp":"31,25 %","pro":"1,56"},{"n":"Medková Markéta","lkh":"32,9","zo":"13","zv":"4","usp":"30,77 %","pro":"1,23"},{"n":"Zajíčková Adéla","lkh":"","zo":"5","zv":"2","usp":"40,00 %","pro":"0,80"},{"n":"Hujo Lukáš","lkh":"","zo":"2","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2743816":{"name":"Havrani Vraňany B","kol":"5","players":[{"n":"Říha Josef","lkh":"49,4","zo":"19","zv":"10","usp":"52,63 %","pro":"5,26"},{"n":"Březina Lukáš","lkh":"39,7","zo":"15","zv":"6","usp":"40,00 %","pro":"2,40"},{"n":"Granát Jakub","lkh":"33,5","zo":"13","zv":"5","usp":"38,46 %","pro":"1,92"},{"n":"Balíková Kristýna","lkh":"31,1","zo":"15","zv":"4","usp":"26,67 %","pro":"1,07"},{"n":"Pešek Jaroslav","lkh":"34,3","zo":"10","zv":"3","usp":"30,00 %","pro":"0,90"},{"n":"Balík Pavel","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"},{"n":"Horák Vladimír","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2745608":{"name":"Zdiby DC","kol":"5","players":[{"n":"Šofr Ladislav","lkh":"47,6","zo":"16","zv":"8","usp":"50,00 %","pro":"4,00"},{"n":"Trap Luboš","lkh":"38,9","zo":"16","zv":"6","usp":"37,50 %","pro":"2,25"},{"n":"Rybecký Lukáš","lkh":"29,8","zo":"16","zv":"4","usp":"25,00 %","pro":"1,00"},{"n":"Štancl Jiří","lkh":"26,8","zo":"16","zv":"4","usp":"25,00 %","pro":"1,00"},{"n":"Třešňák Tomáš","lkh":"29,6","zo":"12","zv":"3","usp":"25,00 %","pro":"0,75"},{"n":"Herda Štefan","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]}}</script>
+<script type="application/json" id="league-teams-data">{"2743048":{"name":"Bocman Club Praha","kol":"4","players":[]},"2743560":{"name":"Figury Libčice","kol":"5","players":[]},"2744328":{"name":"Kralupská letka","kol":"4","players":[]},"2745864":{"name":"Zdiby DC B","kol":"3","players":[]},"2744584":{"name":"Krkavci Kralupy","kol":"5","players":[]},"2745352":{"name":"Roshambo Praha","kol":"5","players":[{"n":"Kohlíček Petr","lkh":"62,5","zo":"19","zv":"13","usp":"68,42 %","pro":"8,89"},{"n":"Novák Jakub","lkh":"52,1","zo":"14","zv":"8","usp":"57,14 %","pro":"4,57"},{"n":"Bečka Marek","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Roklová Zuzana","lkh":"39,0","zo":"16","zv":"6","usp":"37,50 %","pro":"2,25"},{"n":"Pelech Roman","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Bajer Josef","lkh":"","zo":"8","zv":"3","usp":"37,50 %","pro":"1,13"},{"n":"Tkáč Marek","lkh":"","zo":"9","zv":"2","usp":"22,22 %","pro":"0,44"},{"n":"Soliman Alan","lkh":"","zo":"4","zv":"1","usp":"25,00 %","pro":"0,25"}]},"2744072":{"name":"Hell's Darters Praha","kol":"4","players":[]},"2742792":{"name":"Black Diamonds Praha","kol":"3","players":[]},"2743304":{"name":"Bohnický kladiva","kol":"4","players":[]},"2745096":{"name":"Pedro Praha","kol":"4","players":[]},"2743816":{"name":"Havrani Vraňany B","kol":"4","players":[]},"2744840":{"name":"Los Číčos Praha","kol":"3","players":[]},"2745608":{"name":"Zdiby DC","kol":"4","players":[]}}</script>
 <script>
 (function () {
   var DATA = {};
@@ -1225,6 +1244,46 @@
     var row = e.target.closest ? e.target.closest('tr.team-row') : null;
     if (row && e.target === row) { e.preventDefault(); toggle(row); }
   });
+})();
+</script>
+<script>
+(function () {
+  function close() { var bg = document.querySelector('.map-sheet-bg'); if (bg) bg.parentNode.removeChild(bg); }
+  function option(href, title, note) {
+    var a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = title;
+    var sm = document.createElement('small'); sm.textContent = note; a.appendChild(sm);
+    a.addEventListener('click', function () { setTimeout(close, 50); });
+    return a;
+  }
+  function open(link) {
+    close();
+    var lat = link.getAttribute('data-lat'), lng = link.getAttribute('data-lng');
+    var place = link.textContent.replace(/^\s*\S+\s/, '');   // bez ikonky špendlíku
+    var bg = document.createElement('div'); bg.className = 'map-sheet-bg';
+    var sh = document.createElement('div'); sh.className = 'map-sheet';
+    var t = document.createElement('div'); t.className = 'map-sheet-title'; t.textContent = 'Navigovat do';
+    var p = document.createElement('div'); p.className = 'map-sheet-place'; p.textContent = place;
+    sh.appendChild(t); sh.appendChild(p);
+    sh.appendChild(option('https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes', 'Waze', 'z místa, kde právě jsi'));
+    sh.appendChild(option(link.href, 'Google Maps', 'uk\u00e1\u017ee m\u00edsto, trasu si zvol\u00ed\u0161 s\u00e1m'));
+    sh.appendChild(option('https://maps.apple.com/?q=' + encodeURIComponent(place) + '&ll=' + lat + ',' + lng,
+                          'Apple Mapy', 'uk\u00e1\u017ee m\u00edsto, trasu si zvol\u00ed\u0161 s\u00e1m'));
+    var c = document.createElement('button'); c.type = 'button'; c.textContent = 'Zrušit';
+    c.addEventListener('click', close);
+    sh.appendChild(c);
+    bg.appendChild(sh);
+    bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
+    document.body.appendChild(bg);
+  }
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest ? e.target.closest('a.map-link') : null;
+    if (!link || !link.getAttribute('data-lat')) return;
+    e.preventDefault();
+    open(link);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
 })();
 </script>
 </body>

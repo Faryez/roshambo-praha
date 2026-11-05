@@ -147,9 +147,11 @@ def parse_season(html: str) -> dict:
         link = soup.find("a", href=re.compile(rf"page=ligova-skupina.*league={league_id}\b"))
         if link and link.get_text(strip=True):
             info["league"] = link.get_text(strip=True)
-    for option in soup.find_all("option", selected=True):
+    for option in soup.find_all("option", selected=True):       # vybraná položka v seznamu sezón
         if m := re.fullmatch(r"\s*(\d{4}/\d{4})\s*", option.get_text()):
             info["label"] = m.group(1)
+            if "id" not in info and re.fullmatch(r"\d+", option.get("value", "")):
+                info["id"] = option["value"]
             break
     return info
 
@@ -347,11 +349,13 @@ class Sync:
         html = self.get(page_url(page="statistika-hracu", league_type=LEAGUE_TYPE, team=TEAM_ID))
         found = parse_season(html) if html else {}
         season = self.data["season"]
-        if not found.get("id") or not found.get("leagueId"):
+        if not found.get("leagueId") or not found.get("leagueTeamId"):
             self.warn("Nepodařilo se zjistit aktuální sezónu, použijí se dosavadní ID.")
             self.report.append(("Sezóna", "dosavadní"))
             return html
-        if season.get("id") and found["id"] != season["id"]:
+        new_id = found.get("id") and season.get("id") and found["id"] != season["id"]
+        new_team = season.get("leagueTeamId") and found["leagueTeamId"] != season["leagueTeamId"]
+        if new_id or new_team:                       # nová sezóna = nové ID sezóny nebo nové ID družstva
             self.data["history"].insert(0, archive_season(self.data))
             self.notes.append(f"Nová sezóna {found.get('label') or next_label(season.get('label', ''))} – "
                               f"sezóna {season.get('label')} přesunuta do historie.")

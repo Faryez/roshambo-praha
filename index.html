@@ -1,1291 +1,584 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="cs">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roshambo Praha — šipkový tým</title>
+<meta name="description" content="Šipkový tým Roshambo Praha: tabulka, rozpis zápasů, statistiky hráčů a soupiska. Data automaticky ze sipky.org.">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roshambo">
+<meta property="og:title" content="Roshambo Praha — šipkový tým">
+<meta property="og:description" content="Tabulka, rozpis zápasů a statistiky hráčů. Šipky. Pivo. Legenda.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%230a0a0a' stroke='%23f5c518' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23f5c518'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%231b1b1b'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23f5c518'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23c0392b'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAMAAAAKE/YAAAAAkFBMVEX+0Bz/zxj7yxj3xxj2xRj1xRj1xRf0xRj0xBjzwxjywxjxwhjsvBjSqRewixV9YhbLQzXAOStfPxaAMh49Mg8xKg8lHw4dHBobGxoeGxEcGRAaGhoaGhkaFwwYGBkVFRUSEhEOERoPDgsNDAsMDAsLCwsLCgoKDBQKCgoKCgkKCQoJCQoHCAoFBgoDBAoAAAnfHZM9AAAde0lEQVR42u1daZuiOtMW0CM73QhCj0dUtuEM2///d29VBTQJ4NZz3ud5rmvyYabbdrmt3LUmqayq/8Gx+gP6D+g/oJ8bBYz/DdBFnmU5wa2btm1qgk6P/VeCLgFbmrdd3/cdjCY9wkgb/BkfavIUkJf/TaCLLC0Qb3cMA89zXQeHbdN/ruv5QXjEv7ZFmhX/HaDzrGj7vj0GiNZWcKjcoAdsxB4c8XlFlv+nQedZ3gFg33MdhKeurWGY+nqtm+Nva/qjA0IH4F3+Xdyrb7ECEPd7z7U1RdEMy7Y2TLAwNMu2LW38Td3AHw18lu36+w5xF/8R0EXW9N3ed20EzPCqQGOQph8EQRju92EIP/g4C46tMuQ6AGe4m2/AXr3Ni7ZPGWLL0gGSBXBB4YC2bAx2g0aLCuo6FgDXLYvhTvv2bZas3oTc9T88R1GAwwb8i4BTMhBg2tjIyUDDSAdT2KUIfK0oBuF2vGPfvQn7HdA5UDn0bEU1ra0KiL0QAHd1kaZZBT6FRgO/FfRLB79UGfxWw5PS0HM0lLepKrYXArnz/xfQBUg5AF6oKDBAHOTgOzLCSz5lj0zmx568DCHPmq7PAg/kDaQC2G4A0i7+fdBZ3e/d24f+0/dVmlcgz/y4ZyBBBfdfRxpf8GM4QgeStFWeVn1f3L60u+/r7F8Gned9CsTYEGSY3h7EV7Vt9hUyuGleIx+QHzCIHV1b5ymDHn5lbVvBpPSMXpa1gXdJ+1c58hrorOt8h0mZFCkH3nb5fpAk4BtiJBglxiNsYPTUdcNM7PMO+A5a8QWKTNJ2/K7L/jXQIObQVYcPApMFImsbsGZg6ZCz9Z1gFP6EyMdntzBBaDKZAFQ3fE3YL4CGj/FtMFg6TOmxr4EJXb1niJuyeBzC4XMa9i33NbK76Y9AEh2Mpu33TfovgC7T/uiCYEwFBdOmedNlAPmr6pqKl3A9DPnnUeJV01VfjCU5iGGcOvfYZ+XvBp2XfeCAmAcKgpRTkNgR9IoTMcAr8vR8PsFIYOD/53MKKQAHvCxAc48wQ2lX56OSGIoT9GX+e0FnTevpIBLV8ooeg9E8hE8FF1JwgHOAmyTxZAD68znngBfgdoAlYY6Bap97Fr6z4XVt9jtBZx1QY83kUWXwkXsU1BUyAk7PyeEQx4fZgY8LwAE2uPVgD18bDD/N4Roo8qQVeQp02u8dhZiX9qh/MLlHgFyOkPMzCfhwd5DIz/kIuwTY9D5gxZm2WIqz79PfBTrtQ8Bsoo63wIwiJAmNiAvgxCPAN+DJCYKQUdwtzhi8YUZ2CVGHT6FePYM5sFXA7JA1BfEAF8viCvlpxFfc5xF2UaJuHLsCPQDOpWoHz6B+DDoHKSBmpEZRt2HwAwK6AXIGkA8vD4CdjbDr7kcQthAh9qmrmIDa7/PvgwbMGpokt0FqgPKk7ciM/C3IA+z8yhH2nllbu2hStSdQPwKd9b6qgRP02iYvwLyiVBjk4nx4EzLBPgBJBmG3jCJgVcE9aqrfZ98DnYKc1xCLeX2VF90e35xsRl2lyTcgM2mnVc3sCOjJHlD/6j2IH9cg6/Q7oEEHLQ1yVq8vQAXDKzXq/BR/EzOq5GngCFIk7EAsvQfZr2Y90sbVA1sHOgjcALNRt0FQDIauvkvmOMKBrpD9cJfaA+qmCAKIu/MeGaLaDyzf6q4f3DtoNwhzEwQNo3NdneJluPEhueAAh36iHxJ8eNFVnhhFCvb+eQaowYY4+7u+8Q7ovD2i7VRcxIySqBjmbF7MINgDwowC3/Owoue6+L8fRPgVDgu44yRjqCucSZS1S17m2ObvgC5/NfR6F6atrpBzxR1qAOLL5QB4Hcc2FG4YtuMA8oRw36FIgToDylK37FObqnwDNM4UvjprINEGzCOd4znE8Qkk7FH9UdXWWMMzYeB/a02lCqQHEp/HHY/EBtSQ0jTkZYCT2eugwXBoG5qnrISZGzBXM5hRyAnVBRTNNA1D1zfc0HXDME1NoWpDcpmDHZ8HP9PB52BECZq00e6YkNUiob/gpRrpMUlgUQWj5BJ5jqWoG8MU4ArQTWOjKpbjxZckWlRHmtHBZql3aL0oaaSWrqCdB4dV10SwYooZpAyQVZCxsXkwDJC36ngRSHuKumA2pEYegkcDh6643YuSZqYHXpflED7mS5hjQICVAMPYbp4YW0PH2gN8z3gBdZND2JvnnauQqc1eAZ31wXYDM5Q2eZMG6eBTJpij0wUyPPWxkHlxA2z/coqmDBl9I30ocHNtBguo50EXaO3QnaLh2HfzmEHMoaspr0BmsBXNDSfCHlFDgNOg0EwNrW3xPGgI7ZjVSdEMdcWsrQM2Q7qxeREywd5AEjRh9mD5ipbR2kOCLAR8q1k5o9FR3LpAQjPFnmI+xR4ErZu3hqWqXnyaRV3WJdK6+AVzDRakKZ4ETW5lswZDCYRmL6szmc4XyI/0eTGDaSbPAv9IRvsmbB2yt4uEmnl0jNrTGt3EdsnFrObipNBaY8iRsamiBxMZM6T91qxBBr+gXteLVBU81Kz5Br8VTFDfPGNBQcjaCucipynoskQTrdn7NgNysOmpJSWMLpg3ziDWaQXLHoIl+M+mlS99BjfmgxLq+MRoDcqPH26TLpbFE6AxwTLYxPwKjqS/MqEBs6Was87DxgXaaIhKIT7FmM+1Z52POYP6PBIEUiMkqTGbfE1BFyhoxcl+5aPlkAkNmNeajMEwcGXADxOMoA8sAcBoFH8PcRkMPJCMWlvLqA8DrSEXzeuUzEH7hKTBRGq6Dl8QtTCtZyw0ylnGjJAdL0TAUq4C6BF4yByn9CrNklAP1rpGFwPeXNW32oyHmYAu0IXi97tqoUQO0EFbNeSZVjCoOM2nKCj2E4YoiswpQ7UlbRwIQrrI5tztikeg8y7Yrg0MlIBYw0NC1B+dIAYzJ/bL+/tyuJsOgi/625tYSeB1KNjrOKHQ7lcJthZFbayNsMsfgiajntWAnvlv0XLESeQopmQG0C3fhTzCBrcvfWHQnkgQCrMg6M27vM6I1f0D0HkHhgbdZ9ocA0rw61RSQle0zzoWJueC5JkBoTd4ftH8AShJGUmR6oxE7ZHxlUW9mnGG6D1B0OGMoKOLpxr8h+qGMhP9LEsbhK1Ib6B6AupR1CHQgsUTE7e4kszd+CzUX4yiRUFHp8AWDIexVrzkFD1foYlOiaeshbfQ7EA0TyjqkgBcZVjcAY2OhTlD/KLFxNzFiUgOXdO8mUTkLurDxdM0XSSIxOpqFDVzixMHs5JKpGRkmKCbiV8BcghKqGuGP0sNVluaLy/F8cU3BNTg9kRak4cBpcpA1AxQvgy6bI4QUmAUC1FHO2F0nOwdlfs0fYN0jKdWOR68OPjxeGq5Y1SMDf8+qrPnZT2wusUIBCJ7CFKOTbkIGtlhapgG4wsKLDTKgrYECXmXSdoUkd/GDTW4xYa8+uR7IWqRINIbod0qUHB5+wOsmcyPlVg3cBUbs1lgRzYJ/UELLX5aTTBW8RQyFW1sCk5VmxVpJrBjMJwmTzNRF4ckJkNVZA5aNHorwXZ8gW3AsKMb2CGE0ZKJNmW3QHYYYowNxKKaDimABXqqKH9hTCLZcdlFycY6GRKvfUdeUbOPQti0ElcqVIMMzMiOVPig0OYEjdKRwoYY4gubFW30MYehIg3GJfEkgBHfLBQEkI78ACPMBJkvgCYHhFOB7Kgn7BAZbco8hCDam60nUNXAO4nClgyRxGrGjxr5QXEF5tjzoIvq1/D3bs+MdJGIgua0B8ghe43IVVRLny+KqYobyT6IJ4iuiqJOCmaqkR8kyboqZkFT3LHBYgeyA73hWRINJ8T1X6JtpUR3uQRimHIiC1H5X+tFSxSTV0R+4ArKRoo/VkL4jz4zrXFaGpkd6AxNwXJEzyS6y4lsdJHeMJnYD0hD8oolMEIqwEuaTUQPYcoQSXNvE2PUsV3SQgyylQc1EEsRQ2dRF7ei1YtZYl5BqMe8tNfnC/RgfwV3SJSu82SJHYYoaLJgD+s2cuiMoubfUuBHQv4FSN1mo3mYA12winQAOQsL/yV2OAKlfRG0O8Gs65M6jSV6I8yPeVI7E35gKoCkZtXqYgZ0Tox39m2OkyJRmtih36TiHLjlWjmOQsQbDcZGwi1KM0YDYix4xYHUx6DO272jre2A48eKX5zF0gHo4TkoZEqDVBanMpaDbF3XcAcv7vTVBNgYOifxEuWEWG8gdQGWGjRREcNTHrS3gsCDMtqGJbQLnkXXLF4ocgYGztt2Pj4+Pz8+HHsSOsvfdsm/sAS3pqQLIqIV715WkvHwroGHGEonzq1sYAjmKb4E1lrn41UbAI/jw+ajUOnrHhJOFZHUclBN8UQ6AJujB62yqAC6ZUlLncYLcYcoE9HeAmbnUxiOttEX7Ls0f4JTJPeC6csA2m3LGdB1DsJE6ozR0lmgtLkerbS+1Tj2xSf+++hr/eNTGh/6bSIQ2U3U8Lbadvzbdi2Um5j5QJ9IUb7q5PUUNGYtmq5hCszKjiJoLmo3ME4QVJSPIdzPyXCEmIVHhvHMzX4InnwADfqVd6EGsUl6y15WNzMNkcfa/gJmBCy74XXtJzePQL5LPO8idJkbE9SiW4ovnKoA635GYnpbos0rui97rdlfN0N9A92F+KdjW411R0HZOAMhfC46Q76y9zEH+kPwIdEhnv3Gou9hNo9SKAypMWSags478C3oeOop6PgQc28uRNLADn2znRP0bjcn6u3a8PlXc24JhBHfvs8VdFphMQbXBPI50AaCbmoMrcRgWhSnQEvB6+jqVdC7NM/TK+yPGz+kV/OgVSE2oZC6zkGCWGfamMEc6D5YGxSYYhn+BdA3toNpGEH7XVPVTedfrfXVwFjSPN0Hjd6lxqVQfcP58RVXPtBw8x18L5bU5hJoTpeWQKv2KNqszqvyXGfj77ekZwKa12IBdM6WX3DuwRNonB9fCRUxxSWFZQ6RBx06V1FtN1rAm+mba7lRetdmdROlZbubkBoEIxjqmzCkmk0yuEQ0Za4YfMig66L9MQf6Nr/6RudBc574CvrDb8vWj9qs9T9k0EIMAImAdlNjKSUfQP9oivoB6Lx6TA/1IT12Te/5fZE3u+/SAyVd5XdAa6SIzTTIe14RRw4fPa/NIPS6cvoNRczZtpUjxqaqMctpsB74XdMGrEf5pvVYG6P1+HDbru1+XE2esX7TepSj9dDnrMfoXJqxUsODvutceFUaIg9vtdvt9/7Vubj8c55zLoOdTkc7bc3aaVwRx4rpnBs/8PUDAXTM59SMHx+A2fvEJOBzyg7K4+PZ3EWsIsRJzbvxeY9YYKlGw4CpnIKO5NiDf3OHD9RcgLpbuTshBnF5LXakmMZYSGsSCpjSoMKAaSH2oJLpxoI/1SzKq08LqauYYgh/Ip+4Wzk7MV7iAm6pBJgIuiJmnjXtPMEob29uIJRripkkgHQ0wHh6LgnQFqrJYGq5ZAu+0G618sUgj68B6qJnEmqn2kIS0AVo17J6Lt2qXRWtIaRbk7IH5oFcBYGP1uMDZ1ng+ziu5wnk+OAxy5Epb6bF/HEsfGC6xdzebLFmrKm28MRJjhhxH21NEj3j6l3weLv3uYRZLj7wqgIvjhKpBFmAAMccsZsr1mD5iZUQvgKqmWb8W5zEvJkvLx0ODls73jLMrupcJf3hCDUESPX4Kg8/SVKOz+pi4Fu+WiohCCugcrHGbbH+OMSm8VJFXWAfmmrjKmfHtVVVw7PYePJaU/XlxTdBU6QcP75Gpk2O++0Uf7bukYFLpMWL0VCL5sOHLHxhiYSV8pDPiBmEhyUmGmKBSV7mFAwpZOW+bDxuiQs6xDlJg3cBm2fjMinMSSlpouDIJYeLRgB0mGF2tbH8OClB4u4OoZy7F8Iw8T3PY1U9Y8krv4GCU0RWvfa5as1hsS4r1u2RIOrQZELQO7EquRFXZsW6pVQ9PnC1Gp/V+sv5ovq1Ps22HheCDxEqkILlos/XnZEcy/VpcYVCUEMxHxrDJSzBZGOtf2H5Av/qdPl185Iwl6Ej2FuxQA3BCSPHspwpZYmXxAABplAUO123MhWdQ3qYLa25aKZqgzusWYG6OS9pjSzq+EKtSFxXWNIV91gprmDtJEHLun1uWHm6wSISeuoF0GyzBy3YhmE7JbUvrjGL8SmZONdZELRuqX95lyReXkjUwYrGM5SmJVt5y8dK2K/JrHg6kroSl5Edbv8RVRKjG2aE7Lmr2Q3ruMvQ9sU120ioWzKvc5BL6i25Fo+t199bsVUdPN47syY3+pBJ0Ra3+KCg3YB1dTB1btv6VjdZrwZ5r6O4pC/ryLh4UVZ1Nd0RtBK3t2lb2lKGLl9e3xKd7s3sRWBuHQ8E7Se0nk/dRyzTgGGyxi8zK/rSUqoYGIxrW2B6McTT15t10C2tjRdsS5nHwo/JxliJhQZEZRfUxohRwzvRzonQpyYeuKEX/93AlwkneycijBqNxYX2YaMsZOLtMPtZXSxvUvHYWlGZDwtcaXw4LBVITSyuRPBVbLQcHvkz2qMS+biflxjj+dHMLhWcHNUUBS2sx6UjO0paJZL3i4mgu8BcQ5jeZeMGN2nDh8BqpDVuo0JBu+5oZWNAePkJliKKYjx6Rg/IJ58igdCTTUzJbecVMBYD7eVNKijakR9DpCfuM+VrYKNxDZixE2pD7LAcHY+L5rYUSmulQqXstrGmubGjru5ucSN+ZFj4GyrvYlgmLGQRapcEHUy2QMZLB8kh0he/ur4WF9pZVAo5K3iWUcuyu6CD7cagpeZxu9g5Xt56RdEo6KDjn54+BxpdIj70mtl2Ne78ptU4SA83RnAXdFGVzrC5Zlx54aOm6d4jogYYu6ePqNK+EGEdfbIXigRd0lYItsfA+VUV9/eaQhy4NoIupR3MM6Iel5R1wwLzQYSWt/o82iFrbaSl5zlB46biFPdFW9PTLqv5Iy60j4kdfyqkkAEsCB7f08ASm+RUPDz7Fj0BG8xj5Kny5mvJcgyMpkhz2Bd9lHfYrybHEIfdv9fdpoKtZtEe68gFRni380HSCp7GeggbIONJr62061vev8Vs9GDv6ACGNzmYuJocY/ganlinzMHIe2QxdMbaxm73+fGxg/BONUxVdYPLvX3fdJo1cGUxU9Z4mO6ORceCB3RIgF+Towyr2eNEOCXZyOoqEzFHAeHF8bnzFYzVjI1igToylzKzWxbcTOK71uQIEmCOpQ2J2fUAV9bSzlfviYMMlN+yp9asPsbrYpwk/sd1fAJo5iO35lrRXC9AFzgcGmcD3Qs8GHiupmjmdmaD0Nw5BrDRNROfmNHeOZzjsudm9FLhEBSYvB2PGehxrS6ZOnZn8+jE9SUZxoXOZHvY7W16qgj7eYib9cb9VnVAM01Hip46nIPnLzZkQGiS8tsu6jg+hZ88ZgAt7I3B87+koNguL4qwYR52y8P+dNPkYGvNbDCkKiM7FUSmY23OCHruwBntVtHVgA4zpPWVIIA5+BAwS6DReJt44lpds3qCY2M4rQLiaRZmGIA5mT0FdTuas3BMbjV/Ml8djo2MugiBtUhnVq2TQTPchrEZK0yAbQ4xUAMS3SSZP2+GISY7LrJwpHl19+Dn7bBqkQh0XgZ9Oy1uLB1GHM+ZSP1BhvIdniZqhuNmC0c/F04zu4OHwVOUWCIr/yl4Og+Yl0HfH2Bq3PAiR4GsTlq2Rz9tBr/iNq+csaXT+W5d0XnVCtLLgqfzx3XlzXeVl0+sApv1uXMm5ApLSKpxayBWSjeYjrxyBHs8uA05Lp5HOu/mMH9++t7S9uPFs/oWuc/DPOaKDgUNHTMWD44vHcGmfgQbCGRronXqz2L+9DGc0J4/hc2OjZ9mzmwMZ5nHE9jaZvFY8J0T+pAtMm/epP6x/acNPmcwfwYntqXeNJ8Q91ACiS5xtNB5gg4FNxmZr+Wz7ou9EFB7qR9BDhbQx0Mk0ecU9C4aDi8oynretHGm0FrPlkBoXDHjR5FbMe40y1gtduRrx1fClKE+t3/vZgQds2Mi1HZCW5S3bqHTsfBAQzITUQ18hiDah5Du2oeheLm/R04Naza4+A8/4qQ1TBs5zLvkerolYS1JVOwqzNlnHRMcHf2iTe09krn2HgnV4Cjw36MS+kTor+UGMKu7baO2JvUXQtQVoC58AfPndTEijmJs/gJxBrUYJk+Igx0hVzfYYRaCvXj2LFcyyrlCzNRFydzebSG1qu73f8HzpMiQMMia/FcT8Jh3QtEM2+ycImyaDTEHa4+sbihbh8jvhK1fovn+QPlgsDIsEGXYkcQ073Z/uQe6wC2zJnaA6Qh12uZlc+KWvUMpfo+ppvTzErFuyKw7cgQPYHIQLzSQOtf1rX9UgV2U0EMAoYv3+jDBhLH+QmmblaCNoNhl/TOYFTR3cDk6JLdTcskhWu7CdKUGBmn+viuzNmVdlH7Vxbsdr/I2Zf2F0i4tui8fO4uVP8MB9D5ZbJ54O494r5sXxLpjU7Tuh/+Fch4/r83f7y2GnXroXY7YBwbbllVFWUS7JUG/2hGtHlsw0TRSp0mL8fE7XdwYx6g7I+uWVzeAOkHU0ffauFGDwoGFNeuY1w+f9fWof+WjfnnpiDrsU3r3YwuoT7sP/2d2er9hXnw43br8HYMQZME6TaJ8ukcdFR92JiRZm9SdMcthHoEidf7rHETNryp9EzZAHnrlYT9FfMsKfMrQaXL/uE/o4x6QKTINUFt+X4MRAYqUIOyf51/UBPIN2AB5bAEJwUIJ1OiwualvUKfJY/e4c+UT3TazLkPUmuqBEcmbhjqEDo11qXflK7hjrmtlxbq6Ng24wdTD0EVxs2f6sT7T1zRrGk/ZWvrQJLRlPVRvjU3TZxubYlvT862tKevq2mJHQmyAY20Vr3mq8+1THWTzuvOweTFruVy0DXa9ba9F47rChqyH+8Dhr4i4qm/+NoU5a9oiHVqxqqoH6vLb2t5WRcHelxrfZlnVZiE2Y6659sJFxoBPodNjADi7yhi4XHfYojhrqyzrz6zpLUjkyStgnuyKXIIRHVoM+1039OvlewxTs+mC2jgnSTI2FYYUGxs6n8/Y65ZviswaQV97OVN74f3THaifbpoNAD1NHZqJY89sasY8aUBNZa0sS1PAD/9kdH0B3ze7oPbT9FKua7aqeW33dK/v59uT5xVruXztTj6IK+/aSp7Vup42+R6Z3BXDJOVpfe1Pji2in++q/kJPddagfOgDn/VNlrHO9eGx7Jq6fMTHoijrpiuppXre4auvneBfa07+Ysv9rBU77nPt6/Hmgrqcv02JOvDXdP/BrXl9B1K+9dxvX+q5/9o9Ade7Dej8+h4vCgCdJNwAJqXbDK43BVxvCaC7DtLhSQ12yc67fk8n49+73eDVayRgUveuprAbN9yg68HOgjFo0h/DnQxHvKGBH1U6XIeB3wovNijavqN7JEzQDw2MRvPqPRIv331RpHhfh6rQxSw6u08mTzMUZ3q9rCO8jvE6jGOKk5CB+tLNNTqSbKOoeGNH+vKNHW9cjQIcqX12Z8eG7pM5dn1XpehzuhYvujge99dxPOJ1GHhVB9jBCp54pJtrNuy2Dr/p37kb5a1LaLKib4eLQgx2D05Y4g00YJ7BLtdNcyNH09Rgt+FxvIcmC9ldO+ZwRUnXF9k7n//mdT8Amy4KQQAmlWIA+JHuBWtruuksRdeCN5vV7AaxI265wXIOvAC/KF5R8h7kb1yshDf+fJHg8NoqvPdJwxIHQKfrUYaLiogtoY/FEHoKXmdFU/P19l0/1beusMK7lbo9LbepBqAxaFHIstk+IG/o8uc4tkWLR+NTbNcD5W2/c/fWty4LK/Bys3bPbgpDvJalr8dmiqvV2FBxDZaGIcfJ2LdkJr/zud+9lg0+HkzCnt1QtcKWyMO9ZjaM8a4zwLtid1zhRWHfRFz9jrvkyjzLW3ZDFZbxTK5t5SBpk64QozuuWnjy9+/u+z1XDUIwijdU9ehfWKPva6dvQIuepcc7rrLfc2nf77zUEfxicbUb/AAbUoAv/H2f9JuvzyyGe83SYQx3nf3mizT/XFT6B/Qf0H9A/wH9B/Qf0P+zoP8P5fIdRbcjoKMAAAAASUVORK5CYII=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap">
 <script>
-  // Stránka se vždy otevře od začátku (ne na posledním místě, kde jsi skončil)
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  // ...a to i když je ikona na ploše uložená s #sekcí (např. #onas) - sekci z adresy odstraníme dřív, než na ni prohlížeč skočí
+  // Stránka se vždy otevře nahoře – i z ikony na ploše uložené s #sekcí.
+  history.scrollRestoration = 'manual';
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 </script>
-<title>Roshambo Praha — Šipkový tým</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
-
   :root {
-    --black: #0a0a0a;
-    --dark: #141414;
-    --card: #1c1c1c;
-    --border: #2a2a2a;
-    --yellow: #f5c518;
-    --red: #c0392b;
-    --text: #e8e8e8;
-    --muted: #888;
+    --bg: #0a0a0a; --surface: #141414; --card: #1b1b1b; --card-hi: #232323; --line: #2a2a2a;
+    --text: #ececec; --muted: #8f8f8f; --yellow: #f5c518; --red: #c0392b; --green: #2e9e5b; --amber: #d9a400;
+    --us: #2b2610; --radius: 10px; --gap: clamp(16px, 3vw, 28px); --maxw: 1120px;
+    --display: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: dark;
   }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 var(--font); }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gap); }
+  .muted { color: var(--muted); }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  /* ---------- navigace ---------- */
+  .nav { position: sticky; top: 0; z-index: 40; padding-top: env(safe-area-inset-top);
+         background: rgb(10 10 10 / .9); backdrop-filter: blur(10px); border-bottom: 2px solid var(--yellow); }
+  .nav .wrap { display: flex; align-items: center; gap: 16px; height: 58px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 24px var(--display); letter-spacing: 2px;
+           color: var(--yellow); text-decoration: none; white-space: nowrap; }
+  .brand svg { width: 28px; height: 28px; flex: none; }
+  .nav ul { display: flex; gap: clamp(12px, 3vw, 28px); margin: 0 0 0 auto; padding: 0; list-style: none; }
+  .nav ul a { font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+              color: var(--muted); text-decoration: none; }
+  .nav ul a:hover { color: var(--yellow); }
+  @media (max-width: 480px) { .brand span { display: none; } }
 
-  body {
-    background: var(--black);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-  }
+  /* ---------- úvod ---------- */
+  .hero { position: relative; overflow: hidden; text-align: center; padding: clamp(56px, 10vw, 110px) var(--gap) 64px;
+          background: radial-gradient(60% 50% at 50% 0%, rgb(245 197 24 / .10), transparent 70%); }
+  .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 1px; background: var(--line); }
+  .kicker { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--yellow); }
+  .hero h1 { margin: 14px 0 10px; font: clamp(46px, 13vw, 140px)/.9 var(--display); letter-spacing: clamp(1px, .6vw, 5px); }
+  .hero h1 span { display: block; color: var(--yellow); }
+  .tagline { margin: 0; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .quote { max-width: 560px; margin: 28px auto 0; padding: 14px 20px; text-align: left; font-style: italic;
+           color: var(--yellow); border-left: 4px solid var(--yellow); background: rgb(245 197 24 / .07); border-radius: 0 6px 6px 0; }
+  .next { max-width: 560px; margin: 28px auto 0; padding: 18px 20px; text-align: left; border-radius: var(--radius);
+          background: var(--card); border: 1px solid var(--line); box-shadow: 0 10px 30px rgb(0 0 0 / .35); }
+  .next[hidden] { display: none; }
+  .next-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .next-kicker { letter-spacing: 1px; }
+  .next-when { font: 26px/1.1 var(--display); letter-spacing: 1px; color: var(--yellow); }
+  .next-teams { margin: 6px 0 10px; font-weight: 600; }
+  .next-teams b { color: var(--yellow); }
+  .next-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; }
+  .form { display: inline-flex; gap: 5px; align-items: center; }
+  .form i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .form i.win { background: var(--green); } .form i.draw { background: var(--amber); } .form i.loss { background: var(--red); }
 
-  /* NAV */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,10,0.95);
-    border-bottom: 2px solid var(--yellow);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 32px;
-    backdrop-filter: blur(8px);
-  }
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--yellow);
-    letter-spacing: 2px;
-  }
-  .nav-links { display: flex; gap: 24px; }
-  .nav-links a {
-    color: var(--muted); text-decoration: none;
-    font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--yellow); }
+  /* ---------- sekce ---------- */
+  .section { padding: clamp(48px, 8vw, 88px) 0; border-bottom: 1px solid var(--line); }
+  h2 { margin: 0 0 28px; font: clamp(42px, 7vw, 64px)/1 var(--display); letter-spacing: 2px; color: var(--yellow); }
+  h2::after { content: ""; display: block; width: 48px; height: 3px; margin-top: 14px; background: var(--red); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(14px, 3vw, 24px); }
+  .meta { margin: 0 0 12px; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+  .note { margin: 14px 0 0; font-size: 12.5px; color: var(--muted); }
+  .note b { color: var(--text); }
+  .select { width: 100%; margin-bottom: 18px; padding: 13px 16px; font: 20px var(--display); letter-spacing: 1px;
+            color: var(--yellow); background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
 
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 60%),
-      var(--black);
-    padding: 40px 20px;
-    position: relative;
-    overflow: hidden;
-  }
+  /* ---------- tabulky ---------- */
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { padding: 11px 10px; font-size: 10.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+       text-align: center; color: #000; background: var(--yellow); white-space: nowrap; }
+  td { padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--card); }
+  .t-left { text-align: left; }
+  .pos { font: 19px var(--display); color: var(--muted); }
+  tr.podium .pos { color: var(--text); } tr.us .pos, tr.first .pos { color: var(--yellow); }
+  .pts { font-weight: 700; color: var(--yellow); }
+  tr.us > td { background: var(--us); }
+  tr.us .team { color: var(--yellow); font-weight: 700; }
 
-  /* Šipky na pozadí */
-  .hero::before {
-    content: "🎯";
-    position: absolute;
-    font-size: 320px;
-    opacity: 0.04;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
+  /* tabulka ligy: pořadí a název týmu zůstávají při posunu do strany */
+  .standings { min-width: 620px; }
+  .standings tr:not(.detail) > :is(th, td):nth-child(1) { position: sticky; left: 0; z-index: 1; width: 44px; }
+  .standings tr:not(.detail) > :is(th, td):nth-child(2) { position: sticky; left: 44px; z-index: 1; text-align: left;
+                                        box-shadow: 6px 0 8px -6px rgb(0 0 0 / .8); }
+  .standings th:nth-child(-n+2) { z-index: 2; }
+  .team span { display: block; max-width: min(46vw, 260px); overflow: hidden; text-overflow: ellipsis; }
 
-  .hero-eyebrow {
-    font-size: 11px; letter-spacing: 4px;
-    text-transform: uppercase; color: var(--yellow);
-    margin-bottom: 16px;
-  }
+  /* rozbalovací řádky */
+  tr.expandable { cursor: pointer; }
+  tr.expandable:hover > td, tr.expandable[aria-expanded="true"] > td { background: var(--card-hi); }
+  tr.us.expandable:hover > td, tr.us.expandable[aria-expanded="true"] > td { background: #3a3315; }
+  .chev { display: inline-block; width: 12px; margin-right: 6px; font-size: 10px; color: var(--muted); transition: transform .15s; }
+  [aria-expanded="true"] .chev { transform: rotate(90deg); color: var(--yellow); }
+  tr.detail > td { padding: 0; text-align: left; white-space: normal; background: var(--surface); }
+  .detail-body { position: sticky; left: 0; width: var(--view, 100%); padding: 14px 14px 16px; }
+  .detail-title { margin-bottom: 8px; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
 
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(64px, 14vw, 140px);
-    line-height: 0.9;
-    letter-spacing: 4px;
-    color: #fff;
-    margin-bottom: 8px;
-  }
-  .hero-title span { color: var(--yellow); }
+  /* mřížka čísel v detailu */
+  .grid-rows > div { display: grid; grid-template-columns: minmax(96px, 1.6fr) repeat(4, 1fr); gap: 6px; padding: 5px 0;
+                     font-size: 12px; border-bottom: 1px solid rgb(255 255 255 / .05); }
+  .grid-rows > div > span { text-align: center; white-space: nowrap; }
+  .grid-rows > div > span:first-child { white-space: normal; overflow-wrap: anywhere; }
+  .grid-rows > div > span:first-child { text-align: left; }
+  .grid-rows .head { font-size: 10px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+  .hl { color: var(--yellow); font-weight: 700; }
 
-  .hero-sub {
-    font-size: 13px; color: var(--muted);
-    margin-bottom: 32px; letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+  /* statistika hráčů pod tabulkou */
+  .players { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .players table { font-size: 12.5px; }
+  .players th { background: none; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .players td { text-align: left; padding: 8px; background: none; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 24px; }
+  .groups h4 { margin: 0 0 6px; font-size: 10px; letter-spacing: .8px; text-transform: uppercase; color: var(--yellow); }
+  .groups p { display: flex; justify-content: space-between; gap: 10px; margin: 0; padding: 2px 0; font-size: 12px; }
+  .groups p span:first-child { color: var(--muted); }
+  .groups p span:last-child { font-weight: 600; }
+  .compare { margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .compare label { margin-right: 8px; font-size: 10.5px; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+  .compare select { max-width: 100%; padding: 6px 8px; font-size: 12px; color: var(--yellow); background: var(--bg);
+                    border: 1px solid var(--line); border-radius: 4px; }
+  .compare .grid-rows > div { grid-template-columns: minmax(120px, 1.6fr) 1fr 1fr; }
 
-  .hero-quote {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(18px, 4vw, 28px);
-    color: var(--yellow);
-    background: rgba(245,197,24,0.08);
-    border-left: 3px solid var(--yellow);
-    padding: 12px 24px;
-    margin: 0 auto 40px;
-    max-width: 680px;
-    letter-spacing: 2px;
-    text-align: left;
-  }
+  /* rozpis zápasů */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: -12px 0 18px; font-size: 11px; letter-spacing: .8px;
+            text-transform: uppercase; color: var(--muted); }
+  .legend i { display: inline-block; width: 4px; height: 14px; margin-right: 7px; vertical-align: -2px; border-radius: 2px; }
+  .matches { min-width: 760px; }
+  .matches td:first-child { border-left: 4px solid transparent; }
+  .matches tr.win td:first-child { border-left-color: var(--green); }
+  .matches tr.draw td:first-child { border-left-color: var(--amber); }
+  .matches tr.loss td:first-child { border-left-color: var(--red); }
+  .matches tr.played td { color: var(--muted); }
+  .matches tr.played .ours { color: #b9a14a; }
+  .matches .ours { font-weight: 700; }
+  .matches .done::after { content: " ✓"; color: var(--green); }
+  .matches .score { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+  .matches tr.win .score { color: var(--green); } .matches tr.draw .score { color: var(--amber); } .matches tr.loss .score { color: #e05a4a; }
+  .matches tr.next > td { background: var(--us); border-bottom: 1px solid var(--yellow); color: var(--text); }
+  .badge { display: block; margin-top: 2px; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--yellow); }
+  .map { padding: 0; border: 0; background: none; color: inherit; cursor: pointer; text-decoration: none;
+         border-bottom: 1px dotted var(--muted); white-space: nowrap; }
+  .map::before { content: "📍 "; }
+  .map:hover { color: var(--yellow); border-color: var(--yellow); }
 
-  .hero-badge {
-    display: inline-block;
-    background: var(--yellow);
-    color: #000;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 8px 20px;
-    border-radius: 2px;
-  }
+  /* tým */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .player { padding: 22px 14px 18px; text-align: center; background: var(--card); border: 1px solid var(--line);
+            border-radius: var(--radius); transition: transform .15s, border-color .15s; }
+  .player:hover { transform: translateY(-3px); border-color: var(--yellow); }
+  .player svg { width: 64px; height: 64px; }
+  .player h3 { margin: 10px 0 2px; font-size: 14px; }
+  .role { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .captain { display: inline-block; margin-top: 8px; padding: 2px 8px; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+             text-transform: uppercase; color: #000; background: var(--yellow); border-radius: 3px; }
 
-  /* SEKCE */
-  section { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    letter-spacing: 3px;
-    color: var(--yellow);
-    margin-bottom: 8px;
-  }
-  .section-line {
-    width: 48px; height: 3px;
-    background: var(--red);
-    margin-bottom: 40px;
-  }
-  .section-note {
-    font-size: 12px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: -24px 0 32px;
-  }
+  /* o nás + patička */
+  .about { max-width: 720px; border-left: 4px solid var(--yellow); }
+  .about p { margin: 0 0 12px; }
+  .about em { color: var(--yellow); }
+  footer { padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); text-align: center; font-size: 12px; color: var(--muted); }
+  footer b { color: var(--yellow); }
 
-  /* TABULKA ZÁPASŮ */
-  .matches-table {
-    width: 100%; border-collapse: collapse;
-    font-size: 13px;
-  }
-  .matches-table thead tr {
-    background: var(--yellow);
-    color: #000;
-  }
-  .matches-table th {
-    padding: 10px 12px;
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-align: center;
-  }
-  .matches-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-    color: var(--text);
-  }
-  .matches-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin: -24px 0 28px;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .matches-legend span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .matches-legend .dot {
-    width: 4px; height: 14px;
-    border-radius: 1px;
-    display: inline-block;
-  }
-  .matches-legend .dot.win { background: #4a9d6e; }
-  .matches-legend .dot.draw { background: #d4a544; }
-  .matches-legend .dot.loss { background: #c0392b; }
-  .mini-stats {
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
-  .mini-stats-title {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-  .mini-stats-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11px;
-  }
-  .mini-stats-table th {
-    text-align: left;
-    color: var(--muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 9.5px;
-    letter-spacing: 0.5px;
-    padding: 4px 8px 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .mini-stats-table td {
-    padding: 5px 8px 5px 0;
-    color: var(--text);
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-  }
-  .mini-stats-table .msu { color: var(--yellow); font-weight: 700; }
-  .matches-legend .dot.next { background: var(--yellow); }
-  .matches-table tr:hover td { background: rgba(245,197,24,0.04); }
-  .matches-table tr.played td { color: var(--muted); opacity: 0.55; }
-  .matches-table tr.played .roshambo { color: #a5883e; }
-  .matches-table tr.played td:first-child::after {
-    content: "✓";
-    color: #4a9d6e;
-    margin-left: 6px;
-    opacity: 1;
-  }
-  .matches-table tr.played.result-win td:first-child { border-left: 3px solid #4a9d6e; }
-  .matches-table tr.played.result-draw td:first-child { border-left: 3px solid #d4a544; }
-  .matches-table tr.played.result-loss td:first-child { border-left: 3px solid #c0392b; }
-  .matches-table tr.played.result-win td { background: rgba(74,157,110,0.07); }
-  .matches-table tr.played.result-draw td { background: rgba(212,165,68,0.07); }
-  .matches-table tr.played.result-loss td { background: rgba(192,57,43,0.07); }
-  .matches-table tr.next-match td {
-    background: rgba(245,197,24,0.1);
-    border-top: 1px solid var(--yellow);
-    border-bottom: 1px solid var(--yellow);
-  }
-  .matches-table tr.next-match td:first-child {
-    position: relative;
-  }
-  .next-match-badge {
-    display: block;
-    font-size: 9px;
-    letter-spacing: 0.5px;
-    color: var(--yellow);
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-  .roshambo { font-weight: 700; color: var(--yellow); }
-  .vs { color: var(--muted); font-size: 11px; }
-  .misto { color: var(--muted); font-size: 12px; text-align: left !important; }
-
-  /* TABULKA LIGY (KONEČNÉ POŘADÍ) */
-  .table-wrap { overflow-x: auto; }
-  .standings-table {
-    width: 100%; border-collapse: collapse;
-    font-size: 13px;
-    min-width: 720px;
-  }
-  .standings-table thead tr {
-    background: var(--yellow);
-    color: #000;
-  }
-  .standings-table th {
-    padding: 10px 10px;
-    text-transform: uppercase;
-    font-size: 10.5px;
-    letter-spacing: 1px;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .standings-table th:nth-child(2) { text-align: left; }
-  .standings-table td {
-    padding: 9px 10px;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-    color: var(--text);
-    white-space: nowrap;
-  }
-  .standings-table td:nth-child(2) { text-align: left; }
-  .standings-table tr:hover td { background: rgba(245,197,24,0.04); }
-  .standings-table .team-name { color: var(--text); }
-  .standings-table .pos {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
-    color: var(--muted);
-  }
-  .standings-table .pts { font-weight: 700; color: var(--yellow); }
-  .standings-table tr.us td { background: rgba(245,197,24,0.09); }
-  .standings-table tr.us .team-name { color: var(--yellow); font-weight: 700; }
-  .standings-table tr.us .pos { color: var(--yellow); }
-  .standings-table tr.podium .pos { color: var(--text); }
-  .standings-table tr.podium:nth-child(1) .pos { color: #f5c518; }
-  .standings-legend {
-    margin-top: 16px;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-  }
-  .standings-legend b { color: var(--text); }
-
-  /* SEZÓNNÍ ACCORDION */
-  .season-select-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .season-select {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-    background: var(--card);
-    color: var(--yellow);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 10px 14px;
-    cursor: pointer;
-    flex: 1;
-    min-width: 240px;
-  }
-  .season-select:hover, .season-select:focus { border-color: var(--yellow); outline: none; }
-  .season-panel {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 24px;
-  }
-  .season-acc-meta {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* HRÁČI */
-  .players-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 16px;
-  }
-  .player-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 24px 16px;
-    text-align: center;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .player-card:hover {
-    border-color: var(--yellow);
-    transform: translateY(-2px);
-  }
-  .player-avatar {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    margin: 0 auto 12px;
-  }
-  .player-avatar svg { width: 100%; height: 100%; display: block; }
-  .player-name {
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--text);
-  }
-  .player-role {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-  }
-  .captain-badge {
-    display: inline-block;
-    background: var(--yellow);
-    color: #000;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    margin-top: 6px;
-    text-transform: uppercase;
-  }
-
-  /* O NÁS */
-  .about-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--yellow);
-    padding: 32px;
-    border-radius: 4px;
-    max-width: 760px;
-  }
-  .about-box p { color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
-  .about-box p:last-child { margin-bottom: 0; }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    text-align: center;
-    padding: 32px 20px;
-    color: var(--muted);
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-  footer span { color: var(--yellow); }
-
-  /* DIVIDER */
-  .full-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
-
-  @media (max-width: 600px) {
-    nav { padding: 12px 16px; }
-    .nav-links { gap: 12px; }
-    .matches-table th:nth-child(6),
-    .matches-table td:nth-child(6) { display: none; }
-    .hero-title {
-      font-size: clamp(38px, 11vw, 64px);
-      letter-spacing: 1.5px;
-    }
-    .hero { padding: 40px 16px; }
-    .standings-table th:nth-child(1),
-    .standings-table td:nth-child(1) {
-      width: 22px;
-      padding-left: 8px;
-      padding-right: 2px;
-    }
-    .standings-table th:nth-child(2),
-    .standings-table td:nth-child(2) {
-      max-width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .standings-table th:nth-child(3),
-    .standings-table td:nth-child(3) {
-      min-width: 46px;
-      white-space: nowrap;
-      padding-right: 12px;
-    }
-  }
-
-  /* ===== Statistika hráčů: detail + porovnání ===== */
-  .mini-hint { text-transform: none; letter-spacing: 0; opacity: .8; }
-  .mini-player { cursor: pointer; }
-  .mini-player:hover td, .mini-player.open td { background: rgba(245,197,24,0.06); }
-  .mini-player:focus-visible { outline: 1px solid var(--yellow); outline-offset: -1px; }
-  .mini-player td:first-child { white-space: nowrap; }
-  .mp-chev { display: inline-block; width: 12px; margin-right: 6px; color: var(--muted); font-size: 10px; transition: transform .15s ease; }
-  .mini-player.open .mp-chev { transform: rotate(90deg); color: var(--yellow); }
-  .mini-stats-table tr.mini-detail td { padding: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); }
-  .md-wrap { padding: 14px 10px 16px 18px; }
-  .md-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 24px; }
-  .md-group-title { font-size: 9.5px; text-transform: uppercase; letter-spacing: .8px; color: var(--yellow); margin-bottom: 6px; }
-  .md-row { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; padding: 2px 0; }
-  .md-row span:first-child { color: var(--muted); }
-  .md-row span:last-child { color: var(--text); font-weight: 600; }
-  .md-compare { margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); }
-  .cmp-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-right: 8px; }
-  .cmp-select { background: var(--dark); color: var(--yellow); border: 1px solid var(--border); border-radius: 3px; font-size: 11px; padding: 5px 8px; max-width: 100%; }
-  .cmp-select:focus { border-color: var(--yellow); outline: none; }
-  .cmp-out { margin-top: 10px; }
-  .cmp-row { display: grid; grid-template-columns: minmax(110px, 1.5fr) 1fr 1fr; gap: 8px; padding: 4px 0; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .cmp-row span { text-align: center; color: var(--text); }
-  .cmp-row span:first-child { text-align: left; color: var(--muted); }
-  .cmp-row.cmp-head span { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--yellow); font-weight: 700; }
-  .cmp-row.cmp-head span:first-child { color: var(--muted); }
-  .cmp-row .better { color: var(--yellow); font-weight: 700; }
-
-  /* ===== Detail týmu v tabulce (aktuální sezóna) ===== */
-  .team-row { cursor: pointer; }
-  .team-row:hover td, .team-row.open td { background: rgba(245,197,24,0.06); }
-  .team-row:focus-visible { outline: 1px solid var(--yellow); outline-offset: -1px; }
-  .team-row.open .mp-chev { transform: rotate(90deg); color: var(--yellow); }
-  .standings-table tr.team-detail td {
-    padding: 0 !important; width: auto !important; max-width: none !important;
-    text-align: left !important; white-space: normal !important; overflow: visible !important;
-    border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015);
-  }
-  .td-wrap { position: sticky; left: 0; box-sizing: border-box; padding: 12px 10px 14px 12px; }
-  .td-title { font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--yellow); margin-bottom: 8px; }
-  .tp-row { display: grid; grid-template-columns: minmax(92px, 1.6fr) .6fr .9fr .9fr .9fr; gap: 6px; padding: 4px 0; font-size: 11px; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .tp-row span { text-align: center; color: var(--text); }
-  .tp-row span:first-child { text-align: left; overflow-wrap: anywhere; }
-  .tp-head span { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; }
-  .tp-row .tp-usp { color: var(--yellow); font-weight: 700; }
-  .td-note { font-size: 9.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
-  @media (max-width: 600px) { .standings-table { min-width: 600px; } }  /* sloupec Body zůstane celý vidět */
-
-  /* odkaz na trasu v Google Maps (rozpis zápasů) */
-  .misto a.map-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--muted); white-space: nowrap; }
-  .misto a.map-link:hover { color: var(--yellow); border-bottom-color: var(--yellow); }
-
-  /* výběr mapy po kliknutí na místo */
-  .map-sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; }
-  .map-sheet { width: 100%; max-width: 420px; background: var(--card); border: 1px solid var(--border); border-bottom: none;
-    border-radius: 12px 12px 0 0; padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
-  @media (min-width: 601px) { .map-sheet-bg { align-items: center; } .map-sheet { border-radius: 12px; border-bottom: 1px solid var(--border); } }
-  .map-sheet-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
-  .map-sheet-place { font-size: 15px; color: var(--yellow); font-weight: 700; margin-bottom: 14px; }
-  .map-sheet a, .map-sheet button { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 8px;
-    border-radius: 6px; font-size: 14px; font-weight: 600; text-align: left; text-decoration: none; cursor: pointer;
-    background: var(--dark); color: var(--text); border: 1px solid var(--border); font-family: inherit; }
-  .map-sheet a:hover { border-color: var(--yellow); color: var(--yellow); }
-  .map-sheet a small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .map-sheet button { text-align: center; background: transparent; color: var(--muted); margin-bottom: 0; }
-  .matches-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }  /* rozpis se posouvá sám, stránka ne */
+  /* výběr mapy */
+  .sheet-bg { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center;
+              background: rgb(0 0 0 / .6); animation: fade .15s; }
+  .sheet { width: 100%; max-width: 420px; padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+           background: var(--card); border: 1px solid var(--line); border-radius: 14px 14px 0 0; animation: up .2s; }
+  @media (min-width: 601px) { .sheet-bg { align-items: center; } .sheet { border-radius: 14px; } }
+  .sheet h3 { margin: 2px 0 14px; color: var(--yellow); }
+  .sheet a, .sheet button { display: block; width: 100%; margin-bottom: 8px; padding: 12px 14px; text-align: left;
+                            text-decoration: none; font-weight: 600; background: var(--bg); border: 1px solid var(--line);
+                            border-radius: 8px; cursor: pointer; }
+  .sheet a:hover { border-color: var(--yellow); color: var(--yellow); }
+  .sheet small { display: block; font-weight: 400; color: var(--muted); }
+  .sheet button { margin: 0; text-align: center; color: var(--muted); background: none; }
+  @keyframes fade { from { opacity: 0; } } @keyframes up { from { transform: translateY(24px); } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-<!-- NAV -->
-<nav>
-<div class="nav-logo">🎯 Roshambo Praha</div>
-<div class="nav-links">
-<a href="#zapasy">Zápasy</a>
-<a href="#tabulka">Tabulka</a>
-<a href="#hraci">Hráči</a>
-<a href="#onas">O nás</a>
-</div>
-</nav>
-<!-- HERO -->
-<div class="hero">
-<div class="hero-eyebrow">3. liga C · Sezóna 2026/2027</div>
-<h1 class="hero-title">ROSHAMBO<br/><span>PRAHA</span></h1>
-<p class="hero-sub">Šipkový tým · Praha · Česká republika</p>
-<div class="hero-quote">
-    „Screw you guys, I'm going home... but first, one more leg."
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Roshambo Praha – nahoru">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#0a0a0a" stroke="#f5c518" stroke-width="3"/><circle cx="32" cy="32" r="21" fill="#f5c518"/><circle cx="32" cy="32" r="14" fill="#1b1b1b"/><circle cx="32" cy="32" r="7.5" fill="#f5c518"/><circle cx="32" cy="32" r="3.8" fill="#c0392b"/></svg>
+      <span>Roshambo Praha</span>
+    </a>
+    <nav aria-label="Hlavní navigace"><ul>
+      <li><a href="#tabulka">Tabulka</a></li><li><a href="#zapasy">Zápasy</a></li>
+      <li><a href="#tym">Tým</a></li><li><a href="#onas">O nás</a></li>
+    </ul></nav>
   </div>
-<span class="hero-badge">Šipky. Pivo. Legenda.</span>
-</div>
-<hr class="full-divider"/>
-<!-- TABULKA -->
-<section id="tabulka">
-<div class="section-title">Tabulka</div>
-<div class="section-line"></div>
-<div class="season-select-row">
-<select class="season-select" id="seasonSelect">
-<option id="current-season-meta" value="2026">Sezóna 2026/2027 · průběžně 9. místo</option>
-<option value="2025">Sezóna 2025/2026 · 6. místo</option>
-<option value="2024">Sezóna 2024/2025 · 8. místo</option>
-<option value="2023">Sezóna 2023/2024 · 7. místo</option>
-<option value="2022">Sezóna 2022/2023 · 11. místo</option>
-</select>
+</header>
 
-</div>
-<div class="season-panel" id="panel-2026">
-<div class="season-acc-meta" id="current-season-meta-inline" style="margin-bottom:12px;">3. liga C · průběžně 9. místo</div>
-<div class="table-wrap">
-<table class="standings-table">
-<thead>
-<tr>
-<th>#</th>
-<th>Družstvo</th><th>Body</th>
-<th>Kol</th>
-<th>V</th>
-<th>R</th>
-<th>P</th>
-<th>Legy</th><th>Skóre</th>
+<main id="top">
+  <section class="hero">
+    <div class="kicker" id="kicker">&nbsp;</div>
+    <h1>Roshambo <span>Praha</span></h1>
+    <p class="tagline">Šipkový tým · Praha · Česká republika</p>
+    <article class="next" id="next" hidden aria-live="polite"></article>
+    <blockquote class="quote">„Screw you guys, I'm going home… but first, one more leg.“</blockquote>
+  </section>
 
-</tr>
-</thead>
-<tbody id="current-season-tbody">
-            <tr class="podium team-row" data-lt="2743048" tabindex="0"><td class="pos">1.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bocman Club Praha</td><td class="pts">15</td><td>5</td><td>5</td><td>0</td><td>0</td><td>150:67</td><td>70:20</td></tr>
-            <tr class="podium team-row" data-lt="2745864" tabindex="0"><td class="pos">2.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC B</td><td class="pts">13</td><td>5</td><td>4</td><td>1</td><td>0</td><td>122:91</td><td>54:36</td></tr>
-            <tr class="podium team-row" data-lt="2744328" tabindex="0"><td class="pos">3.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Kralupská letka</td><td class="pts">12</td><td>6</td><td>4</td><td>0</td><td>2</td><td>161:111</td><td>67:41</td></tr>
-            <tr class="team-row" data-lt="2744584" tabindex="0"><td class="pos">4.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Krkavci Kralupy</td><td class="pts">12</td><td>7</td><td>3</td><td>3</td><td>1</td><td>152:155</td><td>62:64</td></tr>
-            <tr class="team-row" data-lt="2743560" tabindex="0"><td class="pos">5.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Figury Libčice</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>132:85</td><td>58:32</td></tr>
-            <tr class="team-row" data-lt="2742792" tabindex="0"><td class="pos">6.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Black Diamonds Praha</td><td class="pts">10</td><td>5</td><td>3</td><td>1</td><td>1</td><td>118:95</td><td>52:38</td></tr>
-            <tr class="team-row" data-lt="2745096" tabindex="0"><td class="pos">7.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Pedro Praha</td><td class="pts">8</td><td>7</td><td>2</td><td>2</td><td>3</td><td>141:163</td><td>59:67</td></tr>
-            <tr class="team-row" data-lt="2743304" tabindex="0"><td class="pos">8.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Bohnický kladiva</td><td class="pts">7</td><td>5</td><td>2</td><td>1</td><td>2</td><td>109:115</td><td>43:47</td></tr>
-            <tr class="us team-row" data-lt="2745352" tabindex="0"><td class="pos">9.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Roshambo Praha</td><td class="pts">6</td><td>6</td><td>2</td><td>0</td><td>4</td><td>133:128</td><td>52:56</td></tr>
-            <tr class="team-row" data-lt="2744072" tabindex="0"><td class="pos">10.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Hell&#x27;s Darters Praha</td><td class="pts">6</td><td>6</td><td>2</td><td>0</td><td>4</td><td>117:152</td><td>46:62</td></tr>
-            <tr class="team-row" data-lt="2744840" tabindex="0"><td class="pos">11.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Los Číčos Praha</td><td class="pts">4</td><td>5</td><td>1</td><td>1</td><td>3</td><td>94:128</td><td>38:52</td></tr>
-            <tr class="team-row" data-lt="2743816" tabindex="0"><td class="pos">12.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Havrani Vraňany B</td><td class="pts">2</td><td>6</td><td>0</td><td>2</td><td>4</td><td>96:166</td><td>32:76</td></tr>
-            <tr class="team-row" data-lt="2745608" tabindex="0"><td class="pos">13.</td><td class="team-name"><span class="mp-chev">&#9656;</span>Zdiby DC</td><td class="pts">0</td><td>6</td><td>0</td><td>0</td><td>6</td><td>96:165</td><td>33:75</td></tr>
-          </tbody>
-</table>
-</div>
-<div class="standings-legend" id="current-season-legend">Průběžné pořadí — Roshambo Praha je na <b>9. místě</b> z 13 týmů. Naposledy aktualizováno automaticky 04.11.2026 17:44.</div>
-<div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2026/2027 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
-<table class="mini-stats-table">
-<thead>
-<tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr>
-</thead>
-<tbody id="current-season-mini-stats-tbody">
-<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="9,78" data-lkh="61,5" data-zp="65,22" data-zc="24" data-zo="23" data-zv="15" data-lp="64,15" data-lo="53" data-lv="34" data-n95="32" data-n95a="0,60" data-n133="8" data-n133a="0,15" data-n170="1" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">65,22 %</td><td>9,78</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="5,56" data-lkh="52,1" data-zp="55,56" data-zc="24" data-zo="18" data-zv="10" data-lp="57,14" data-lo="42" data-lv="24" data-n95="16" data-n95a="0,38" data-n133="5" data-n133a="0,12" data-n170="1" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">55,56 %</td><td>5,56</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="2,67" data-lkh="" data-zp="66,67" data-zc="24" data-zo="6" data-zv="4" data-lp="53,33" data-lo="15" data-lv="8" data-n95="0" data-n95a="0,00" data-n133="1" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">66,67 %</td><td>2,67</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="2,25" data-lkh="39,0" data-zp="37,50" data-zc="24" data-zo="16" data-zv="6" data-lp="47,62" data-lo="42" data-lv="20" data-n95="18" data-n95a="0,43" data-n133="2" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">37,50 %</td><td>2,25</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="2,25" data-lkh="" data-zp="75,00" data-zc="24" data-zo="4" data-zv="3" data-lp="75,00" data-lo="8" data-lv="6" data-n95="2" data-n95a="0,25" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">75,00 %</td><td>2,25</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bajer Josef" data-pro="0,75" data-lkh="32,0" data-zp="25,00" data-zc="24" data-zo="12" data-zv="3" data-lp="40,00" data-lo="30" data-lv="12" data-n95="9" data-n95a="0,30" data-n133="3" data-n133a="0,10" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bajer Josef</td><td class="msu">25,00 %</td><td>0,75</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="0,50" data-lkh="" data-zp="25,00" data-zc="24" data-zo="8" data-zv="2" data-lp="31,58" data-lo="19" data-lv="6" data-n95="5" data-n95a="0,26" data-n133="1" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">25,00 %</td><td>0,50</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tkáč Marek" data-pro="0,44" data-lkh="" data-zp="22,22" data-zc="24" data-zo="9" data-zv="2" data-lp="33,33" data-lo="24" data-lv="8" data-n95="8" data-n95a="0,33" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tkáč Marek</td><td class="msu">22,22 %</td><td>0,44</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="season-panel" id="panel-2025" style="display:none">
-<div class="season-acc-meta" style="margin-bottom:12px;">3. liga C · 6. místo</div>
-<div class="table-wrap">
-<table class="standings-table">
-<thead>
-<tr>
-<th>#</th>
-<th>Družstvo</th><th>Body</th>
-<th>Kol</th>
-<th>V</th>
-<th>R</th>
-<th>P</th>
-<th>Legy</th><th>Skóre</th>
+  <section class="section" id="tabulka" aria-labelledby="h-tabulka">
+    <div class="wrap">
+      <h2 id="h-tabulka">Tabulka</h2>
+      <select class="select" id="season" aria-label="Sezóna"></select>
+      <div class="card" id="standings"></div>
+    </div>
+  </section>
 
-</tr>
-</thead>
-<tbody>
-<tr class="podium"><td class="pos">1.</td><td class="team-name">Nikater Praha</td><td class="pts">64</td><td>24</td><td>21</td><td>1</td><td>2</td><td>649:383</td><td>300:132</td></tr>
-<tr class="podium"><td class="pos">2.</td><td class="team-name">Hardcore Praha</td><td class="pts">53</td><td>24</td><td>17</td><td>2</td><td>5</td><td>602:463</td><td>257:175</td></tr>
-<tr class="podium"><td class="pos">3.</td><td class="team-name">Patriots darts club Zdiby B</td><td class="pts">49</td><td>24</td><td>15</td><td>4</td><td>5</td><td>595:462</td><td>258:174</td></tr>
-<tr><td class="pos">4.</td><td class="team-name">Bocman Club Praha</td><td class="pts">47</td><td>24</td><td>15</td><td>2</td><td>7</td><td>579:463</td><td>246:186</td></tr>
-<tr><td class="pos">5.</td><td class="team-name">The LegenDarts Praha</td><td class="pts">41</td><td>24</td><td>13</td><td>2</td><td>9</td><td>531:516</td><td>219:213</td></tr>
-<tr class="us"><td class="pos">6.</td><td class="team-name">Roshambo Praha</td><td class="pts">38</td><td>24</td><td>12</td><td>2</td><td>10</td><td>527:525</td><td>217:215</td></tr>
-<tr><td class="pos">7.</td><td class="team-name">Staří promiň Praha</td><td class="pts">36</td><td>24</td><td>10</td><td>6</td><td>8</td><td>517:512</td><td>219:213</td></tr>
-<tr><td class="pos">8.</td><td class="team-name">Prosecká Devítka Praha</td><td class="pts">34</td><td>24</td><td>11</td><td>1</td><td>12</td><td>517:536</td><td>210:222</td></tr>
-<tr><td class="pos">9.</td><td class="team-name">Bohnická kladiva</td><td class="pts">25</td><td>24</td><td>7</td><td>4</td><td>13</td><td>507:562</td><td>199:233</td></tr>
-<tr><td class="pos">10.</td><td class="team-name">Bar On Prosek</td><td class="pts">24</td><td>24</td><td>7</td><td>3</td><td>14</td><td>463:587</td><td>180:252</td></tr>
-<tr><td class="pos">11.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">17</td><td>24</td><td>4</td><td>5</td><td>15</td><td>457:591</td><td>174:258</td></tr>
-<tr><td class="pos">12.</td><td class="team-name">Patriots darts club Zdiby</td><td class="pts">14</td><td>24</td><td>3</td><td>5</td><td>16</td><td>493:570</td><td>188:244</td></tr>
-<tr><td class="pos">13.</td><td class="team-name">Los Číčos Praha</td><td class="pts">7</td><td>24</td><td>2</td><td>1</td><td>21</td><td>385:652</td><td>141:291</td></tr>
-</tbody>
-</table>
-</div>
-<div class="standings-legend">Roshambo Praha skončilo na <b>6. místě</b> ze 13 týmů — solidní střed tabulky, se kterým jde do nové sezóny útočit výš.</div>
-<div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2025/2026 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
-<table class="mini-stats-table">
-<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
-<tbody>
-<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="35,17" data-lkh="58,0" data-zp="63,95" data-zc="96" data-zo="86" data-zv="55" data-lp="61,03" data-lo="213" data-lv="130" data-n95="133" data-n95a="0,62" data-n133="32" data-n133a="0,15" data-n170="1" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">63,95 %</td><td>35,17</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="24,99" data-lkh="52,0" data-zp="58,11" data-zc="96" data-zo="74" data-zv="43" data-lp="54,75" data-lo="179" data-lv="98" data-n95="107" data-n95a="0,60" data-n133="15" data-n133a="0,08" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">58,11 %</td><td>24,99</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="21,35" data-lkh="56,7" data-zp="64,71" data-zc="96" data-zo="51" data-zv="33" data-lp="60,16" data-lo="123" data-lv="74" data-n95="54" data-n95a="0,44" data-n133="17" data-n133a="0,14" data-n170="3" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">64,71 %</td><td>21,35</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="16,07" data-lkh="47,6" data-zp="53,57" data-zc="96" data-zo="56" data-zv="30" data-lp="52,17" data-lo="138" data-lv="72" data-n95="64" data-n95a="0,46" data-n133="10" data-n133a="0,07" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">53,57 %</td><td>16,07</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="8,45" data-lkh="" data-zp="65,00" data-zc="96" data-zo="20" data-zv="13" data-lp="62,50" data-lo="48" data-lv="30" data-n95="31" data-n95a="0,65" data-n133="7" data-n133a="0,15" data-n170="1" data-n170a="0,02" data-z64="1" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">65,00 %</td><td>8,45</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="1,98" data-lkh="" data-zp="21,95" data-zc="96" data-zo="41" data-zv="9" data-lp="29,00" data-lo="100" data-lv="29" data-n95="26" data-n95a="0,26" data-n133="5" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">21,95 %</td><td>1,98</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="1,79" data-lkh="" data-zp="35,71" data-zc="96" data-zo="14" data-zv="5" data-lp="41,67" data-lo="36" data-lv="15" data-n95="9" data-n95a="0,25" data-n133="3" data-n133a="0,08" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">35,71 %</td><td>1,79</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tkáč Marek" data-pro="0,64" data-lkh="" data-zp="21,43" data-zc="96" data-zo="14" data-zv="3" data-lp="29,41" data-lo="34" data-lv="10" data-n95="13" data-n95a="0,38" data-n133="1" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tkáč Marek</td><td class="msu">21,43 %</td><td>0,64</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bajer Josef" data-pro="0,57" data-lkh="" data-zp="14,29" data-zc="96" data-zo="28" data-zv="4" data-lp="22,73" data-lo="66" data-lv="15" data-n95="27" data-n95a="0,41" data-n133="1" data-n133a="0,02" data-n170="1" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bajer Josef</td><td class="msu">14,29 %</td><td>0,57</td></tr>
-</tbody>
-</table>
-<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
-</div>
+  <section class="section" id="zapasy" aria-labelledby="h-zapasy">
+    <div class="wrap">
+      <h2 id="h-zapasy">Rozpis zápasů</h2>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--green)"></i>Výhra</span><span><i style="background:var(--amber)"></i>Remíza</span>
+        <span><i style="background:var(--red)"></i>Prohra</span><span><i style="background:var(--yellow)"></i>Nejbližší zápas</span>
+      </div>
+      <div class="card scroll"><table class="matches" id="matches"></table></div>
+    </div>
+  </section>
 
-</div>
-<div class="season-panel" id="panel-2024" style="display:none">
-<div class="season-acc-meta" style="margin-bottom:12px;">3. liga L · 8. místo</div>
-<div class="table-wrap">
-<table class="standings-table">
-<thead>
-<tr>
-<th>#</th>
-<th>Družstvo</th><th>Body</th>
-<th>Kol</th>
-<th>V</th>
-<th>R</th>
-<th>P</th>
-<th>Legy</th><th>Skóre</th>
+  <section class="section" id="tym" aria-labelledby="h-tym">
+    <div class="wrap">
+      <h2 id="h-tym">Tým</h2>
+      <div class="team-grid" id="roster"></div>
+    </div>
+  </section>
 
-</tr>
-</thead>
-<tbody>
-<tr class="podium"><td class="pos">1.</td><td class="team-name">TŠA Devítka Praha</td><td class="pts">63</td><td>24</td><td>21</td><td>0</td><td>3</td><td>651:392</td><td>293:139</td></tr>
-<tr class="podium"><td class="pos">2.</td><td class="team-name">Crazy dart Praha</td><td class="pts">59</td><td>24</td><td>19</td><td>2</td><td>3</td><td>623:417</td><td>274:158</td></tr>
-<tr class="podium"><td class="pos">3.</td><td class="team-name">Worm Gang Praha</td><td class="pts">54</td><td>24</td><td>17</td><td>3</td><td>4</td><td>619:451</td><td>262:170</td></tr>
-<tr><td class="pos">4.</td><td class="team-name">Sgt. Pepik's Band Praha C</td><td class="pts">48</td><td>24</td><td>15</td><td>3</td><td>6</td><td>619:431</td><td>268:164</td></tr>
-<tr><td class="pos">5.</td><td class="team-name">Kryplos Praha</td><td class="pts">48</td><td>24</td><td>14</td><td>6</td><td>4</td><td>609:444</td><td>261:171</td></tr>
-<tr><td class="pos">6.</td><td class="team-name">Monkey z 213 Praha</td><td class="pts">37</td><td>24</td><td>12</td><td>1</td><td>11</td><td>537:514</td><td>224:208</td></tr>
-<tr><td class="pos">7.</td><td class="team-name">Hostivar Darts Praha</td><td class="pts">31</td><td>24</td><td>9</td><td>4</td><td>11</td><td>488:565</td><td>195:237</td></tr>
-<tr class="us"><td class="pos">8.</td><td class="team-name">Roshambo Praha</td><td class="pts">28</td><td>24</td><td>8</td><td>4</td><td>12</td><td>508:545</td><td>209:223</td></tr>
-<tr><td class="pos">9.</td><td class="team-name">Rychlé hroty Praha B</td><td class="pts">21</td><td>24</td><td>6</td><td>3</td><td>15</td><td>468:583</td><td>184:248</td></tr>
-<tr><td class="pos">10.</td><td class="team-name">Los Číčos Praha</td><td class="pts">20</td><td>24</td><td>6</td><td>2</td><td>16</td><td>436:605</td><td>171:261</td></tr>
-<tr><td class="pos">11.</td><td class="team-name">Alcatraz DSC Praha</td><td class="pts">16</td><td>24</td><td>5</td><td>1</td><td>18</td><td>433:608</td><td>165:267</td></tr>
-<tr><td class="pos">12.</td><td class="team-name">Future Praha</td><td class="pts">14</td><td>24</td><td>4</td><td>2</td><td>18</td><td>469:590</td><td>176:256</td></tr>
-<tr><td class="pos">13.</td><td class="team-name">Stiflerova máma Praha</td><td class="pts">12</td><td>24</td><td>3</td><td>3</td><td>18</td><td>358:673</td><td>126:306</td></tr>
-</tbody>
-</table>
-</div>
-<div class="standings-legend">V sezóně 2024/2025 hrálo Roshambo Praha <b>3. ligu L</b> a skončilo na 8. místě ze 13 týmů.</div>
-<div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2024/2025 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
-<table class="mini-stats-table">
-<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
-<tbody>
-<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="30,38" data-lkh="50,8" data-zp="58,43" data-zc="96" data-zo="89" data-zv="52" data-lp="55,36" data-lo="224" data-lv="124" data-n95="112" data-n95a="0,50" data-n133="18" data-n133a="0,08" data-n170="2" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">58,43 %</td><td>30,38</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="24,50" data-lkh="49,5" data-zp="58,33" data-zc="96" data-zo="72" data-zv="42" data-lp="55,43" data-lo="184" data-lv="102" data-n95="84" data-n95a="0,46" data-n133="10" data-n133a="0,05" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">58,33 %</td><td>24,50</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="16,00" data-lkh="" data-zp="66,67" data-zc="96" data-zo="36" data-zv="24" data-lp="63,41" data-lo="82" data-lv="52" data-n95="55" data-n95a="0,67" data-n133="10" data-n133a="0,12" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">66,67 %</td><td>16,00</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="8,23" data-lkh="32,7" data-zp="34,29" data-zc="96" data-zo="70" data-zv="24" data-lp="37,04" data-lo="162" data-lv="60" data-n95="53" data-n95a="0,33" data-n133="4" data-n133a="0,02" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">34,29 %</td><td>8,23</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="7,54" data-lkh="" data-zp="53,85" data-zc="96" data-zo="26" data-zv="14" data-lp="50,82" data-lo="61" data-lv="31" data-n95="31" data-n95a="0,51" data-n133="5" data-n133a="0,08" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">53,85 %</td><td>7,54</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bečka Marek" data-pro="6,04" data-lkh="" data-zp="46,43" data-zc="96" data-zo="28" data-zv="13" data-lp="50,00" data-lo="72" data-lv="36" data-n95="28" data-n95a="0,39" data-n133="9" data-n133a="0,13" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bečka Marek</td><td class="msu">46,43 %</td><td>6,04</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Novák Jakub" data-pro="2,67" data-lkh="" data-zp="33,33" data-zc="96" data-zo="24" data-zv="8" data-lp="33,90" data-lo="59" data-lv="20" data-n95="20" data-n95a="0,34" data-n133="6" data-n133a="0,10" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Novák Jakub</td><td class="msu">33,33 %</td><td>2,67</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="1,07" data-lkh="" data-zp="26,67" data-zc="96" data-zo="15" data-zv="4" data-lp="32,43" data-lo="37" data-lv="12" data-n95="9" data-n95a="0,24" data-n133="1" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">26,67 %</td><td>1,07</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="0,80" data-lkh="" data-zp="20,00" data-zc="96" data-zo="20" data-zv="4" data-lp="23,91" data-lo="46" data-lv="11" data-n95="13" data-n95a="0,28" data-n133="2" data-n133a="0,04" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">20,00 %</td><td>0,80</td></tr>
-</tbody>
-</table>
-<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
-</div>
+  <section class="section" id="onas" aria-labelledby="h-onas">
+    <div class="wrap">
+      <h2 id="h-onas">O nás</h2>
+      <div class="card about">
+        <p>Roshambo Praha je šipkový tým z hlavního města, jehož název vychází z legendární hry Roshambo — kterou proslavil
+           sám Eric Cartman v South Parku. Jako on, i my hrajeme naplno, bez omluv a s plným nasazením.</p>
+        <p id="home-line">Přijďte nás podpořit — pivo bude, šipky taky.</p>
+        <p><em>„Oh my God, they killed Kenny!“ — ale naše šipky cíl nezabíjejí, trefují ho.</em></p>
+      </div>
+    </div>
+  </section>
+</main>
 
-</div>
-<div class="season-panel" id="panel-2023" style="display:none">
-<div class="season-acc-meta" style="margin-bottom:12px;">3. liga J · 7. místo</div>
-<div class="table-wrap">
-<table class="standings-table">
-<thead>
-<tr>
-<th>#</th>
-<th>Družstvo</th><th>Body</th>
-<th>Kol</th>
-<th>V</th>
-<th>R</th>
-<th>P</th>
-<th>Legy</th><th>Skóre</th>
-
-</tr>
-</thead>
-<tbody>
-<tr class="podium"><td class="pos">1.</td><td class="team-name">Bocman Club Praha</td><td class="pts">56</td><td>22</td><td>18</td><td>2</td><td>2</td><td>596:365</td><td>265:131</td></tr>
-<tr class="podium"><td class="pos">2.</td><td class="team-name">Kralupská letka</td><td class="pts">53</td><td>22</td><td>17</td><td>2</td><td>3</td><td>583:372</td><td>255:141</td></tr>
-<tr class="podium"><td class="pos">3.</td><td class="team-name">Willi Hubert Praha</td><td class="pts">47</td><td>22</td><td>15</td><td>2</td><td>5</td><td>550:426</td><td>236:160</td></tr>
-<tr><td class="pos">4.</td><td class="team-name">Kašamba Praha</td><td class="pts">43</td><td>22</td><td>13</td><td>4</td><td>5</td><td>539:419</td><td>238:158</td></tr>
-<tr><td class="pos">5.</td><td class="team-name">Výsost Vysočany Praha</td><td class="pts">37</td><td>22</td><td>12</td><td>1</td><td>9</td><td>500:463</td><td>208:188</td></tr>
-<tr><td class="pos">6.</td><td class="team-name">Los Číčos Praha</td><td class="pts">32</td><td>22</td><td>10</td><td>2</td><td>10</td><td>474:492</td><td>190:206</td></tr>
-<tr class="us"><td class="pos">7.</td><td class="team-name">Roshambo Praha</td><td class="pts">31</td><td>22</td><td>10</td><td>1</td><td>11</td><td>490:483</td><td>199:197</td></tr>
-<tr><td class="pos">8.</td><td class="team-name">Staří promiň Praha</td><td class="pts">29</td><td>22</td><td>9</td><td>2</td><td>11</td><td>477:499</td><td>194:202</td></tr>
-<tr><td class="pos">9.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">26</td><td>22</td><td>8</td><td>2</td><td>12</td><td>440:533</td><td>169:227</td></tr>
-<tr><td class="pos">10.</td><td class="team-name">Patriots darts club Zdiby</td><td class="pts">15</td><td>22</td><td>4</td><td>3</td><td>15</td><td>443:540</td><td>171:225</td></tr>
-<tr><td class="pos">11.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">9</td><td>22</td><td>1</td><td>6</td><td>15</td><td>401:562</td><td>148:248</td></tr>
-<tr><td class="pos">12.</td><td class="team-name">Kašamba Praha II</td><td class="pts">4</td><td>22</td><td>1</td><td>1</td><td>20</td><td>302:641</td><td>103:293</td></tr>
-</tbody>
-</table>
-</div>
-<div class="standings-legend">V sezóně 2023/2024 hrálo Roshambo Praha <b>3. ligu J</b> a skončilo na 7. místě z 12 týmů.</div>
-<div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2023/2024 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
-<table class="mini-stats-table">
-<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
-<tbody>
-<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="25,31" data-lkh="51,1" data-zp="56,25" data-zc="88" data-zo="80" data-zv="45" data-lp="55,10" data-lo="196" data-lv="108" data-n95="109" data-n95a="0,56" data-n133="14" data-n133a="0,07" data-n170="3" data-n170a="0,02" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">56,25 %</td><td>25,31</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="22,41" data-lkh="48,8" data-zp="54,67" data-zc="88" data-zo="75" data-zv="41" data-lp="54,59" data-lo="185" data-lv="101" data-n95="92" data-n95a="0,50" data-n133="9" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">54,67 %</td><td>22,41</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="20,28" data-lkh="46,1" data-zp="52,00" data-zc="88" data-zo="75" data-zv="39" data-lp="50,80" data-lo="187" data-lv="95" data-n95="86" data-n95a="0,46" data-n133="13" data-n133a="0,07" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">52,00 %</td><td>20,28</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="8,34" data-lkh="35,6" data-zp="37,93" data-zc="88" data-zo="58" data-zv="22" data-lp="40,85" data-lo="142" data-lv="58" data-n95="41" data-n95a="0,29" data-n133="10" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">37,93 %</td><td>8,34</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pelech Roman" data-pro="4,27" data-lkh="" data-zp="53,33" data-zc="88" data-zo="15" data-zv="8" data-lp="52,63" data-lo="38" data-lv="20" data-n95="19" data-n95a="0,50" data-n133="2" data-n133a="0,05" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pelech Roman</td><td class="msu">53,33 %</td><td>4,27</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="3,00" data-lkh="" data-zp="33,33" data-zc="88" data-zo="27" data-zv="9" data-lp="35,38" data-lo="65" data-lv="23" data-n95="13" data-n95a="0,20" data-n133="2" data-n133a="0,03" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">33,33 %</td><td>3,00</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bartoška Zdeněk *" data-pro="2,25" data-lkh="" data-zp="75,00" data-zc="88" data-zo="4" data-zv="3" data-lp="60,00" data-lo="10" data-lv="6" data-n95="4" data-n95a="0,40" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bartoška Zdeněk *</td><td class="msu">75,00 %</td><td>2,25</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Haltuch Štěpán *" data-pro="1,79" data-lkh="" data-zp="35,71" data-zc="88" data-zo="14" data-zv="5" data-lp="45,45" data-lo="33" data-lv="15" data-n95="5" data-n95a="0,15" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Haltuch Štěpán *</td><td class="msu">35,71 %</td><td>1,79</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="1,00" data-lkh="" data-zp="50,00" data-zc="88" data-zo="4" data-zv="2" data-lp="55,56" data-lo="9" data-lv="5" data-n95="3" data-n95a="0,33" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">50,00 %</td><td>1,00</td></tr>
-</tbody>
-</table>
-<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
-</div>
-
-</div>
-<div class="season-panel" id="panel-2022" style="display:none">
-<div class="season-acc-meta" style="margin-bottom:12px;">3. liga G · 11. místo</div>
-<div class="table-wrap">
-<table class="standings-table">
-<thead>
-<tr>
-<th>#</th>
-<th>Družstvo</th><th>Body</th>
-<th>Kol</th>
-<th>V</th>
-<th>R</th>
-<th>P</th>
-<th>K</th>
-<th>Legy</th><th>Skóre</th>
-
-</tr>
-</thead>
-<tbody>
-<tr class="podium"><td class="pos">1.</td><td class="team-name">Krkavci Kralupy</td><td class="pts">67</td><td>26</td><td>21</td><td>4</td><td>1</td><td>0</td><td>689:457</td><td>304:164</td></tr>
-<tr class="podium"><td class="pos">2.</td><td class="team-name">Patriots darts club Zdiby B</td><td class="pts">67</td><td>26</td><td>22</td><td>1</td><td>3</td><td>0</td><td>740:370</td><td>334:134</td></tr>
-<tr class="podium"><td class="pos">3.</td><td class="team-name">Létající Jeleni Kralupy n/Vlt. B</td><td class="pts">61</td><td>26</td><td>19</td><td>4</td><td>3</td><td>0</td><td>709:416</td><td>315:153</td></tr>
-<tr><td class="pos">4.</td><td class="team-name">Kralupská letka Čechie</td><td class="pts">57</td><td>26</td><td>18</td><td>3</td><td>5</td><td>0</td><td>713:418</td><td>318:150</td></tr>
-<tr><td class="pos">5.</td><td class="team-name">Nikater Praha</td><td class="pts">50</td><td>26</td><td>16</td><td>2</td><td>8</td><td>0</td><td>606:520</td><td>261:207</td></tr>
-<tr><td class="pos">6.</td><td class="team-name">Kašamba Praha</td><td class="pts">43</td><td>26</td><td>13</td><td>4</td><td>9</td><td>0</td><td>615:532</td><td>261:207</td></tr>
-<tr><td class="pos">7.</td><td class="team-name">Alcatraz DSC Praha</td><td class="pts">37</td><td>26</td><td>12</td><td>1</td><td>13</td><td>0</td><td>520:602</td><td>214:254</td></tr>
-<tr><td class="pos">8.</td><td class="team-name">Havrani Vraňany B</td><td class="pts">29</td><td>26</td><td>9</td><td>2</td><td>15</td><td>0</td><td>548:589</td><td>220:248</td></tr>
-<tr><td class="pos">9.</td><td class="team-name">Kecky Praha</td><td class="pts">25</td><td>26</td><td>8</td><td>4</td><td>13</td><td>1</td><td>480:622</td><td>193:275</td></tr>
-<tr><td class="pos">10.</td><td class="team-name">Los Číčos Praha</td><td class="pts">23</td><td>26</td><td>7</td><td>2</td><td>17</td><td>0</td><td>518:607</td><td>202:266</td></tr>
-<tr class="us"><td class="pos">11.</td><td class="team-name">Roshambo Praha</td><td class="pts">22</td><td>26</td><td>9</td><td>1</td><td>14</td><td>2</td><td>489:620</td><td>196:272</td></tr>
-<tr><td class="pos">12.</td><td class="team-name">Hell's Darters Praha</td><td class="pts">22</td><td>26</td><td>7</td><td>1</td><td>18</td><td>0</td><td>457:668</td><td>179:289</td></tr>
-<tr><td class="pos">13.</td><td class="team-name">Patriots darts club Zdiby</td><td class="pts">16</td><td>26</td><td>5</td><td>1</td><td>20</td><td>0</td><td>471:661</td><td>180:288</td></tr>
-<tr><td class="pos">14.</td><td class="team-name">Kašamba Praha II</td><td class="pts">3</td><td>26</td><td>1</td><td>0</td><td>25</td><td>0</td><td>314:787</td><td>99:369</td></tr>
-</tbody>
-</table>
-</div>
-<div class="standings-legend">V sezóně 2022/2023 hrálo Roshambo Praha <b>3. ligu G</b> a skončilo na 11. místě ze 14 týmů (2× kontumace).</div>
-<div class="mini-stats">
-<div class="mini-stats-title">Statistika hráčů · Sezóna 2022/2023 <span class="mini-hint">— klikni na jméno pro detail a porovnání</span></div>
-<table class="mini-stats-table">
-<thead><tr><th>Hráč</th><th>Úspěšnost</th><th>Prospěšnost</th></tr></thead>
-<tbody>
-<tr class="mini-player" tabindex="0" data-name="Roklová Zuzana" data-pro="19,25" data-lkh="46,6" data-zp="50,67" data-zc="92" data-zo="75" data-zv="38" data-lp="50,00" data-lo="182" data-lv="91" data-n95="83" data-n95a="0,46" data-n133="20" data-n133a="0,11" data-n170="0" data-n170a="0,00" data-z64="1" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Roklová Zuzana</td><td class="msu">50,67 %</td><td>19,25</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Kohlíček Petr" data-pro="16,55" data-lkh="41,9" data-zp="47,30" data-zc="92" data-zo="74" data-zv="35" data-lp="47,25" data-lo="182" data-lv="86" data-n95="65" data-n95a="0,36" data-n133="10" data-n133a="0,05" data-n170="1" data-n170a="0,01" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Kohlíček Petr</td><td class="msu">47,30 %</td><td>16,55</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Pik Robert *" data-pro="16,12" data-lkh="42,7" data-zp="46,05" data-zc="92" data-zo="76" data-zv="35" data-lp="47,34" data-lo="188" data-lv="89" data-n95="86" data-n95a="0,46" data-n133="13" data-n133a="0,07" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Pik Robert *</td><td class="msu">46,05 %</td><td>16,12</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Bartoška Zdeněk *" data-pro="13,79" data-lkh="" data-zp="68,97" data-zc="92" data-zo="29" data-zv="20" data-lp="65,15" data-lo="66" data-lv="43" data-n95="38" data-n95a="0,58" data-n133="6" data-n133a="0,09" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Bartoška Zdeněk *</td><td class="msu">68,97 %</td><td>13,79</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Soliman Alan" data-pro="6,11" data-lkh="33,0" data-zp="33,96" data-zc="92" data-zo="53" data-zv="18" data-lp="37,50" data-lo="120" data-lv="45" data-n95="43" data-n95a="0,36" data-n133="1" data-n133a="0,01" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Soliman Alan</td><td class="msu">33,96 %</td><td>6,11</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Haltuch Štěpán *" data-pro="1,69" data-lkh="" data-zp="24,14" data-zc="92" data-zo="29" data-zv="7" data-lp="35,62" data-lo="73" data-lv="26" data-n95="26" data-n95a="0,36" data-n133="3" data-n133a="0,04" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Haltuch Štěpán *</td><td class="msu">24,14 %</td><td>1,69</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Tůma Rostislav *" data-pro="1,50" data-lkh="" data-zp="25,00" data-zc="92" data-zo="24" data-zv="6" data-lp="30,36" data-lo="56" data-lv="17" data-n95="13" data-n95a="0,23" data-n133="1" data-n133a="0,02" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Tůma Rostislav *</td><td class="msu">25,00 %</td><td>1,50</td></tr>
-<tr class="mini-player" tabindex="0" data-name="Rajchl Josef *" data-pro="0,13" data-lkh="" data-zp="12,50" data-zc="92" data-zo="8" data-zv="1" data-lp="21,05" data-lo="19" data-lv="4" data-n95="3" data-n95a="0,16" data-n133="0" data-n133a="0,00" data-n170="0" data-n170a="0,00" data-z64="0" data-z53="0" data-z42="0" data-z3="0"><td><span class="mp-chev">&#9656;</span>Rajchl Josef *</td><td class="msu">12,50 %</td><td>0,13</td></tr>
-</tbody>
-</table>
-<div style="font-size:9.5px;color:var(--muted);margin-top:8px;">* hráč už není v aktuální sestavě týmu</div>
-</div>
-
-</div>
-</section>
-<hr class="full-divider"/>
-<!-- ZÁPASY -->
-<section id="zapasy">
-<div class="section-title">Rozpis zápasů</div>
-<div class="section-line"></div>
-<div class="matches-legend">
-<span><span class="dot win"></span> Výhra</span>
-<span><span class="dot draw"></span> Remíza</span>
-<span><span class="dot loss"></span> Prohra</span>
-<span><span class="dot next"></span> Nejbližší zápas</span>
-</div>
-<div class="matches-wrap"><table class="matches-table">
-<thead>
-<tr>
-<th>Kolo</th>
-<th>Den</th>
-<th>Datum</th>
-<th>Čas</th>
-<th>Domácí</th>
-<th></th>
-<th>Hosté</th>
-<th>Místo</th>
-</tr>
-</thead>
-<tbody>
-<tr data-date="2026-09-01" data-result="loss"><td>1</td><td>Út</td><td>1.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Hell's Darters Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2026-09-20" data-result="loss"><td>2</td><td>Ne</td><td>20.9.2026</td><td>18:00</td><td>Kralupská letka</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="416008" data-lat="50.2435833" data-lng="14.3108675" href="https://www.google.com/maps/search/?api=1&amp;query=DAHA%20Bar%2C%20U%20Cukrovaru%201085%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJv9UUagDDC0cRy2-awMk-Qrg" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; DAHA bar, Kralupy n. Vlt.</a></td></tr>
-<tr data-date="2026-09-22" data-result="loss"><td>3</td><td>Út</td><td>22.9.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC B</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2026-10-11" data-result="win"><td>4</td><td>Ne</td><td>11.10.2026</td><td>18:00</td><td>Los Číčos Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="285960" data-lat="50.1272495" data-lng="14.4674053" href="https://www.google.com/maps/search/?api=1&amp;query=Stanice%20L%C3%A1dv%C3%AD%2C%20Kyselova%201657/6%2C%20182%2000%20Praha%208&amp;query_place_id=ChIJca0NY2frC0cRLenq0-cheTI" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Stanice Ládví, Praha 8</a></td></tr>
-<tr data-date="2026-10-13" data-result="win"><td>5</td><td>Út</td><td>13.10.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bohnický kladiva</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2026-10-25" data-result="loss"><td>6</td><td>Ne</td><td>25.10.2026</td><td>18:00</td><td>Black Diamonds Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="283400" data-lat="50.1313201" data-lng="14.4306638" href="https://www.google.com/maps/search/?api=1&amp;query=BAR%20na%20zast%C3%A1vce%2C%20%C4%8Cimick%C3%A1%20269%2C%20181%2000%20Praha%208-Bohnice&amp;query_place_id=ChIJKwUU8SHrC0cRkcMh_Bl-4yc" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Bar Na zastávce, Praha 8</a></td></tr>
-<tr data-date="2026-11-03"><td>7</td><td>Út</td><td>3.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Bocman Club Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2026-11-15"><td>8</td><td>Ne</td><td>15.11.2026</td><td>18:00</td><td>Figury Libčice</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="300552" data-lat="50.2489163" data-lng="14.3152485" href="https://www.google.com/maps/search/?api=1&amp;query=Bar%20Z%C3%81KLADNA%2C%20Hakenova%20725%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJAUa8eYHDC0cR-8Ydj6I30Ys" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Základna bar, Kralupy</a></td></tr>
-<tr data-date="2026-11-17"><td>9</td><td>Út</td><td>17.11.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Zdiby DC</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2026-11-24"><td>10</td><td>Út</td><td>24.11.2026</td><td>20:00</td><td>Krkavci Kralupy</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="300552" data-lat="50.2489163" data-lng="14.3152485" href="https://www.google.com/maps/search/?api=1&amp;query=Bar%20Z%C3%81KLADNA%2C%20Hakenova%20725%2C%20278%2001%20Kralupy%20nad%20Vltavou&amp;query_place_id=ChIJAUa8eYHDC0cR-8Ydj6I30Ys" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Základna bar, Kralupy</a></td></tr>
-<tr data-date="2026-12-13"><td>12</td><td>Ne</td><td>13.12.2026</td><td>17:00</td><td>Havrani Vraňany B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="374536" data-lat="50.3158735" data-lng="14.3632078" href="https://www.google.com/maps/search/?api=1&amp;query=Hospoda%20Na%20h%C5%99i%C5%A1ti%2C%20Vra%C5%88any%2097%2C%20277%2007%20Vra%C5%88any&amp;query_place_id=ChIJ4Rg1EZHcC0cRIhI7VnTEE3I" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Na hřišti, Vraňany</a></td></tr>
-<tr data-date="2026-12-15"><td>13</td><td>Út</td><td>15.12.2026</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Pedro Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-01-17"><td>14</td><td>Ne</td><td>17.1.2027</td><td>18:00</td><td>Hell's Darters Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-01-19"><td>15</td><td>Út</td><td>19.1.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Kralupská letka</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-01-31"><td>16</td><td>Ne</td><td>31.1.2027</td><td>17:00</td><td>Zdiby DC B</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="279560" data-lat="50.168663" data-lng="14.4289913" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace%20u%20Jezera%2C%20Sob%C4%9Bslavovo%20n%C3%A1m.%203%2C%20250%2066%20Zdiby&amp;query_place_id=ChIJ5X0RV0_qC0cRiNcxHstH_U8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Restaurace U jezera, Zdiby</a></td></tr>
-<tr data-date="2027-02-02"><td>17</td><td>Út</td><td>2.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Los Číčos Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-02-09"><td>18</td><td>Út</td><td>9.2.2027</td><td>19:00</td><td>Bohnický kladiva</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="246280" data-lat="50.1302835" data-lng="14.4336183" href="https://www.google.com/maps/search/?api=1&amp;query=Club%20Troja%2C%20Bukolsk%C3%A1%20775%2C%20181%2000%20Praha%208&amp;query_place_id=ChIJVa2RWyLrC0cR2OBTL8aA8N8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Club Troja, Praha 8</a></td></tr>
-<tr data-date="2027-02-16"><td>19</td><td>Út</td><td>16.2.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Black Diamonds Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-02-28"><td>20</td><td>Ne</td><td>28.2.2027</td><td>18:00</td><td>Bocman Club Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-03-02"><td>21</td><td>Út</td><td>2.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Figury Libčice</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-03-14"><td>22</td><td>Ne</td><td>14.3.2027</td><td>17:00</td><td>Zdiby DC</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="279560" data-lat="50.168663" data-lng="14.4289913" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace%20u%20Jezera%2C%20Sob%C4%9Bslavovo%20n%C3%A1m.%203%2C%20250%2066%20Zdiby&amp;query_place_id=ChIJ5X0RV0_qC0cRiNcxHstH_U8" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Restaurace U jezera, Zdiby</a></td></tr>
-<tr data-date="2027-03-30"><td>23</td><td>Út</td><td>30.3.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Krkavci Kralupy</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-04-13"><td>25</td><td>Út</td><td>13.4.2027</td><td>19:00</td><td class="roshambo">Roshambo Praha</td><td class="vs">vs</td><td>Havrani Vraňany B</td><td class="misto"><a class="map-link" data-place="175880" data-lat="50.0916469" data-lng="14.4525528" href="https://www.google.com/maps/search/?api=1&amp;query=Yondu%20bar%2C%20Th%C3%A1mova%20221/7%2C%20186%2000%20Praha%208-Karl%C3%ADn&amp;query_place_id=ChIJY5DO2X-VC0cRKaM-Jd-H6uQ" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Yondu Bar, Praha 8</a></td></tr>
-<tr data-date="2027-05-09"><td>26</td><td>Ne</td><td>9.5.2027</td><td>16:00</td><td>Pedro Praha</td><td class="vs">vs</td><td class="roshambo">Roshambo Praha</td><td class="misto"><a class="map-link" data-place="419592" data-lat="50.1408893" data-lng="14.4276854" href="https://www.google.com/maps/search/?api=1&amp;query=Squash%20Sport%20%C4%8Cimice%2C%20%C4%8Cimick%C3%A1%20780/61%2C%20181%2000%20Praha%208&amp;query_place_id=ChIJBVKPhOLqC0cRRGiU5rqY_F4" target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; Squash Sport Čimice</a></td></tr>
-</tbody>
-</table></div>
-</section>
-<hr class="full-divider"/>
-<!-- HRÁČI -->
-<section id="hraci">
-<div class="section-title">Tým</div>
-<div class="section-line"></div>
-<div class="players-grid">
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#e8c39e" r="28"></circle><path d="M4 26a24 24 0 0 1 48 0v3H4z" fill="#c0392b"></path><circle cx="28" cy="8" fill="#c0392b" r="5"></circle><circle cx="28" cy="8" fill="#fff" r="2.4"></circle><rect fill="#a52f22" height="6" width="48" x="4" y="24"></rect><circle cx="19" cy="30" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="30" fill="#2b2b2b" r="3"></circle><path d="M20 40q8 6 16 0" fill="none" stroke="#7a3d1f" stroke-linecap="round" stroke-width="2.5"></path></svg>
-</div>
-<div class="player-name">Novák Jakub</div>
-<div class="player-role">Hráč</div>
-<div class="captain-badge">⭐ Kapitán</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#f0d4b0" r="28"></circle><path d="M6 22a22 22 0 0 1 44 0v2H6z" fill="#5a3a22"></path><circle cx="19" cy="31" fill="none" r="6" stroke="#2b2b2b" stroke-width="2"></circle><circle cx="37" cy="31" fill="none" r="6" stroke="#2b2b2b" stroke-width="2"></circle><line stroke="#2b2b2b" stroke-width="2" x1="25" x2="31" y1="31" y2="31"></line><path d="M21 42q7 5 14 0" fill="none" stroke="#7a3d1f" stroke-linecap="round" stroke-width="2.5"></path></svg>
-</div>
-<div class="player-name">Bajer Josef</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#e8c39e" r="28"></circle><path d="M9 24a19 19 0 0 1 38 0" fill="#2c5aa0"></path><rect fill="#1f4278" height="8" rx="2" width="7" x="9" y="17"></rect><circle cx="19" cy="31" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="31" fill="#2b2b2b" r="3"></circle><path d="M20 41q8 5 16 0" fill="none" stroke="#7a3d1f" stroke-linecap="round" stroke-width="2.5"></path></svg>
-</div>
-<div class="player-name">Bečka Marek</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#f0d4b0" r="28"></circle><path d="M8 20a20 20 0 0 1 40 0v1H8z" fill="#4a4a4a"></path><circle cx="19" cy="30" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="30" fill="#2b2b2b" r="3"></circle><path d="M18 39q10-3 20 0" fill="none" stroke="#4a4a4a" stroke-linecap="round" stroke-width="3.5"></path></svg>
-</div>
-<div class="player-name">Kohlíček Petr</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#e8c39e" r="28"></circle><path d="M7 23a21 21 0 0 1 42-1c-6-3-30-3-42 1z" fill="#2b2b2b"></path><circle cx="19" cy="31" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="31" fill="#2b2b2b" r="3"></circle><path d="M20 41q8 5 16 0" fill="none" stroke="#7a3d1f" stroke-linecap="round" stroke-width="2.5"></path><path d="M12 36q4 6 3 10M44 36q-4 6-3 10" opacity="0.5" stroke="#c9a377" stroke-width="1.5"></path></svg>
-</div>
-<div class="player-name">Pelech Roman</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#f0d4b0" r="28"></circle><path d="M8 24a20 20 0 0 1 40 0c0 4-2 6-2 6H10s-2-2-2-6z" fill="#8a4a2e"></path><path d="M42 20c6 0 8 6 6 12-2-3-6-4-8-4z" fill="#8a4a2e"></path><circle cx="46" cy="18" fill="#d4457e" r="3.5"></circle><circle cx="19" cy="31" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="31" fill="#2b2b2b" r="3"></circle><path d="M20 40q8 6 16 0" fill="none" stroke="#a5503a" stroke-linecap="round" stroke-width="2.5"></path></svg>
-</div>
-<div class="player-name">Roklová Zuzana</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#e8c39e" r="28"></circle><path d="M8 20a20 20 0 0 1 40 0v1H8z" fill="#c0392b"></path><circle cx="19" cy="30" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="30" fill="#2b2b2b" r="3"></circle><path d="M18 39q10-3 20 0" fill="none" stroke="#4a4a4a" stroke-linecap="round" stroke-width="3.5"></path></svg>
-</div>
-<div class="player-name">Soliman Alan</div>
-<div class="player-role">Hráč</div>
-</div>
-<div class="player-card">
-<div class="player-avatar">
-<svg viewbox="0 0 56 56"><circle cx="28" cy="28" fill="#e8c39e" r="28"></circle><path d="M6 24a22 22 0 0 1 44 0v3H6z" fill="#3f7d5c"></path><rect fill="#2e5f45" height="5" width="44" x="6" y="23"></rect><circle cx="19" cy="30" fill="#2b2b2b" r="3"></circle><circle cx="37" cy="30" fill="#2b2b2b" r="3"></circle><path d="M14 36c2 10 26 10 28 0-4 4-24 4-28 0z" fill="#5a3a22"></path></svg>
-</div>
-<div class="player-name">Tkáč Marek</div>
-<div class="player-role">Hráč</div>
-</div>
-</div>
-</section>
-<hr class="full-divider"/>
-<!-- O NÁS -->
-<section id="onas">
-<div class="section-title">O nás</div>
-<div class="section-line"></div>
-<div class="about-box">
-<p>Roshambo Praha je šipkový tým z hlavního města, jehož název vychází z legendární hry Roshambo — kterou proslavil sám Eric Cartman v South Parku. Jako on, i my hrajeme naplno, bez omluv a s plným nasazením.</p>
-<p>Hrajeme 3. ligu C a náš domácí bar je <strong style="color: var(--yellow)">Yondu Bar, Praha 8</strong>. Přijďte nás podpořit — pivo bude, šipky taky.</p>
-<p style="color: var(--yellow); font-style: italic;">"Oh my God, they killed Kenny!" — ale naše šipky cíl nezabíjejí, trefují ho.</p>
-</div>
-</section>
-<!-- FOOTER -->
 <footer>
-<p>🎯 <span>Roshambo Praha</span> · 3. liga C · Sezóna 2026/2027</p>
-<p style="margin-top:8px;">Respekt soupeřům. Nula omluv. Šipky do terče.</p>
+  <div class="wrap">
+    <p><b>Roshambo Praha</b> · <span id="foot-league"></span></p>
+    <p>Respekt soupeřům. Nula omluv. Šipky do terče.</p>
+    <p id="foot-updated"></p>
+  </div>
 </footer>
-<script>
-(function () {
-  var select = document.getElementById('seasonSelect');
-  if (!select) return;
-  select.addEventListener('change', function () {
-    var panels = document.querySelectorAll('.season-panel');
-    for (var i = 0; i < panels.length; i++) {
-      panels[i].style.display = 'none';
-    }
-    var chosen = document.getElementById('panel-' + select.value);
-    if (chosen) chosen.style.display = 'block';
-  });
-})();
-</script>
-<script>
-(function () {
-  var todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  var rows = document.querySelectorAll('.matches-table tbody tr[data-date]');
-  var nextRow = null;
 
-  rows.forEach(function (row) {
-    var date = row.getAttribute('data-date');
-    if (date < todayStr) {
-      row.classList.add('played');
-      var result = row.getAttribute('data-result');
-      if (result) row.classList.add('result-' + result);
-    } else if (!nextRow || date < nextRow.getAttribute('data-date')) {
-      nextRow = row;
-    }
-  });
+<noscript><p class="wrap">Pro zobrazení tabulky a rozpisu zapněte JavaScript.</p></noscript>
 
-  if (nextRow) {
-    nextRow.classList.add('next-match');
-    var firstCell = nextRow.querySelector('td:first-child');
-    if (firstCell) {
-      var badge = document.createElement('span');
-      badge.className = 'next-match-badge';
-      badge.textContent = 'Nejbližší';
-      firstCell.appendChild(badge);
-    }
-  }
-})();
-</script>
-
+<script type="application/json" id="site-config">{"team":"Roshambo Praha","venues":{"175880":{"label":"Yondu Bar, Praha 8","lat":50.0916469,"lng":14.4525528,"query":"Yondu bar, Thámova 221/7, 186 00 Praha 8-Karlín","placeId":"ChIJY5DO2X-VC0cRKaM-Jd-H6uQ"},"416008":{"label":"DAHA bar, Kralupy n. Vlt.","lat":50.2435833,"lng":14.3108675,"query":"DAHA Bar, U Cukrovaru 1085, 278 01 Kralupy nad Vltavou","placeId":"ChIJv9UUagDDC0cRy2-awMk-Qrg"},"285960":{"label":"Stanice Ládví, Praha 8","lat":50.1272495,"lng":14.4674053,"query":"Stanice Ládví, Kyselova 1657/6, 182 00 Praha 8","placeId":"ChIJca0NY2frC0cRLenq0-cheTI"},"283400":{"label":"Bar Na zastávce, Praha 8","lat":50.1313201,"lng":14.4306638,"query":"BAR na zastávce, Čimická 269, 181 00 Praha 8-Bohnice","placeId":"ChIJKwUU8SHrC0cRkcMh_Bl-4yc"},"300552":{"label":"Základna bar, Kralupy","lat":50.2489163,"lng":14.3152485,"query":"Bar ZÁKLADNA, Hakenova 725, 278 01 Kralupy nad Vltavou","placeId":"ChIJAUa8eYHDC0cR-8Ydj6I30Ys"},"374536":{"label":"Na hřišti, Vraňany","lat":50.3158735,"lng":14.3632078,"query":"Hospoda Na hřišti, Vraňany 97, 277 07 Vraňany","placeId":"ChIJ4Rg1EZHcC0cRIhI7VnTEE3I"},"279560":{"label":"Restaurace U jezera, Zdiby","lat":50.168663,"lng":14.4289913,"query":"Restaurace u Jezera, Soběslavovo nám. 3, 250 66 Zdiby","placeId":"ChIJ5X0RV0_qC0cRiNcxHstH_U8"},"246280":{"label":"Club Troja, Praha 8","lat":50.1302835,"lng":14.4336183,"query":"Club Troja, Bukolská 775, 181 00 Praha 8","placeId":"ChIJVa2RWyLrC0cR2OBTL8aA8N8"},"419592":{"label":"Squash Sport Čimice","lat":50.1408893,"lng":14.4276854,"query":"Squash Sport Čimice, Čimická 780/61, 181 00 Praha 8","placeId":"ChIJBVKPhOLqC0cRRGiU5rqY_F4"}},"avatars":{"Novák Jakub":{"skin":"#e8c39e","cap":"bobble","capColor":"#c0392b","mood":"smile"},"Bajer Josef":{"skin":"#f1c9a5","hair":"short","hairColor":"#5a3a22","glasses":true,"mood":"smile"},"Bečka Marek":{"skin":"#e8c39e","cap":"cap-back","capColor":"#2e6da4","mood":"grin"},"Kohlíček Petr":{"skin":"#f1c9a5","hair":"bald","mustache":true,"beardColor":"#5a3a22","mood":"neutral"},"Pelech Roman":{"skin":"#e8c39e","hair":"short","hairColor":"#2b2b2b","beard":"stubble","mood":"smile"},"Roklová Zuzana":{"skin":"#f1c9a5","hair":"ponytail","hairColor":"#8a4b2a","bow":"#e84393","mood":"smile"},"Soliman Alan":{"skin":"#e8c39e","cap":"cap","capColor":"#c0392b","mustache":true,"beardColor":"#5a3a22","mood":"grumpy"},"Tkáč Marek":{"skin":"#e8c39e","cap":"beanie","capColor":"#3f7d5c","beard":"full","beardColor":"#5a3a22","mood":"smile"},"Pamětický Josef":{"skin":"#d9a77c","hair":"short","hairColor":"#3b2a1e","beard":"stubble","mood":"grin"},"Tůma Rostislav":{"skin":"#f1c9a5","hair":"short","hairColor":"#8f8f8f","glasses":true,"mustache":true,"beardColor":"#8f8f8f","mood":"neutral"}}}</script>
+<script type="application/json" id="site-data">{"updated":"2026-11-04T22:24:00+01:00","season":{"id":"6243","label":"2026/2027","league":"3. liga C","leagueId":"228360","leagueTeamId":"2745352","final":false},"standings":[{"pos":1,"name":"Bocman Club Praha","body":12,"kol":4,"v":4,"r":0,"p":0,"legy":"118:59","skore":"54:18","lt":"2743048"},{"pos":2,"name":"Figury Libčice","body":10,"kol":5,"v":3,"r":1,"p":1,"legy":"132:85","skore":"58:32","lt":"2743560"},{"pos":3,"name":"Kralupská letka","body":9,"kol":4,"v":3,"r":0,"p":1,"legy":"113:73","skore":"48:24","lt":"2744328"},{"pos":4,"name":"Zdiby DC B","body":9,"kol":3,"v":3,"r":0,"p":0,"legy":"80:49","skore":"35:19","lt":"2745864"},{"pos":5,"name":"Krkavci Kralupy","body":8,"kol":5,"v":2,"r":2,"p":1,"legy":"103:116","skore":"42:48","lt":"2744584"},{"pos":6,"name":"Roshambo Praha","body":6,"kol":5,"v":2,"r":0,"p":3,"legy":"118:101","skore":"47:43","lt":"2745352"},{"pos":7,"name":"Hell's Darters Praha","body":6,"kol":4,"v":2,"r":0,"p":2,"legy":"76:100","skore":"31:41","lt":"2744072"},{"pos":8,"name":"Black Diamonds Praha","body":4,"kol":3,"v":1,"r":1,"p":1,"legy":"63:65","skore":"26:28","lt":"2742792"},{"pos":9,"name":"Bohnický kladiva","body":4,"kol":4,"v":1,"r":1,"p":2,"legy":"83:97","skore":"32:40","lt":"2743304"},{"pos":10,"name":"Pedro Praha","body":3,"kol":4,"v":1,"r":0,"p":3,"legy":"78:101","skore":"31:41","lt":"2745096"},{"pos":11,"name":"Havrani Vraňany B","body":2,"kol":4,"v":0,"r":2,"p":2,"legy":"73:106","skore":"25:47","lt":"2743816"},{"pos":12,"name":"Los Číčos Praha","body":1,"kol":3,"v":0,"r":1,"p":2,"legy":"53:79","skore":"21:33","lt":"2744840"},{"pos":13,"name":"Zdiby DC","body":0,"kol":4,"v":0,"r":0,"p":4,"legy":"58:117","skore":"18:54","lt":"2745608"}],"matches":[{"round":1,"date":"2026-09-01","time":"19:00","home":"Roshambo Praha","away":"Hell's Darters Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":"8:10","result":"loss"},{"round":2,"date":"2026-09-20","time":"18:00","home":"Kralupská letka","away":"Roshambo Praha","place":"416008","venue":"DAHA bar, Kralupy n. Vlt.","score":"12:6","result":"loss"},{"round":3,"date":"2026-09-22","time":"19:00","home":"Roshambo Praha","away":"Zdiby DC B","place":"175880","venue":"Yondu Bar, Praha 8","score":"8:10","result":"loss"},{"round":4,"date":"2026-10-11","time":"18:00","home":"Los Číčos Praha","away":"Roshambo Praha","place":"285960","venue":"Stanice Ládví, Praha 8","score":"6:12","result":"win"},{"round":5,"date":"2026-10-13","time":"19:00","home":"Roshambo Praha","away":"Bohnický kladiva","place":"175880","venue":"Yondu Bar, Praha 8","score":"13:5","result":"win"},{"round":6,"date":"2026-10-25","time":"18:00","home":"Black Diamonds Praha","away":"Roshambo Praha","place":"283400","venue":"Bar Na zastávce, Praha 8","score":"13:5","result":"loss"},{"round":7,"date":"2026-11-03","time":"19:00","home":"Roshambo Praha","away":"Bocman Club Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":8,"date":"2026-11-15","time":"18:00","home":"Figury Libčice","away":"Roshambo Praha","place":"300552","venue":"Základna bar, Kralupy","score":null,"result":null},{"round":9,"date":"2026-11-17","time":"19:00","home":"Roshambo Praha","away":"Zdiby DC","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":10,"date":"2026-11-24","time":"20:00","home":"Krkavci Kralupy","away":"Roshambo Praha","place":"300552","venue":"Základna bar, Kralupy","score":null,"result":null},{"round":12,"date":"2026-12-13","time":"17:00","home":"Havrani Vraňany B","away":"Roshambo Praha","place":"374536","venue":"Na hřišti, Vraňany","score":null,"result":null},{"round":13,"date":"2026-12-15","time":"19:00","home":"Roshambo Praha","away":"Pedro Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":14,"date":"2027-01-17","time":"18:00","home":"Hell's Darters Praha","away":"Roshambo Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":15,"date":"2027-01-19","time":"19:00","home":"Roshambo Praha","away":"Kralupská letka","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":16,"date":"2027-01-31","time":"17:00","home":"Zdiby DC B","away":"Roshambo Praha","place":"279560","venue":"Restaurace U jezera, Zdiby","score":null,"result":null},{"round":17,"date":"2027-02-02","time":"19:00","home":"Roshambo Praha","away":"Los Číčos Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":18,"date":"2027-02-09","time":"19:00","home":"Bohnický kladiva","away":"Roshambo Praha","place":"246280","venue":"Club Troja, Praha 8","score":null,"result":null},{"round":19,"date":"2027-02-16","time":"19:00","home":"Roshambo Praha","away":"Black Diamonds Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":20,"date":"2027-02-28","time":"18:00","home":"Bocman Club Praha","away":"Roshambo Praha","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":21,"date":"2027-03-02","time":"19:00","home":"Roshambo Praha","away":"Figury Libčice","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":22,"date":"2027-03-14","time":"17:00","home":"Zdiby DC","away":"Roshambo Praha","place":"279560","venue":"Restaurace U jezera, Zdiby","score":null,"result":null},{"round":23,"date":"2027-03-30","time":"19:00","home":"Roshambo Praha","away":"Krkavci Kralupy","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":25,"date":"2027-04-13","time":"19:00","home":"Roshambo Praha","away":"Havrani Vraňany B","place":"175880","venue":"Yondu Bar, Praha 8","score":null,"result":null},{"round":26,"date":"2027-05-09","time":"16:00","home":"Pedro Praha","away":"Roshambo Praha","place":"419592","venue":"Squash Sport Čimice","score":null,"result":null}],"players":[{"name":"Kohlíček Petr","lkh":"62,5","zp":"68,42","zc":20,"zo":19,"zv":13,"lp":"65,91","lo":44,"lv":29,"n95":27,"n95a":"0,61","n133":6,"n133a":"0,14","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Novák Jakub","lkh":"52,1","zp":"57,14","zc":20,"zo":14,"zv":8,"lp":"57,58","lo":33,"lv":19,"n95":12,"n95a":"0,36","n133":3,"n133a":"0,09","n170":1,"n170a":"0,03","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bečka Marek","lkh":"","zp":"66,67","zc":20,"zo":6,"zv":4,"lp":"53,33","lo":15,"lv":8,"n95":0,"n95a":"0,00","n133":1,"n133a":"0,07","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Roklová Zuzana","lkh":"39,0","zp":"37,50","zc":20,"zo":16,"zv":6,"lp":"47,62","lo":42,"lv":20,"n95":18,"n95a":"0,43","n133":2,"n133a":"0,05","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pelech Roman","lkh":"","zp":"75,00","zc":20,"zo":4,"zv":3,"lp":"75,00","lo":8,"lv":6,"n95":2,"n95a":"0,25","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bajer Josef","lkh":"","zp":"37,50","zc":20,"zo":8,"zv":3,"lp":"47,37","lo":19,"lv":9,"n95":6,"n95a":"0,32","n133":1,"n133a":"0,05","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Tkáč Marek","lkh":"","zp":"22,22","zc":20,"zo":9,"zv":2,"lp":"33,33","lo":24,"lv":8,"n95":8,"n95a":"0,33","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Soliman Alan","lkh":"","zp":"25,00","zc":20,"zo":4,"zv":1,"lp":"40,00","lo":10,"lv":4,"n95":2,"n95a":"0,20","n133":1,"n133a":"0,10","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0}],"leagueTeams":{"2743048":{"name":"Bocman Club Praha","players":[]},"2743560":{"name":"Figury Libčice","players":[]},"2744328":{"name":"Kralupská letka","players":[]},"2745864":{"name":"Zdiby DC B","players":[]},"2744584":{"name":"Krkavci Kralupy","players":[]},"2745352":{"name":"Roshambo Praha","players":[{"name":"Kohlíček Petr","lkh":"62,5","zo":19,"zv":13},{"name":"Novák Jakub","lkh":"52,1","zo":14,"zv":8},{"name":"Bečka Marek","lkh":"","zo":6,"zv":4},{"name":"Roklová Zuzana","lkh":"39,0","zo":16,"zv":6},{"name":"Pelech Roman","lkh":"","zo":4,"zv":3},{"name":"Bajer Josef","lkh":"","zo":8,"zv":3},{"name":"Tkáč Marek","lkh":"","zo":9,"zv":2},{"name":"Soliman Alan","lkh":"","zo":4,"zv":1}]},"2744072":{"name":"Hell's Darters Praha","players":[]},"2742792":{"name":"Black Diamonds Praha","players":[]},"2743304":{"name":"Bohnický kladiva","players":[]},"2745096":{"name":"Pedro Praha","players":[]},"2743816":{"name":"Havrani Vraňany B","players":[]},"2744840":{"name":"Los Číčos Praha","players":[]},"2745608":{"name":"Zdiby DC","players":[]}},"roster":{"members":["Novák Jakub","Bajer Josef","Bečka Marek","Kohlíček Petr","Pelech Roman","Roklová Zuzana","Soliman Alan","Tkáč Marek","Pamětický Josef","Tůma Rostislav"],"captain":"Novák Jakub"},"venues":{},"history":[{"season":"2025/2026","league":"3. liga C","final":true,"note":"Roshambo Praha skončilo na 6. místě ze 13 týmů — solidní střed tabulky, se kterým jde do nové sezóny útočit výš.","standings":[{"pos":1,"name":"Nikater Praha","body":64,"kol":24,"v":21,"r":1,"p":2,"legy":"649:383","skore":"300:132"},{"pos":2,"name":"Hardcore Praha","body":53,"kol":24,"v":17,"r":2,"p":5,"legy":"602:463","skore":"257:175"},{"pos":3,"name":"Patriots darts club Zdiby B","body":49,"kol":24,"v":15,"r":4,"p":5,"legy":"595:462","skore":"258:174"},{"pos":4,"name":"Bocman Club Praha","body":47,"kol":24,"v":15,"r":2,"p":7,"legy":"579:463","skore":"246:186"},{"pos":5,"name":"The LegenDarts Praha","body":41,"kol":24,"v":13,"r":2,"p":9,"legy":"531:516","skore":"219:213"},{"pos":6,"name":"Roshambo Praha","body":38,"kol":24,"v":12,"r":2,"p":10,"legy":"527:525","skore":"217:215"},{"pos":7,"name":"Staří promiň Praha","body":36,"kol":24,"v":10,"r":6,"p":8,"legy":"517:512","skore":"219:213"},{"pos":8,"name":"Prosecká Devítka Praha","body":34,"kol":24,"v":11,"r":1,"p":12,"legy":"517:536","skore":"210:222"},{"pos":9,"name":"Bohnická kladiva","body":25,"kol":24,"v":7,"r":4,"p":13,"legy":"507:562","skore":"199:233"},{"pos":10,"name":"Bar On Prosek","body":24,"kol":24,"v":7,"r":3,"p":14,"legy":"463:587","skore":"180:252"},{"pos":11,"name":"Hell's Darters Praha","body":17,"kol":24,"v":4,"r":5,"p":15,"legy":"457:591","skore":"174:258"},{"pos":12,"name":"Patriots darts club Zdiby","body":14,"kol":24,"v":3,"r":5,"p":16,"legy":"493:570","skore":"188:244"},{"pos":13,"name":"Los Číčos Praha","body":7,"kol":24,"v":2,"r":1,"p":21,"legy":"385:652","skore":"141:291"}],"players":[{"name":"Kohlíček Petr","lkh":"58,0","zp":"63,95","zc":96,"zo":86,"zv":55,"lp":"61,03","lo":213,"lv":130,"n95":133,"n95a":"0,62","n133":32,"n133a":"0,15","n170":1,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Roklová Zuzana","lkh":"52,0","zp":"58,11","zc":96,"zo":74,"zv":43,"lp":"54,75","lo":179,"lv":98,"n95":107,"n95a":"0,60","n133":15,"n133a":"0,08","n170":1,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bečka Marek","lkh":"56,7","zp":"64,71","zc":96,"zo":51,"zv":33,"lp":"60,16","lo":123,"lv":74,"n95":54,"n95a":"0,44","n133":17,"n133a":"0,14","n170":3,"n170a":"0,02","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Novák Jakub","lkh":"47,6","zp":"53,57","zc":96,"zo":56,"zv":30,"lp":"52,17","lo":138,"lv":72,"n95":64,"n95a":"0,46","n133":10,"n133a":"0,07","n170":1,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pelech Roman","lkh":"","zp":"65,00","zc":96,"zo":20,"zv":13,"lp":"62,50","lo":48,"lv":30,"n95":31,"n95a":"0,65","n133":7,"n133a":"0,15","n170":1,"n170a":"0,02","z64":1,"z53":0,"z42":0,"z3":0},{"name":"Tůma Rostislav","lkh":"","zp":"21,95","zc":96,"zo":41,"zv":9,"lp":"29,00","lo":100,"lv":29,"n95":26,"n95a":"0,26","n133":5,"n133a":"0,05","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Soliman Alan","lkh":"","zp":"35,71","zc":96,"zo":14,"zv":5,"lp":"41,67","lo":36,"lv":15,"n95":9,"n95a":"0,25","n133":3,"n133a":"0,08","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Tkáč Marek","lkh":"","zp":"21,43","zc":96,"zo":14,"zv":3,"lp":"29,41","lo":34,"lv":10,"n95":13,"n95a":"0,38","n133":1,"n133a":"0,03","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bajer Josef","lkh":"","zp":"14,29","zc":96,"zo":28,"zv":4,"lp":"22,73","lo":66,"lv":15,"n95":27,"n95a":"0,41","n133":1,"n133a":"0,02","n170":1,"n170a":"0,02","z64":0,"z53":0,"z42":0,"z3":0}]},{"season":"2024/2025","league":"3. liga L","final":true,"note":"V sezóně 2024/2025 hrálo Roshambo Praha 3. ligu L a skončilo na 8. místě ze 13 týmů.","standings":[{"pos":1,"name":"TŠA Devítka Praha","body":63,"kol":24,"v":21,"r":0,"p":3,"legy":"651:392","skore":"293:139"},{"pos":2,"name":"Crazy dart Praha","body":59,"kol":24,"v":19,"r":2,"p":3,"legy":"623:417","skore":"274:158"},{"pos":3,"name":"Worm Gang Praha","body":54,"kol":24,"v":17,"r":3,"p":4,"legy":"619:451","skore":"262:170"},{"pos":4,"name":"Sgt. Pepik's Band Praha C","body":48,"kol":24,"v":15,"r":3,"p":6,"legy":"619:431","skore":"268:164"},{"pos":5,"name":"Kryplos Praha","body":48,"kol":24,"v":14,"r":6,"p":4,"legy":"609:444","skore":"261:171"},{"pos":6,"name":"Monkey z 213 Praha","body":37,"kol":24,"v":12,"r":1,"p":11,"legy":"537:514","skore":"224:208"},{"pos":7,"name":"Hostivar Darts Praha","body":31,"kol":24,"v":9,"r":4,"p":11,"legy":"488:565","skore":"195:237"},{"pos":8,"name":"Roshambo Praha","body":28,"kol":24,"v":8,"r":4,"p":12,"legy":"508:545","skore":"209:223"},{"pos":9,"name":"Rychlé hroty Praha B","body":21,"kol":24,"v":6,"r":3,"p":15,"legy":"468:583","skore":"184:248"},{"pos":10,"name":"Los Číčos Praha","body":20,"kol":24,"v":6,"r":2,"p":16,"legy":"436:605","skore":"171:261"},{"pos":11,"name":"Alcatraz DSC Praha","body":16,"kol":24,"v":5,"r":1,"p":18,"legy":"433:608","skore":"165:267"},{"pos":12,"name":"Future Praha","body":14,"kol":24,"v":4,"r":2,"p":18,"legy":"469:590","skore":"176:256"},{"pos":13,"name":"Stiflerova máma Praha","body":12,"kol":24,"v":3,"r":3,"p":18,"legy":"358:673","skore":"126:306"}],"players":[{"name":"Kohlíček Petr","lkh":"50,8","zp":"58,43","zc":96,"zo":89,"zv":52,"lp":"55,36","lo":224,"lv":124,"n95":112,"n95a":"0,50","n133":18,"n133a":"0,08","n170":2,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Roklová Zuzana","lkh":"49,5","zp":"58,33","zc":96,"zo":72,"zv":42,"lp":"55,43","lo":184,"lv":102,"n95":84,"n95a":"0,46","n133":10,"n133a":"0,05","n170":1,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pelech Roman","lkh":"","zp":"66,67","zc":96,"zo":36,"zv":24,"lp":"63,41","lo":82,"lv":52,"n95":55,"n95a":"0,67","n133":10,"n133a":"0,12","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Tůma Rostislav","lkh":"32,7","zp":"34,29","zc":96,"zo":70,"zv":24,"lp":"37,04","lo":162,"lv":60,"n95":53,"n95a":"0,33","n133":4,"n133a":"0,02","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pik Robert","lkh":"","zp":"53,85","zc":96,"zo":26,"zv":14,"lp":"50,82","lo":61,"lv":31,"n95":31,"n95a":"0,51","n133":5,"n133a":"0,08","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bečka Marek","lkh":"","zp":"46,43","zc":96,"zo":28,"zv":13,"lp":"50,00","lo":72,"lv":36,"n95":28,"n95a":"0,39","n133":9,"n133a":"0,13","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Novák Jakub","lkh":"","zp":"33,33","zc":96,"zo":24,"zv":8,"lp":"33,90","lo":59,"lv":20,"n95":20,"n95a":"0,34","n133":6,"n133a":"0,10","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Rajchl Josef","lkh":"","zp":"26,67","zc":96,"zo":15,"zv":4,"lp":"32,43","lo":37,"lv":12,"n95":9,"n95a":"0,24","n133":1,"n133a":"0,03","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Soliman Alan","lkh":"","zp":"20,00","zc":96,"zo":20,"zv":4,"lp":"23,91","lo":46,"lv":11,"n95":13,"n95a":"0,28","n133":2,"n133a":"0,04","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0}]},{"season":"2023/2024","league":"3. liga J","final":true,"note":"V sezóně 2023/2024 hrálo Roshambo Praha 3. ligu J a skončilo na 7. místě z 12 týmů.","standings":[{"pos":1,"name":"Bocman Club Praha","body":56,"kol":22,"v":18,"r":2,"p":2,"legy":"596:365","skore":"265:131"},{"pos":2,"name":"Kralupská letka","body":53,"kol":22,"v":17,"r":2,"p":3,"legy":"583:372","skore":"255:141"},{"pos":3,"name":"Willi Hubert Praha","body":47,"kol":22,"v":15,"r":2,"p":5,"legy":"550:426","skore":"236:160"},{"pos":4,"name":"Kašamba Praha","body":43,"kol":22,"v":13,"r":4,"p":5,"legy":"539:419","skore":"238:158"},{"pos":5,"name":"Výsost Vysočany Praha","body":37,"kol":22,"v":12,"r":1,"p":9,"legy":"500:463","skore":"208:188"},{"pos":6,"name":"Los Číčos Praha","body":32,"kol":22,"v":10,"r":2,"p":10,"legy":"474:492","skore":"190:206"},{"pos":7,"name":"Roshambo Praha","body":31,"kol":22,"v":10,"r":1,"p":11,"legy":"490:483","skore":"199:197"},{"pos":8,"name":"Staří promiň Praha","body":29,"kol":22,"v":9,"r":2,"p":11,"legy":"477:499","skore":"194:202"},{"pos":9,"name":"Havrani Vraňany B","body":26,"kol":22,"v":8,"r":2,"p":12,"legy":"440:533","skore":"169:227"},{"pos":10,"name":"Patriots darts club Zdiby","body":15,"kol":22,"v":4,"r":3,"p":15,"legy":"443:540","skore":"171:225"},{"pos":11,"name":"Hell's Darters Praha","body":9,"kol":22,"v":1,"r":6,"p":15,"legy":"401:562","skore":"148:248"},{"pos":12,"name":"Kašamba Praha II","body":4,"kol":22,"v":1,"r":1,"p":20,"legy":"302:641","skore":"103:293"}],"players":[{"name":"Roklová Zuzana","lkh":"51,1","zp":"56,25","zc":88,"zo":80,"zv":45,"lp":"55,10","lo":196,"lv":108,"n95":109,"n95a":"0,56","n133":14,"n133a":"0,07","n170":3,"n170a":"0,02","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Kohlíček Petr","lkh":"48,8","zp":"54,67","zc":88,"zo":75,"zv":41,"lp":"54,59","lo":185,"lv":101,"n95":92,"n95a":"0,50","n133":9,"n133a":"0,05","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pik Robert","lkh":"46,1","zp":"52,00","zc":88,"zo":75,"zv":39,"lp":"50,80","lo":187,"lv":95,"n95":86,"n95a":"0,46","n133":13,"n133a":"0,07","n170":1,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Tůma Rostislav","lkh":"35,6","zp":"37,93","zc":88,"zo":58,"zv":22,"lp":"40,85","lo":142,"lv":58,"n95":41,"n95a":"0,29","n133":10,"n133a":"0,07","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pelech Roman","lkh":"","zp":"53,33","zc":88,"zo":15,"zv":8,"lp":"52,63","lo":38,"lv":20,"n95":19,"n95a":"0,50","n133":2,"n133a":"0,05","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Soliman Alan","lkh":"","zp":"33,33","zc":88,"zo":27,"zv":9,"lp":"35,38","lo":65,"lv":23,"n95":13,"n95a":"0,20","n133":2,"n133a":"0,03","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bartoška Zdeněk","lkh":"","zp":"75,00","zc":88,"zo":4,"zv":3,"lp":"60,00","lo":10,"lv":6,"n95":4,"n95a":"0,40","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Haltuch Štěpán","lkh":"","zp":"35,71","zc":88,"zo":14,"zv":5,"lp":"45,45","lo":33,"lv":15,"n95":5,"n95a":"0,15","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Rajchl Josef","lkh":"","zp":"50,00","zc":88,"zo":4,"zv":2,"lp":"55,56","lo":9,"lv":5,"n95":3,"n95a":"0,33","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0}]},{"season":"2022/2023","league":"3. liga G","final":true,"note":"V sezóně 2022/2023 hrálo Roshambo Praha 3. ligu G a skončilo na 11. místě ze 14 týmů (2× kontumace).","standings":[{"pos":1,"name":"Krkavci Kralupy","body":67,"kol":26,"v":21,"r":4,"p":1,"legy":"0","skore":"689:457"},{"pos":2,"name":"Patriots darts club Zdiby B","body":67,"kol":26,"v":22,"r":1,"p":3,"legy":"0","skore":"740:370"},{"pos":3,"name":"Létající Jeleni Kralupy n/Vlt. B","body":61,"kol":26,"v":19,"r":4,"p":3,"legy":"0","skore":"709:416"},{"pos":4,"name":"Kralupská letka Čechie","body":57,"kol":26,"v":18,"r":3,"p":5,"legy":"0","skore":"713:418"},{"pos":5,"name":"Nikater Praha","body":50,"kol":26,"v":16,"r":2,"p":8,"legy":"0","skore":"606:520"},{"pos":6,"name":"Kašamba Praha","body":43,"kol":26,"v":13,"r":4,"p":9,"legy":"0","skore":"615:532"},{"pos":7,"name":"Alcatraz DSC Praha","body":37,"kol":26,"v":12,"r":1,"p":13,"legy":"0","skore":"520:602"},{"pos":8,"name":"Havrani Vraňany B","body":29,"kol":26,"v":9,"r":2,"p":15,"legy":"0","skore":"548:589"},{"pos":9,"name":"Kecky Praha","body":25,"kol":26,"v":8,"r":4,"p":13,"legy":"1","skore":"480:622"},{"pos":10,"name":"Los Číčos Praha","body":23,"kol":26,"v":7,"r":2,"p":17,"legy":"0","skore":"518:607"},{"pos":11,"name":"Roshambo Praha","body":22,"kol":26,"v":9,"r":1,"p":14,"legy":"2","skore":"489:620"},{"pos":12,"name":"Hell's Darters Praha","body":22,"kol":26,"v":7,"r":1,"p":18,"legy":"0","skore":"457:668"},{"pos":13,"name":"Patriots darts club Zdiby","body":16,"kol":26,"v":5,"r":1,"p":20,"legy":"0","skore":"471:661"},{"pos":14,"name":"Kašamba Praha II","body":3,"kol":26,"v":1,"r":0,"p":25,"legy":"0","skore":"314:787"}],"players":[{"name":"Roklová Zuzana","lkh":"46,6","zp":"50,67","zc":92,"zo":75,"zv":38,"lp":"50,00","lo":182,"lv":91,"n95":83,"n95a":"0,46","n133":20,"n133a":"0,11","n170":0,"n170a":"0,00","z64":1,"z53":0,"z42":0,"z3":0},{"name":"Kohlíček Petr","lkh":"41,9","zp":"47,30","zc":92,"zo":74,"zv":35,"lp":"47,25","lo":182,"lv":86,"n95":65,"n95a":"0,36","n133":10,"n133a":"0,05","n170":1,"n170a":"0,01","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Pik Robert","lkh":"42,7","zp":"46,05","zc":92,"zo":76,"zv":35,"lp":"47,34","lo":188,"lv":89,"n95":86,"n95a":"0,46","n133":13,"n133a":"0,07","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Bartoška Zdeněk","lkh":"","zp":"68,97","zc":92,"zo":29,"zv":20,"lp":"65,15","lo":66,"lv":43,"n95":38,"n95a":"0,58","n133":6,"n133a":"0,09","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Soliman Alan","lkh":"33,0","zp":"33,96","zc":92,"zo":53,"zv":18,"lp":"37,50","lo":120,"lv":45,"n95":43,"n95a":"0,36","n133":1,"n133a":"0,01","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Haltuch Štěpán","lkh":"","zp":"24,14","zc":92,"zo":29,"zv":7,"lp":"35,62","lo":73,"lv":26,"n95":26,"n95a":"0,36","n133":3,"n133a":"0,04","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Tůma Rostislav","lkh":"","zp":"25,00","zc":92,"zo":24,"zv":6,"lp":"30,36","lo":56,"lv":17,"n95":13,"n95a":"0,23","n133":1,"n133a":"0,02","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0},{"name":"Rajchl Josef","lkh":"","zp":"12,50","zc":92,"zo":8,"zv":1,"lp":"21,05","lo":19,"lv":4,"n95":3,"n95a":"0,16","n133":0,"n133a":"0,00","n170":0,"n170a":"0,00","z64":0,"z53":0,"z42":0,"z3":0}]}]}</script>
 <script>
-(function () {
-  // [klíč v data-* atributu, popisek]
-  var DEFS = [
-    { g: 'Koeficient',     items: [['lkh', 'LKH']] },
-    { g: 'Zápasy',         items: [['zp', 'Úspěšnost'], ['zc', 'Celkem'], ['zo', 'Odehráno'], ['zv', 'Vyhráno'], ['pro', 'Prospěšnost']] },
-    { g: 'Legy',           items: [['lp', 'Úspěšnost'], ['lo', 'Odehráno'], ['lv', 'Vyhráno']] },
-    { g: 'Náhozy / legy',   items: [['n95', '95+'], ['n133', '133+'], ['n170', '170+']] },
-    { g: 'Zavření v kole', items: [['z64', '6. kolo'], ['z53', '5. kolo'], ['z42', '4. kolo'], ['z3', '3. kolo']] }
+'use strict';
+(() => {
+  // ---------------------------------------------------------------- pomocné funkce
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const el = (tag, props = {}, ...children) => {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k === 'text') node.textContent = v;
+      else if (k === 'svg') node.innerHTML = v;                 // jen SVG generované níže z konfigurace
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? '' : v);
+    }
+    node.append(...children.flat().filter(c => c != null && c !== false));
+    return node;
+  };
+  const json = id => JSON.parse(document.getElementById(id).textContent);
+  const CFG = json('site-config'), DATA = json('site-data'), TEAM = CFG.team;
+
+  const num = v => typeof v === 'number' ? v : parseFloat(String(v ?? '').replace(',', '.'));
+  const fmt = (n, d = 2) => Number.isFinite(n) ? n.toLocaleString('cs-CZ', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
+  const success = p => p.zo ? p.zv / p.zo * 100 : 0;          // úspěšnost = V / O
+  const benefit = p => p.zo ? p.zv * p.zv / p.zo : 0;          // prospěšnost = V² / O
+  const byBenefit = (a, b) => benefit(b) - benefit(a) || success(b) - success(a);
+  const DAYS = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
+  const toDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+  const pad = n => String(n).padStart(2, '0');
+  const now = new Date();
+  const TODAY = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const dayLabel = iso => { const d = toDate(iso); return `${DAYS[d.getDay()]} ${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}`; };
+  const safely = (name, fn) => { try { fn(); } catch (e) { console.error(`[${name}]`, e); } };
+
+  // ---------------------------------------------------------------- sezóny
+  const seasons = [
+    { label: DATA.season.label, league: DATA.season.league, final: DATA.season.final,
+      standings: DATA.standings, players: DATA.players, current: true },
+    ...DATA.history.map(h => ({ ...h, label: h.season, current: false })),
   ];
-  var PCT = { zp: 1, lp: 1 };
-  var NO_COMPARE = { zc: 1 };
-  var PER_LEG = { n95: 1, n133: 1, n170: 1 };  // zobrazí se jako počet / odehrané legy
+  const ourRow = s => s.standings.find(r => r.name === TEAM);
+  const placeText = s => { const r = ourRow(s); return r ? `${s.final ? '' : 'průběžně '}${r.pos}. místo` : ''; };
+  const roster = new Set(DATA.roster?.members ?? []);
 
-  function raw(row, k) { var v = row.getAttribute('data-' + k); return v === null ? '' : v; }
-  function fmt(row, k) {
-    var v = raw(row, k);
-    if (v === '') return '\u2014';
-    if (PER_LEG[k]) { var lo = raw(row, 'lo'); return lo === '' ? v : v + ' / ' + lo; }
-    return PCT[k] ? v + ' %' : v;
-  }
-  function num(row, k) {
-    var v = raw(row, k);
-    if (v === '') return NaN;
-    var x = parseFloat(v.replace(',', '.'));
-    if (PER_LEG[k]) { var lo = parseFloat(raw(row, 'lo').replace(',', '.')); return lo > 0 ? x / lo : NaN; }
-    return x;
-  }
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text !== undefined) e.textContent = text;
-    return e;
-  }
-  function label(g, it) { return g.items.length === 1 ? it[1] : g.g + ' \u00b7 ' + it[1]; }
-
-  function buildDetail(row) {
-    var tr = el('tr', 'mini-detail');
-    var td = el('td'); td.colSpan = 3;
-    var wrap = el('div', 'md-wrap');
-    var groups = el('div', 'md-groups');
-    DEFS.forEach(function (g) {
-      var box = el('div');
-      box.appendChild(el('div', 'md-group-title', g.g));
-      g.items.forEach(function (it) {
-        var r = el('div', 'md-row');
-        r.appendChild(el('span', '', it[1]));
-        r.appendChild(el('span', '', fmt(row, it[0])));
-        box.appendChild(r);
-      });
-      groups.appendChild(box);
+  // ---------------------------------------------------------------- rozbalování řádků (vždy jen jeden otevřený)
+  function bindExpandable(container, buildDetail) {
+    container.dataset.scope = '';
+    const own = row => row?.closest('[data-scope]') === container ? row : null;
+    const close = row => { row.setAttribute('aria-expanded', 'false'); row.nextElementSibling?.classList.contains('detail') && row.nextElementSibling.remove(); };
+    const toggle = row => {
+      const open = row.getAttribute('aria-expanded') === 'true';
+      $$('tr[aria-expanded="true"]', container).filter(own).forEach(close);
+      if (open) return;
+      row.setAttribute('aria-expanded', 'true');
+      const scroller = row.closest('.scroll');
+      const td = el('td', { colspan: row.cells.length });
+      const body = el('div', { class: 'detail-body' }, buildDetail(row));
+      if (scroller) body.style.setProperty('--view', `${scroller.clientWidth}px`);
+      td.append(body);
+      row.after(el('tr', { class: 'detail' }, td));
+    };
+    container.addEventListener('click', e => {
+      const row = own(e.target.closest('tr.expandable'));
+      if (row) toggle(row);
     });
-    wrap.appendChild(groups);
-
-    var cmp = el('div', 'md-compare');
-    cmp.appendChild(el('span', 'cmp-label', 'Porovnat s:'));
-    var sel = el('select', 'cmp-select');
-    sel.appendChild(new Option('\u2014 vyber hr\u00e1\u010de \u2014', ''));
-    var rows = row.parentNode.querySelectorAll('tr.mini-player');
-    Array.prototype.forEach.call(rows, function (r) {
-      if (r !== row) sel.appendChild(new Option(r.getAttribute('data-name'), r.getAttribute('data-name')));
-    });
-    cmp.appendChild(sel);
-    cmp.appendChild(el('div', 'cmp-out'));
-    wrap.appendChild(cmp);
-
-    td.appendChild(wrap);
-    tr.appendChild(td);
-    return tr;
-  }
-
-  function renderCompare(out, a, b) {
-    out.textContent = '';
-    if (!b) return;
-    var head = el('div', 'cmp-row cmp-head');
-    head.appendChild(el('span', '', ''));
-    head.appendChild(el('span', '', a.getAttribute('data-name')));
-    head.appendChild(el('span', '', b.getAttribute('data-name')));
-    out.appendChild(head);
-    DEFS.forEach(function (g) {
-      g.items.forEach(function (it) {
-        var k = it[0];
-        var r = el('div', 'cmp-row');
-        var sa = el('span', '', fmt(a, k));
-        var sb = el('span', '', fmt(b, k));
-        var na = num(a, k), nb = num(b, k);
-        if (!NO_COMPARE[k] && isFinite(na) && isFinite(nb) && na !== nb) {
-          (na > nb ? sa : sb).className = 'better';
-        }
-        r.appendChild(el('span', '', label(g, it)));
-        r.appendChild(sa);
-        r.appendChild(sb);
-        out.appendChild(r);
-      });
+    container.addEventListener('keydown', e => {
+      const row = own(e.target.closest('tr.expandable'));
+      if (row && e.target === row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(row); }
     });
   }
 
-  function closeRow(row) {
-    var next = row.nextElementSibling;
-    row.classList.remove('open');
-    if (next && next.classList.contains('mini-detail')) next.parentNode.removeChild(next);
+  const gridRows = (head, rows) => el('div', { class: 'grid-rows' },
+    el('div', { class: 'head' }, head.map(h => el('span', { text: h }))),
+    rows.map(cells => el('div', {}, cells.map(c => c instanceof Node ? c : el('span', { text: c })))));
+
+  // ---------------------------------------------------------------- tabulka ligy
+  function teamDetail(row) {
+    const lt = row.dataset.lt;
+    const team = DATA.leagueTeams?.[lt];
+    const players = (lt === DATA.season.leagueTeamId ? DATA.players : team?.players ?? []).filter(p => p.zo > 0).sort(byBenefit);
+    const title = el('div', { class: 'detail-title', text: `Hráči · ${team?.name ?? row.dataset.name}` });
+    if (!players.length) return [title, el('p', { class: 'note', text: 'Zatím tu nejsou žádná data o hráčích.' })];
+    const narrow = (row.closest('.scroll')?.clientWidth ?? 999) < 460;
+    return [title, gridRows(narrow ? ['Hráč', 'LKH', 'Záp.', 'Úsp.', 'Prosp.'] : ['Hráč', 'LKH', 'Zápasy', 'Úspěšnost', 'Prospěšnost'],
+      players.map(p => [p.name, p.lkh || '—', `${p.zv}/${p.zo}`, el('span', { class: 'hl', text: `${fmt(success(p), narrow ? 1 : 2)} %` }), fmt(benefit(p))])),
+      el('p', { class: 'note', text: 'Zápasy = vyhráno / odehráno · zdroj: sipky.org' })];
   }
 
-  function toggle(row) {
-    if (row.classList.contains('open')) {
-      closeRow(row);
+  function renderStandings(season) {
+    const box = $('#standings');
+    const tbody = el('tbody', {}, season.standings.map(r => {
+      const clickable = season.current && r.lt && (DATA.leagueTeams?.[r.lt] || r.lt === DATA.season.leagueTeamId);
+      const cls = [r.name === TEAM ? 'us' : r.pos <= 3 && 'podium', r.pos === 1 && 'first', clickable && 'expandable'].filter(Boolean).join(' ');
+      return el('tr', { class: cls || null, tabindex: clickable ? 0 : null, 'aria-expanded': clickable ? 'false' : null,
+                        'data-lt': clickable ? r.lt : null, 'data-name': r.name },
+        el('td', { class: 'pos', text: `${r.pos}.` }),
+        el('td', { class: 'team' }, el('span', {}, clickable ? el('i', { class: 'chev', text: '▸', 'aria-hidden': 'true' }) : null, r.name)),
+        el('td', { class: 'pts', text: r.body }),
+        ...[r.kol, r.v, r.r, r.p, r.legy, r.skore].map(v => el('td', { text: v })));
+    }));
+    const head = el('thead', {}, el('tr', {}, ['#', 'Družstvo', 'Body', 'Kol', 'V', 'R', 'P', 'Legy', 'Skóre']
+      .map((t, i) => el('th', { scope: 'col', class: i === 1 ? 't-left' : null, text: t }))));
+    const us = ourRow(season);
+    const note = season.current
+      ? el('p', { class: 'note' }, `${season.final ? 'Konečné' : 'Průběžné'} pořadí — ${TEAM} je na `,
+          el('b', { text: `${us?.pos ?? '?'}. místě` }), ` z ${season.standings.length} týmů.`,
+          season.final ? '' : ' Klikni na tým pro jeho hráče.')
+      : el('p', { class: 'note', text: season.note });
+    box.replaceChildren(el('p', { class: 'meta', text: `${season.league} · ${placeText(season)}` }),
+      el('div', { class: 'scroll' }, el('table', { class: 'standings' }, head, tbody)), note, renderPlayers(season));
+  }
+
+  // ---------------------------------------------------------------- statistika hráčů
+  const DETAIL_GROUPS = [
+    ['Koeficient', [['LKH', p => p.lkh || '—', p => num(p.lkh)]]],
+    ['Zápasy', [['Úspěšnost', p => `${fmt(success(p))} %`, success], ['Celkem', p => p.zc, null], ['Odehráno', p => p.zo, p => p.zo],
+                ['Vyhráno', p => p.zv, p => p.zv], ['Prospěšnost', p => fmt(benefit(p)), benefit]]],
+    ['Legy', [['Úspěšnost', p => p.lp ? `${p.lp} %` : '—', p => num(p.lp)], ['Odehráno', p => p.lo, p => p.lo], ['Vyhráno', p => p.lv, p => p.lv]]],
+    ['Náhozy / legy', [['95+', p => `${p.n95} / ${p.lo}`, p => p.lo ? p.n95 / p.lo : NaN],
+                       ['133+', p => `${p.n133} / ${p.lo}`, p => p.lo ? p.n133 / p.lo : NaN],
+                       ['170+', p => `${p.n170} / ${p.lo}`, p => p.lo ? p.n170 / p.lo : NaN]]],
+    ['Zavření v kole', [['6. kolo', p => p.z64, p => p.z64], ['5. kolo', p => p.z53, p => p.z53],
+                        ['4. kolo', p => p.z42, p => p.z42], ['3. kolo', p => p.z3, p => p.z3]]],
+  ];
+
+  function playerDetail(row, players) {
+    const p = players[+row.dataset.i];
+    const groups = el('div', { class: 'groups' }, DETAIL_GROUPS.map(([title, items]) =>
+      el('div', {}, el('h4', { text: title }), items.map(([label, show]) => el('p', {}, el('span', { text: label }), el('span', { text: show(p) }))))));
+    const out = el('div', { class: 'compare-out' });
+    const select = el('select', { 'aria-label': 'Porovnat s hráčem',
+      onchange: e => out.replaceChildren(e.target.value === '' ? '' : compareTable(p, players[+e.target.value])) },
+      el('option', { value: '', text: '— vyber hráče —' }),
+      players.map((o, i) => o === p ? null : el('option', { value: i, text: o.name })));
+    return [groups, el('div', { class: 'compare' }, el('label', { text: 'Porovnat s:' }), select, out)];
+  }
+
+  function compareTable(a, b) {
+    const rows = DETAIL_GROUPS.flatMap(([group, items]) => items.map(([label, show, value]) => {
+      const [va, vb] = value ? [value(a), value(b)] : [NaN, NaN];
+      const better = Number.isFinite(va) && Number.isFinite(vb) && va !== vb ? (va > vb ? 0 : 1) : -1;
+      return [items.length > 1 ? `${group} · ${label}` : label,
+              el('span', { class: better === 0 ? 'hl' : null, text: show(a) }), el('span', { class: better === 1 ? 'hl' : null, text: show(b) })];
+    }));
+    return gridRows(['', a.name, b.name], rows);
+  }
+
+  function renderPlayers(season) {
+    const players = season.players.filter(p => p.zo > 0).sort(byBenefit);
+    const former = p => !season.current && roster.size && !roster.has(p.name);
+    const tbody = el('tbody', {}, players.map((p, i) => el('tr', { class: 'expandable', tabindex: 0, 'aria-expanded': 'false', 'data-i': i },
+      el('td', {}, el('i', { class: 'chev', text: '▸', 'aria-hidden': 'true' }), p.name + (former(p) ? ' *' : '')),
+      el('td', { class: 'hl', text: `${fmt(success(p))} %` }), el('td', { text: fmt(benefit(p)) }))));
+    const wrap = el('div', { class: 'players' },
+      el('p', { class: 'meta', text: `Statistika hráčů · sezóna ${season.label} — klikni na jméno pro detail a porovnání` }),
+      players.length ? el('table', {}, el('thead', {}, el('tr', {}, ['Hráč', 'Úspěšnost', 'Prospěšnost'].map(t => el('th', { text: t })))), tbody)
+                     : el('p', { class: 'note', text: 'Zatím žádný odehraný zápas.' }),
+      players.some(former) ? el('p', { class: 'note', text: '* hráč už není na soupisce týmu' }) : null);
+    bindExpandable(wrap, row => playerDetail(row, players));
+    return wrap;
+  }
+
+  // ---------------------------------------------------------------- hrací místa a mapy
+  const venueOf = m => ({ label: m.venue, query: m.venue, ...DATA.venues?.[m.place], ...CFG.venues?.[m.place] });
+  const mapButton = venue => el('button', { class: 'map', type: 'button', text: venue.label, onclick: () => openMaps(venue) });
+
+  function openMaps(v) {
+    const enc = encodeURIComponent;
+    const query = v.address ? `${v.label}, ${v.address}` : v.query || v.label;
+    const hasGps = Number.isFinite(v.lat) && Number.isFinite(v.lng);
+    const links = [
+      ['Waze', 'naviguje z místa, kde právě jsi', hasGps ? `https://waze.com/ul?ll=${v.lat},${v.lng}&navigate=yes` : `https://waze.com/ul?q=${enc(query)}&navigate=yes`],
+      ['Google Maps', 'ukáže místo, trasu si zvolíš sám', `https://www.google.com/maps/search/?api=1&query=${enc(query)}${v.placeId ? `&query_place_id=${v.placeId}` : ''}`],
+      ['Apple Mapy', 'ukáže místo, trasu si zvolíš sám', hasGps ? `https://maps.apple.com/?q=${enc(v.label)}&ll=${v.lat},${v.lng}` : `https://maps.apple.com/?q=${enc(query)}`],
+    ];
+    const opener = document.activeElement;
+    const close = () => { bg.remove(); document.removeEventListener('keydown', onKey); opener?.focus?.(); };
+    const onKey = e => e.key === 'Escape' && close();
+    const bg = el('div', { class: 'sheet-bg', onclick: e => e.target === bg && close() },
+      el('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': `Navigovat do ${v.label}` },
+        el('div', { class: 'meta', text: 'Navigovat do' }), el('h3', { text: v.label }),
+        links.map(([name, hint, href]) => el('a', { href, target: '_blank', rel: 'noopener', onclick: () => setTimeout(close, 50) }, name, el('small', { text: hint }))),
+        el('button', { type: 'button', text: 'Zrušit', onclick: close })));
+    document.addEventListener('keydown', onKey);
+    document.body.append(bg);
+    $('a', bg).focus();
+  }
+
+  // ---------------------------------------------------------------- rozpis zápasů
+  const matches = DATA.matches ?? [];
+  const nextMatch = matches.find(m => !m.result && m.date >= TODAY);
+
+  function renderMatches() {
+    const head = el('thead', {}, el('tr', {}, ['Kolo', 'Datum', 'Čas', 'Domácí', '', 'Hosté', 'Místo']
+      .map(t => el('th', { scope: 'col', text: t }))));
+    const tbody = el('tbody', {}, matches.map(m => {
+      const played = Boolean(m.result) || m.date < TODAY;
+      const cls = [m.result, played && 'played', m === nextMatch && 'next'].filter(Boolean).join(' ');
+      const side = name => el('td', { class: name === TEAM ? 'ours' : null, text: name });
+      return el('tr', { class: cls || null },
+        el('td', {}, el('span', { class: played ? 'done' : null, text: m.round }), m === nextMatch ? el('span', { class: 'badge', text: 'NEJBLIŽŠÍ' }) : null),
+        el('td', { text: dayLabel(m.date) }), el('td', { text: m.time || '—' }),
+        side(m.home), el('td', { class: m.score ? 'score' : 'muted', text: m.score ? m.score.replace(':', ' : ') : 'vs' }), side(m.away),
+        el('td', { class: 't-left' }, mapButton(venueOf(m))));
+    }));
+    $('#matches').replaceChildren(head, tbody);
+  }
+
+  function renderNext() {
+    const box = $('#next');
+    const last = matches.filter(m => m.result).slice(-5);
+    const form = last.length ? el('span', { class: 'form', title: 'Forma – posledních 5 zápasů' }, 'Forma ', last.map(m => el('i', { class: m.result }))) : '';
+    if (!nextMatch) {
+      if (!last.length) return;
+      box.append(el('div', { class: 'next-head' }, el('span', { class: 'kicker', text: DATA.season.final ? 'Sezóna skončila' : 'Rozpis' })),
+                 el('div', { class: 'next-foot' }, form));
     } else {
-      // otevřený může být vždy jen jeden hráč - ostatní zavřít
-      Array.prototype.forEach.call(document.querySelectorAll('tr.mini-player.open'), closeRow);
-      row.classList.add('open');
-      row.parentNode.insertBefore(buildDetail(row), row.nextSibling);
+      const days = Math.round((toDate(nextMatch.date) - toDate(TODAY)) / 864e5);
+      const when = days === 0 ? 'dnes' : days === 1 ? 'zítra' : `za ${days} dní`;
+      const vs = (a, b) => [a === TEAM ? el('b', { text: a }) : a, ' vs ', b === TEAM ? el('b', { text: b }) : b];
+      box.append(
+        el('div', { class: 'kicker next-kicker', text: `Nejbližší zápas · ${when} · ${nextMatch.round}. kolo` }),
+        el('div', { class: 'next-when', text: `${dayLabel(nextMatch.date)} · ${nextMatch.time}` }),
+        el('div', { class: 'next-teams' }, vs(nextMatch.home, nextMatch.away)),
+        el('div', { class: 'next-foot' }, mapButton(venueOf(nextMatch)), form));
+    }
+    box.hidden = false;
+  }
+
+  // ---------------------------------------------------------------- tým a avatary
+  const PALETTE = { skin: ['#f1c9a5', '#e8c39e', '#d9a77c', '#c68b5e'], hair: ['#2b2b2b', '#5a3a22', '#8a5a2b', '#c9a227', '#8f8f8f'],
+                    cap: ['#c0392b', '#2e6da4', '#3f7d5c', '#6c3483', '#d35400'] };
+  const hash = s => [...s].reduce((h, c) => (h * 31 + c.codePointAt(0)) >>> 0, 7);
+  const COLOR = /^#[0-9a-f]{3,8}$/i;
+  function defaultAvatar(name) {
+    const h = hash(name), pick = (list, k) => list[Math.floor(h / k) % list.length];
+    return h % 2 ? { skin: pick(PALETTE.skin, 3), hair: 'short', hairColor: pick(PALETTE.hair, 7), mood: 'smile' }
+                 : { skin: pick(PALETTE.skin, 3), cap: 'beanie', capColor: pick(PALETTE.cap, 11), mood: 'smile' };
+  }
+  function avatarSVG(a) {
+    const c = (v, fb) => COLOR.test(v ?? '') ? v : fb;
+    const skin = c(a.skin, '#e8c39e'), hairC = c(a.hairColor, '#2b2b2b'), capC = c(a.capColor, '#c0392b'), beardC = c(a.beardColor, hairC);
+    const parts = [`<circle cx="28" cy="28" r="28" fill="${skin}"/>`];
+    if (a.hair === 'short') parts.push(`<path d="M6 27a22 22 0 0 1 44 0c-5-6-12-9-22-9S11 21 6 27z" fill="${hairC}"/>`);
+    if (a.hair === 'ponytail') parts.push(`<path d="M6 27a22 22 0 0 1 44 0c-5-6-12-9-22-9S11 21 6 27z" fill="${hairC}"/><ellipse cx="49" cy="20" rx="6" ry="9" fill="${hairC}"/><circle cx="46" cy="12" r="3.5" fill="${c(a.bow, '#e84393')}"/>`);
+    if (a.hair === 'bald') parts.push('<ellipse cx="22" cy="10" rx="7" ry="3" fill="#fff" opacity=".25"/>');
+    if (a.cap === 'beanie' || a.cap === 'bobble') parts.push(`<path d="M5 25a23 23 0 0 1 46 0v3H5z" fill="${capC}"/><rect x="5" y="23" width="46" height="6" fill="#000" opacity=".2"/>`);
+    if (a.cap === 'bobble') parts.push('<circle cx="28" cy="5" r="4.5" fill="#fff"/>');
+    if (a.cap === 'cap') parts.push(`<path d="M7 24a21 21 0 0 1 42 0z" fill="${capC}"/><rect x="28" y="21" width="26" height="5" rx="2.5" fill="${capC}"/><rect x="7" y="22" width="42" height="3" fill="#000" opacity=".18"/>`);
+    if (a.cap === 'cap-back') parts.push(`<path d="M7 24a21 21 0 0 1 42 0z" fill="${capC}"/><rect x="2" y="21" width="16" height="5" rx="2.5" fill="${capC}"/><rect x="7" y="22" width="42" height="3" fill="#000" opacity=".18"/>`);
+    if (a.beard === 'full') parts.push(`<path d="M8 31c2 18 38 18 40 0-3 7-10 11-20 11S11 38 8 31z" fill="${beardC}"/>`);
+    if (a.beard === 'stubble') parts.push('<path d="M10 33c3 15 33 15 36 0-4 7-11 10-18 10S14 40 10 33z" fill="#000" opacity=".16"/>');
+    if (a.mood === 'grumpy') parts.push('<path d="M14 24l9 3M42 24l-9 3" stroke="#2b2b2b" stroke-width="2.4" stroke-linecap="round"/>');
+    parts.push('<circle cx="19" cy="31" r="3" fill="#2b2b2b"/><circle cx="37" cy="31" r="3" fill="#2b2b2b"/>');
+    if (a.glasses) parts.push('<g fill="none" stroke="#1d1d1d" stroke-width="2"><circle cx="19" cy="31" r="6"/><circle cx="37" cy="31" r="6"/><path d="M25 31h6"/></g>');
+    if (a.mustache) parts.push(`<path d="M19 39q9-6 18 0q-9 3-18 0z" fill="${beardC}"/>`);
+    const mouth = { smile: 'M21 41q7 6 14 0', grin: 'M21 40q7 7 14 0z', grumpy: 'M21 45q7-5 14 0', neutral: 'M22 43h12' }[a.mood] ?? 'M21 41q7 6 14 0';
+    parts.push(a.mood === 'grin' ? `<path d="${mouth}" fill="#fff" stroke="#2b2b2b" stroke-width="1.6"/>`
+                                 : `<path d="${mouth}" fill="none" stroke="#2b2b2b" stroke-width="2.4" stroke-linecap="round"/>`);
+    return `<svg viewBox="0 0 56 56" aria-hidden="true">${parts.join('')}</svg>`;
+  }
+
+  function renderRoster() {
+    const captain = DATA.roster?.captain;
+    const members = [...(DATA.roster?.members ?? [])].sort((a, b) => (b === captain) - (a === captain) || a.localeCompare(b, 'cs'));
+    $('#roster').replaceChildren(...members.map(name => el('article', { class: 'player' },
+      el('div', { svg: avatarSVG(CFG.avatars?.[name] ?? defaultAvatar(name)) }), el('h3', { text: name }),
+      el('div', { class: 'role', text: 'Hráč' }), name === captain ? el('span', { class: 'captain', text: '★ Kapitán' }) : null)));
+  }
+
+  // ---------------------------------------------------------------- texty z dat
+  function renderTexts() {
+    const { league, label } = DATA.season;
+    $('#kicker').textContent = `${league} · Sezóna ${label}`;
+    $('#foot-league').textContent = `${league} · Sezóna ${label}`;
+    const homes = matches.filter(m => m.home === TEAM && m.place);
+    const counts = homes.reduce((acc, m) => acc.set(m.place, (acc.get(m.place) ?? 0) + 1), new Map());
+    const home = [...counts].sort((a, b) => b[1] - a[1])[0];
+    if (home) {
+      const m = homes.find(x => x.place === home[0]);
+      $('#home-line').replaceChildren(`Hrajeme ${league} a náš domácí bar je `, mapButton(venueOf(m)), '. Přijďte nás podpořit — pivo bude, šipky taky.');
+    }
+    if (DATA.updated) {
+      const d = new Date(DATA.updated);
+      $('#foot-updated').textContent = `Data ze sipky.org · aktualizováno ${d.toLocaleDateString('cs-CZ')} ${d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}`;
     }
   }
 
-  document.addEventListener('click', function (e) {
-    var row = e.target.closest ? e.target.closest('tr.mini-player') : null;
-    if (row) toggle(row);
+  // ---------------------------------------------------------------- start
+  safely('texty', renderTexts);
+  safely('nejbližší zápas', renderNext);
+  safely('rozpis', renderMatches);
+  safely('tým', renderRoster);
+  safely('tabulka', () => {
+    const select = $('#season');
+    select.replaceChildren(...seasons.map((s, i) => el('option', { value: i, text: `${s.label} · ${placeText(s)}` })));
+    select.addEventListener('change', () => renderStandings(seasons[+select.value]));
+    bindExpandable($('#standings'), teamDetail);
+    renderStandings(seasons[0]);
   });
-  document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    var row = e.target.closest ? e.target.closest('tr.mini-player') : null;
-    if (row && e.target === row) { e.preventDefault(); toggle(row); }
-  });
-  document.addEventListener('change', function (e) {
-    var sel = e.target;
-    if (!sel.classList || !sel.classList.contains('cmp-select')) return;
-    var detail = sel.closest('tr.mini-detail');
-    var rowA = detail && detail.previousElementSibling;
-    var out = detail.querySelector('.cmp-out');
-    var rowB = null;
-    if (sel.value) {
-      Array.prototype.forEach.call(rowA.parentNode.querySelectorAll('tr.mini-player'), function (r) {
-        if (r.getAttribute('data-name') === sel.value) rowB = r;
-      });
-    }
-    renderCompare(out, rowA, rowB);
-  });
-})();
-</script>
-
-<script>
-(function () {
-  function toTop() {
-    var d = document.documentElement, prev = d.style.scrollBehavior;
-    d.style.scrollBehavior = 'auto';   // bez plynulého posunu, ať to neanimuje dolů
-    window.scrollTo(0, 0);
-    d.style.scrollBehavior = prev;
-  }
-  toTop();
-  window.addEventListener('DOMContentLoaded', toTop);
-  window.addEventListener('load', toTop);
-  // po kliknutí v menu se #sekce v adrese nenechává (ikona přidaná na plochu pak vždy začne nahoře)
-  window.addEventListener('hashchange', function () {
-    history.replaceState(null, '', location.pathname + location.search);
-  });
-})();
-</script>
-<script type="application/json" id="league-teams-data">{"2743048":{"name":"Bocman Club Praha","kol":"5","players":[{"n":"Janouch Martin","lkh":"82,4","zo":"20","zv":"17","usp":"85,00 %","pro":"14,45"},{"n":"Kahoun Pavel","lkh":"70,9","zo":"18","zv":"15","usp":"83,33 %","pro":"12,50"},{"n":"Šalplachta Tomáš","lkh":"68,9","zo":"18","zv":"14","usp":"77,78 %","pro":"10,89"},{"n":"Bárta Josef","lkh":"75,7","zo":"13","zv":"11","usp":"84,62 %","pro":"9,31"},{"n":"Rezek Jan","lkh":"","zo":"9","zv":"4","usp":"44,44 %","pro":"1,78"},{"n":"Píchová Dita","lkh":"","zo":"2","zv":"1","usp":"50,00 %","pro":"0,50"}]},"2745864":{"name":"Zdiby DC B","kol":"5","players":[{"n":"Sekula Martin","lkh":"80,0","zo":"16","zv":"14","usp":"87,50 %","pro":"12,25"},{"n":"Novák Tomáš","lkh":"57,9","zo":"20","zv":"13","usp":"65,00 %","pro":"8,45"},{"n":"Kotrba Mikuláš","lkh":"50,8","zo":"20","zv":"11","usp":"55,00 %","pro":"6,05"},{"n":"Šprincl Petr","lkh":"47,1","zo":"13","zv":"7","usp":"53,85 %","pro":"3,77"},{"n":"Nicek Pavel","lkh":"40,4","zo":"11","zv":"5","usp":"45,45 %","pro":"2,27"}]},"2744328":{"name":"Kralupská letka","kol":"6","players":[{"n":"Pospíšil Milan","lkh":"63,3","zo":"23","zv":"17","usp":"73,91 %","pro":"12,57"},{"n":"Panocha Václav","lkh":"59,6","zo":"23","zv":"15","usp":"65,22 %","pro":"9,78"},{"n":"Jurik Pavel","lkh":"62,0","zo":"18","zv":"13","usp":"72,22 %","pro":"9,39"},{"n":"Dvorský Martin","lkh":"","zo":"9","zv":"4","usp":"44,44 %","pro":"1,78"},{"n":"Číhalík Josef","lkh":"","zo":"8","zv":"3","usp":"37,50 %","pro":"1,13"},{"n":"Suk Jiří","lkh":"","zo":"9","zv":"3","usp":"33,33 %","pro":"1,00"},{"n":"Hájek Miroslav","lkh":"","zo":"2","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2744584":{"name":"Krkavci Kralupy","kol":"7","players":[{"n":"Macháček Jiří","lkh":"54,3","zo":"26","zv":"16","usp":"61,54 %","pro":"9,85"},{"n":"Adamíra Jan","lkh":"53,9","zo":"23","zv":"14","usp":"60,87 %","pro":"8,52"},{"n":"Novák Jiří","lkh":"42,9","zo":"16","zv":"8","usp":"50,00 %","pro":"4,00"},{"n":"Rosáková Kateřina","lkh":"47,6","zo":"14","zv":"7","usp":"50,00 %","pro":"3,50"},{"n":"Šlechta Martin","lkh":"36,4","zo":"15","zv":"6","usp":"40,00 %","pro":"2,40"},{"n":"Kolátor Petr","lkh":"27,4","zo":"14","zv":"4","usp":"28,57 %","pro":"1,14"},{"n":"Mrhal František","lkh":"","zo":"4","zv":"1","usp":"25,00 %","pro":"0,25"}]},"2743560":{"name":"Figury Libčice","kol":"5","players":[{"n":"Souček Libor","lkh":"60,7","zo":"18","zv":"13","usp":"72,22 %","pro":"9,39"},{"n":"Krečun Ivan","lkh":"65,1","zo":"16","zv":"12","usp":"75,00 %","pro":"9,00"},{"n":"Barnet Martin","lkh":"56,9","zo":"20","zv":"13","usp":"65,00 %","pro":"8,45"},{"n":"Weinfurtner Michal","lkh":"47,2","zo":"17","zv":"8","usp":"47,06 %","pro":"3,76"},{"n":"Koš Martin","lkh":"","zo":"8","zv":"4","usp":"50,00 %","pro":"2,00"},{"n":"Kašpar Tomáš","lkh":"","zo":"1","zv":"1","usp":"100,00 %","pro":"1,00"}]},"2742792":{"name":"Black Diamonds Praha","kol":"5","players":[{"n":"Eger Patrik","lkh":"68,7","zo":"20","zv":"16","usp":"80,00 %","pro":"12,80"},{"n":"Medek Zdeněk","lkh":"60,0","zo":"16","zv":"10","usp":"62,50 %","pro":"6,25"},{"n":"Vácha David","lkh":"55,1","zo":"16","zv":"10","usp":"62,50 %","pro":"6,25"},{"n":"Podolák Roman","lkh":"","zo":"8","zv":"5","usp":"62,50 %","pro":"3,13"},{"n":"Ševčík Radim","lkh":"17,9","zo":"11","zv":"2","usp":"18,18 %","pro":"0,36"},{"n":"Opata Jan","lkh":"","zo":"3","zv":"1","usp":"33,33 %","pro":"0,33"},{"n":"Marek Jan","lkh":"","zo":"6","zv":"1","usp":"16,67 %","pro":"0,17"}]},"2745096":{"name":"Pedro Praha","kol":"7","players":[{"n":"Janeček Jan","lkh":"65,7","zo":"28","zv":"20","usp":"71,43 %","pro":"14,29"},{"n":"Fazekaš Radek","lkh":"61,9","zo":"28","zv":"17","usp":"60,71 %","pro":"10,32"},{"n":"Stolec Jiří","lkh":"27,8","zo":"27","zv":"7","usp":"25,93 %","pro":"1,81"},{"n":"Brejla Radek","lkh":"26,3","zo":"16","zv":"4","usp":"25,00 %","pro":"1,00"},{"n":"Srazil Jaroslav","lkh":"","zo":"13","zv":"2","usp":"15,38 %","pro":"0,31"}]},"2743304":{"name":"Bohnický kladiva","kol":"5","players":[{"n":"Čedík Tomáš","lkh":"66,6","zo":"14","zv":"11","usp":"78,57 %","pro":"8,64"},{"n":"Gruzdz Antony","lkh":"45,3","zo":"18","zv":"8","usp":"44,44 %","pro":"3,56"},{"n":"Heller Martin","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Sofron Michal","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Štefek Pavel","lkh":"","zo":"4","zv":"2","usp":"50,00 %","pro":"1,00"},{"n":"Žoltak Vladimír","lkh":"","zo":"4","zv":"2","usp":"50,00 %","pro":"1,00"},{"n":"Vyskočil Martin","lkh":"33,8","zo":"10","zv":"3","usp":"30,00 %","pro":"0,90"},{"n":"Burda Michal","lkh":"33,3","zo":"10","zv":"3","usp":"30,00 %","pro":"0,90"},{"n":"Šebl Ondřej","lkh":"","zo":"6","zv":"2","usp":"33,33 %","pro":"0,67"},{"n":"Brdek David","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2745352":{"name":"Roshambo Praha","kol":"6","players":[{"n":"Kohlíček Petr","lkh":"61,5","zo":"23","zv":"15","usp":"65,22 %","pro":"9,78"},{"n":"Novák Jakub","lkh":"52,1","zo":"18","zv":"10","usp":"55,56 %","pro":"5,56"},{"n":"Bečka Marek","lkh":"","zo":"6","zv":"4","usp":"66,67 %","pro":"2,67"},{"n":"Roklová Zuzana","lkh":"39,0","zo":"16","zv":"6","usp":"37,50 %","pro":"2,25"},{"n":"Pelech Roman","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Bajer Josef","lkh":"32,0","zo":"12","zv":"3","usp":"25,00 %","pro":"0,75"},{"n":"Soliman Alan","lkh":"","zo":"8","zv":"2","usp":"25,00 %","pro":"0,50"},{"n":"Tkáč Marek","lkh":"","zo":"9","zv":"2","usp":"22,22 %","pro":"0,44"}]},"2744072":{"name":"Hell's Darters Praha","kol":"6","players":[{"n":"Opletal Jan","lkh":"54,6","zo":"16","zv":"11","usp":"68,75 %","pro":"7,56"},{"n":"Lacina Jiří","lkh":"37,9","zo":"23","zv":"9","usp":"39,13 %","pro":"3,52"},{"n":"Uher Daniel","lkh":"39,8","zo":"24","zv":"9","usp":"37,50 %","pro":"3,38"},{"n":"Rozporka Jiří","lkh":"32,4","zo":"22","zv":"7","usp":"31,82 %","pro":"2,23"},{"n":"Pokorný Jan","lkh":"","zo":"6","zv":"3","usp":"50,00 %","pro":"1,50"},{"n":"Černík Jan","lkh":"","zo":"1","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2744840":{"name":"Los Číčos Praha","kol":"5","players":[{"n":"Kubinová Nina","lkh":"62,4","zo":"16","zv":"12","usp":"75,00 %","pro":"9,00"},{"n":"Rozkovcová Hana","lkh":"42,4","zo":"20","zv":"9","usp":"45,00 %","pro":"4,05"},{"n":"Medková Markéta","lkh":"39,5","zo":"17","zv":"7","usp":"41,18 %","pro":"2,88"},{"n":"Rudolf Stanislav","lkh":"27,9","zo":"18","zv":"5","usp":"27,78 %","pro":"1,39"},{"n":"Zajíčková Adéla","lkh":"","zo":"7","zv":"3","usp":"42,86 %","pro":"1,29"},{"n":"Hujo Lukáš","lkh":"","zo":"2","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2743816":{"name":"Havrani Vraňany B","kol":"6","players":[{"n":"Říha Josef","lkh":"46,7","zo":"23","zv":"11","usp":"47,83 %","pro":"5,26"},{"n":"Březina Lukáš","lkh":"34,3","zo":"19","zv":"6","usp":"31,58 %","pro":"1,89"},{"n":"Granát Jakub","lkh":"32,1","zo":"15","zv":"5","usp":"33,33 %","pro":"1,67"},{"n":"Balíková Kristýna","lkh":"29,6","zo":"19","zv":"5","usp":"26,32 %","pro":"1,32"},{"n":"Pešek Jaroslav","lkh":"28,8","zo":"12","zv":"3","usp":"25,00 %","pro":"0,75"},{"n":"Balík Pavel","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"},{"n":"Horák Vladimír","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]},"2745608":{"name":"Zdiby DC","kol":"6","players":[{"n":"Šofr Ladislav","lkh":"41,7","zo":"20","zv":"8","usp":"40,00 %","pro":"3,20"},{"n":"Trap Luboš","lkh":"39,4","zo":"20","zv":"8","usp":"40,00 %","pro":"3,20"},{"n":"Levý Petr","lkh":"","zo":"4","zv":"3","usp":"75,00 %","pro":"2,25"},{"n":"Štancl Jiří","lkh":"26,9","zo":"20","zv":"5","usp":"25,00 %","pro":"1,25"},{"n":"Rybecký Lukáš","lkh":"29,8","zo":"16","zv":"4","usp":"25,00 %","pro":"1,00"},{"n":"Třešňák Tomáš","lkh":"29,6","zo":"12","zv":"3","usp":"25,00 %","pro":"0,75"},{"n":"Herda Štefan","lkh":"","zo":"4","zv":"0","usp":"0,00 %","pro":"0,00"}]}}</script>
-<script>
-(function () {
-  var DATA = {};
-  try { DATA = JSON.parse(document.getElementById('league-teams-data').textContent) || {}; } catch (e) {}
-
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text !== undefined) e.textContent = text;
-    return e;
-  }
-  function line(cols, cls) {
-    var r = el('div', 'tp-row' + (cls ? ' ' + cls : ''));
-    cols.forEach(function (c, i) {
-      var sp = el('span', (i === 3 && !cls) ? 'tp-usp' : '', c);
-      r.appendChild(sp);
-    });
-    return r;
-  }
-
-  function buildDetail(row) {
-    var info = DATA[row.getAttribute('data-lt')] || { players: [] };
-    var tr = el('tr', 'team-detail');
-    var td = el('td'); td.colSpan = row.cells.length;
-    var wrap = el('div', 'td-wrap');
-    var box = row.closest('.table-wrap');
-    if (box) wrap.style.width = Math.max(280, box.clientWidth) + 'px';
-
-    var nameCell = row.querySelector('.team-name');
-    var title = info.name || (nameCell ? nameCell.textContent.trim() : '');
-    wrap.appendChild(el('div', 'td-title', 'Hráči \u00b7 ' + title));
-
-    if (info.players && info.players.length) {
-      var narrow = box && box.clientWidth < 460;
-      wrap.appendChild(line(narrow
-        ? ['Hr\u00e1\u010d', 'LKH', 'Z\u00e1pasy', '\u00dasp.', 'Prosp.']
-        : ['Hr\u00e1\u010d', 'LKH', 'Z\u00e1pasy', '\u00dasp\u011b\u0161nost', 'Prosp\u011b\u0161nost'], 'tp-head'));
-      info.players.forEach(function (p) {
-        wrap.appendChild(line([p.n, p.lkh || '\u2014', p.zv + ' / ' + p.zo, p.usp, p.pro]));
-      });
-      wrap.appendChild(el('div', 'td-note',
-        'Z\u00e1pasy = vyhr\u00e1no / odehr\u00e1no \u00b7 zdroj: U\u0160O \u2014 sipky.org' +
-        (info.partial ? ' \u00b7 N\u00c1HLED: zat\u00edm jen \u010d\u00e1st hr\u00e1\u010d\u016f, kompletn\u00ed soupisky se na\u010dtou p\u0159i prvn\u00ed aktualizaci' : '')));
-    } else {
-      wrap.appendChild(el('div', 'td-note',
-        'Zat\u00edm tu nejsou \u017e\u00e1dn\u00e1 data o hr\u00e1\u010d\u00edch (t\u00fdm je\u0161t\u011b nehr\u00e1l, nebo se na\u010dtou p\u0159i p\u0159\u00ed\u0161t\u00ed aktualizaci).'));
-    }
-    td.appendChild(wrap); tr.appendChild(td);
-    return tr;
-  }
-
-  function closeRow(row) {
-    var next = row.nextElementSibling;
-    row.classList.remove('open');
-    if (next && next.classList.contains('team-detail')) next.parentNode.removeChild(next);
-  }
-  function toggle(row) {
-    if (row.classList.contains('open')) { closeRow(row); return; }
-    Array.prototype.forEach.call(document.querySelectorAll('tr.team-row.open'), closeRow);  // jen jeden otev\u0159en\u00fd
-    row.classList.add('open');
-    row.parentNode.insertBefore(buildDetail(row), row.nextSibling);
-  }
-
-  document.addEventListener('click', function (e) {
-    var row = e.target.closest ? e.target.closest('tr.team-row') : null;
-    if (row) toggle(row);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    var row = e.target.closest ? e.target.closest('tr.team-row') : null;
-    if (row && e.target === row) { e.preventDefault(); toggle(row); }
-  });
-})();
-</script>
-<script>
-(function () {
-  function close() { var bg = document.querySelector('.map-sheet-bg'); if (bg) bg.parentNode.removeChild(bg); }
-  function option(href, title, note) {
-    var a = document.createElement('a');
-    a.href = href; a.target = '_blank'; a.rel = 'noopener';
-    a.textContent = title;
-    var sm = document.createElement('small'); sm.textContent = note; a.appendChild(sm);
-    a.addEventListener('click', function () { setTimeout(close, 50); });
-    return a;
-  }
-  function open(link) {
-    close();
-    var lat = link.getAttribute('data-lat'), lng = link.getAttribute('data-lng'), q = link.getAttribute('data-q');
-    var place = link.textContent.replace(/^\s*\S+\s/, '');   // bez ikonky špendlíku
-    var bg = document.createElement('div'); bg.className = 'map-sheet-bg';
-    var sh = document.createElement('div'); sh.className = 'map-sheet';
-    var t = document.createElement('div'); t.className = 'map-sheet-title'; t.textContent = 'Navigovat do';
-    var p = document.createElement('div'); p.className = 'map-sheet-place'; p.textContent = place;
-    sh.appendChild(t); sh.appendChild(p);
-    sh.appendChild(option(lat ? 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes'
-                              : 'https://waze.com/ul?q=' + encodeURIComponent(q) + '&navigate=yes', 'Waze', 'z místa, kde právě jsi'));
-    sh.appendChild(option(link.href, 'Google Maps', 'uk\u00e1\u017ee m\u00edsto, trasu si zvol\u00ed\u0161 s\u00e1m'));
-    sh.appendChild(option(lat ? 'https://maps.apple.com/?q=' + encodeURIComponent(place) + '&ll=' + lat + ',' + lng
-                              : 'https://maps.apple.com/?q=' + encodeURIComponent(q),
-                          'Apple Mapy', 'uk\u00e1\u017ee m\u00edsto, trasu si zvol\u00ed\u0161 s\u00e1m'));
-    var c = document.createElement('button'); c.type = 'button'; c.textContent = 'Zrušit';
-    c.addEventListener('click', close);
-    sh.appendChild(c);
-    bg.appendChild(sh);
-    bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
-    document.body.appendChild(bg);
-  }
-  document.addEventListener('click', function (e) {
-    var link = e.target.closest ? e.target.closest('a.map-link') : null;
-    if (!link || !(link.getAttribute('data-lat') || link.getAttribute('data-q'))) return;
-    e.preventDefault();
-    open(link);
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  addEventListener('hashchange', () => history.replaceState(null, '', location.pathname + location.search));
+  let userScrolled = false;
+  ['wheel', 'touchstart', 'keydown'].forEach(t => addEventListener(t, () => { userScrolled = true; }, { once: true, passive: true }));
+  addEventListener('load', () => userScrolled || scrollTo({ top: 0, behavior: 'instant' }));
 })();
 </script>
 </body>

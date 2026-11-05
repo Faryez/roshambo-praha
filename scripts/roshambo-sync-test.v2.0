@@ -1,0 +1,192 @@
+"""Testy parserů a logiky synchronizace (spouští se před každou aktualizací na GitHubu).
+
+Spuštění:  python -m unittest discover -s scripts -p "test_*.py" -v
+"""
+import json
+import unittest
+
+import update_table as ut
+
+P = "https://www.sipky.org/?page=osobni-profil&user="
+
+
+def row(*cells: str) -> str:
+    return "<tr>" + "".join(f"<td>{c}</td>" for c in cells) + "</tr>"
+
+
+def team(name: str, lt: str) -> str:
+    return f'<a href="?region=stc&page=profil-druzstva&league_team={lt}">{name}</a>'
+
+
+STANDINGS = "<table>" + "".join([
+    row("1.", team("Bocman Club Praha", "2743048"), "4", "4", "0", "0", "0", "0", "0", "54", ":", "18", "118", ":", "59", "12"),
+    row("2.", team("Figury Libčice", "2743560"), "5", "3", "0", "1", "0", "1", "0", "58", ":", "32", "132", ":", "85", "10"),
+    row("3.", team("Kralupská letka", "2744328"), "4", "3", "0", "0", "0", "1", "0", "48", ":", "24", "113", ":", "73", "9"),
+    row("4.", team("Zdiby DC B", "2745864"), "3", "3", "0", "0", "0", "0", "0", "35", ":", "19", "80", ":", "49", "9"),
+    row("5.", team("Krkavci Kralupy", "2744584"), "5", "2", "0", "2", "0", "1", "0", "42", ":", "48", "103", ":", "116", "8"),
+    row("6.", team("Roshambo Praha", "2745352"), "5", "2", "0", "0", "0", "3", "0", "47", ":", "43", "118", ":", "101", "6"),
+]) + "</table><table>" + row("1.", "Hráč", "61,5") + "</table>"
+
+
+def match(rnd: int, day: str, home: str, away: str, score: str, place: str, venue: str, time_: str) -> str:
+    return (f'<tr><td>+</td><td><a href="?page=rozpis-utkani&league=228360&round={rnd}">{rnd}.</a></td>'
+            f'<td>Út</td><td>{day}</td><td>{team(home, "1")}</td><td>{score}</td><td>{team(away, "2")}</td>'
+            f'<td><a href="?region=stc&page=hraci-misto&place={place}">{venue}</a></td><td>zápis</td></tr>'
+            f'<tr><td></td><td></td><td></td><td>{time_}</td><td>Kapitán</td><td>21 : 23</td><td>Kapitán</td></tr>'
+            '<tr><td colspan="9"><table><tr><td>Zadal</td><td>1.9.2026 22:50</td></tr></table></td></tr>')
+
+
+SCHEDULE = "<table>" + "".join([
+    match(1, "1.9.2026", "Roshambo Praha", "Hell's Darters Praha", "8 : 10", "175880", "Yondu Bar, Praha 8", "19:00"),
+    match(4, "11.10.2026", "Los Číčos Praha", "Roshambo Praha", "6 : 12", "285960", "Stanice Ládví, Praha 8", "18:00"),
+    match(6, "25.10.2026", "Black Diamonds Praha", "Roshambo Praha", "9 : 9", "283400", "Bar Na zastávce, Praha 8", "18:00"),
+    match(7, "3.11.2026", "Roshambo Praha", "Bocman Club Praha", "", "175880", "Yondu Bar, Praha 8", "19:00"),
+    match(8, "15.11.2026", "Figury Libčice", "Roshambo Praha", "", "300552", "Základna bar, Kralupy", "18:00"),
+]) + "</table>"
+
+STATS = ("<table>" + row("1.", f'<a href="{P}1">Kohlíček Petr</a> ' + team("Roshambo Praha", "2745352"),
+                         "61,5", "65,22", "24", "23", "15", "64,15", "53", "34", "32", "0,60", "8", "0,15", "1", "0,02", "0", "0", "0", "0")
+         + row("2.", f'<a href="{P}2">Sekula Martin</a> ' + team("Zdiby DC B", "2745864"),
+               "85,4", "91,67", "12", "12", "11", "88,46", "26", "23", "20", "0,77", "5", "0,19", "0", "0,00", "0", "0", "0", "0")
+         + row("3.", f'<a href="{P}3">Nehrál Nikdy</a> ' + team("Zdiby DC B", "2745864"),
+               "", "0,00", "12", "0", "0", "0,00", "0", "0", "0", "0,00", "0", "0,00", "0", "0,00", "0", "0", "0", "0")
+         + row("1.", team("Bocman Club Praha", "2743048"), "4", "4", "0", "0", "0", "0") + "</table>")
+
+PROFILE = ("<table><tr><td>Předseda klubu</td></tr>" + row(f'<a href="{P}1">Novák Jakub</a>', "CZE052825")
+           + "<tr><td>Vedoucí družstva</td></tr>" + row(f'<a href="{P}1">Novák Jakub</a>', "CZE052825") + "</table>"
+           "<table><tr><th>Jméno</th><th>Reg.číslo</th><th>Obec</th><th>Souhlas s GDPR</th></tr>"
+           + row('<a href="?page=soupiska-druzstva">Soupiska družstva</a>', "")
+           + row(f'<a href="{P}5">Bajer Josef</a>', "CZE085747", "Praha", "Udělen")
+           + row(f'<a href="{P}6">Pamětický Josef</a>', "CZE092174", "Praha 10", "Udělen")
+           + row(f'<a href="{P}1">Novák Jakub</a>', "CZE052825", "Praha 3", "Udělen") + "</table>")
+
+SEASON_PAGE = ('<select><option value="5987">2025/2026</option><option value="6243" selected>2026/2027</option></select>'
+               '<a href="?region=stc&page=rozpis-utkani&team=339464&league=228360&league_type=611&league_team=2745352">Rozpis</a>'
+               '<a href="?region=stc&page=ligova-skupina&league=228360">3. liga C</a>'
+               '<a href="?league_type=611&page=statistika-hracu&region=stc&season=6243&team=339464&print=preview">Náhled</a>'
+               "<table>" + row("1.", f'<a href="{P}1">Kohlíček Petr</a>', "61,5", "65,22", "24", "23", "15", "64,15", "53", "34",
+                               "32", "0,60", "8", "0,15", "1", "0,02", "0", "0", "0", "0") + "</table>")
+
+VENUE = "<table><tr><td>Bar Na zastávce</td><td>Čimická 269, 181 00 Praha 8, GPS: N 50° 7.879206', E 14° 25.83983'</td></tr></table>"
+
+
+class ParserTests(unittest.TestCase):
+    def test_standings(self):
+        rows, final = ut.parse_standings(STANDINGS)
+        self.assertEqual(len(rows), 6)
+        self.assertFalse(final)
+        us = rows[5]
+        self.assertEqual((us["name"], us["lt"], us["pos"], us["body"], us["kol"], us["v"], us["r"], us["p"]),
+                         ("Roshambo Praha", "2745352", 6, 6, 5, 2, 0, 3))
+        self.assertEqual((us["skore"], us["legy"]), ("47:43", "118:101"))
+        self.assertTrue(ut.parse_standings(STANDINGS.replace("<table>", "<h2>Tabulka - konečné pořadí</h2><table>", 1))[1])
+
+    def test_schedule(self):
+        ms = ut.parse_schedule(SCHEDULE)
+        self.assertEqual([m["round"] for m in ms], [1, 4, 6, 7, 8])
+        self.assertEqual((ms[0]["date"], ms[0]["time"], ms[0]["place"]), ("2026-09-01", "19:00", "175880"))
+        self.assertEqual([m["result"] for m in ms], ["loss", "win", "draw", None, None])
+        self.assertEqual(ms[1]["score"], "6:12")
+        self.assertIsNone(ms[3]["score"], "čas zápasu se nesmí plést se skóre")
+
+    def test_players_league_and_team(self):
+        ps = ut.parse_players(STATS)
+        self.assertEqual([p["name"] for p in ps], ["Kohlíček Petr", "Sekula Martin"])
+        self.assertEqual((ps[0]["lt"], ps[0]["zo"], ps[0]["zv"], ps[0]["n95"], ps[0]["lkh"]), ("2745352", 23, 15, 32, "61,5"))
+        team_page = ut.parse_players(SEASON_PAGE)
+        self.assertEqual(team_page[0]["name"], "Kohlíček Petr")
+        self.assertNotIn("lt", team_page[0])
+
+    def test_roster(self):
+        members, captain = ut.parse_roster(PROFILE)
+        self.assertEqual(members, ["Bajer Josef", "Pamětický Josef", "Novák Jakub"])
+        self.assertEqual(captain, "Novák Jakub")
+
+    def test_season(self):
+        s = ut.parse_season(SEASON_PAGE)
+        self.assertEqual(s, {"leagueTeamId": "2745352", "leagueId": "228360", "id": "6243",
+                             "league": "3. liga C", "label": "2026/2027"})
+
+    def test_venue_gps(self):
+        v = ut.parse_venue(VENUE)
+        self.assertAlmostEqual(v["lat"], 50.131320, places=5)
+        self.assertAlmostEqual(v["lng"], 14.430664, places=5)
+        self.assertEqual(v["address"], "Čimická 269, 181 00 Praha 8")
+
+
+class FakeFetcher:
+    def __init__(self, pages):
+        self.pages = pages
+        self.requests = 0
+
+    def get(self, url):
+        for key, html in self.pages.items():
+            if key in url:
+                return html
+        return None
+
+
+def base_data(**over):
+    data = {"updated": "2026-11-01T10:00+01:00",
+            "season": {"id": "6243", "label": "2026/2027", "league": "3. liga C", "leagueId": "228360",
+                       "leagueTeamId": "2745352", "final": False},
+            "standings": [{"pos": 1, "name": "Roshambo Praha", "lt": "2745352", "body": 0, "kol": 0, "v": 0,
+                           "r": 0, "p": 0, "legy": "0:0", "skore": "0:0"}],
+            "matches": [], "players": [], "leagueTeams": {}, "roster": {"members": ["Bajer Josef"], "captain": None},
+            "venues": {}, "history": []}
+    data.update(over)
+    return data
+
+
+PAGES = {"page=statistika-hracu&league_type=611&team=": SEASON_PAGE, "page=ligova-skupina": STANDINGS,
+         "page=rozpis-utkani": SCHEDULE, "page=statistika-hracu&league=": STATS, "page=profil-druzstva": PROFILE,
+         "page=hraci-misto": VENUE}
+
+
+class SyncTests(unittest.TestCase):
+    def test_full_sync(self):
+        s = ut.Sync(base_data(), {"venues": {"175880": {}, "285960": {}, "300552": {}}}, FakeFetcher(PAGES))
+        data = s.run()
+        self.assertEqual(len(data["standings"]), 6)
+        self.assertEqual(len(data["matches"]), 5)
+        self.assertEqual([p["name"] for p in data["players"]], ["Kohlíček Petr"])
+        self.assertEqual([p["name"] for p in data["leagueTeams"]["2745864"]["players"]], ["Sekula Martin"])
+        self.assertEqual(data["roster"], {"members": ["Bajer Josef", "Pamětický Josef", "Novák Jakub"], "captain": "Novák Jakub"})
+        self.assertIn("283400", data["venues"], "neznámé hrací místo se má dohledat")
+        self.assertIn("Nový hráč na soupisce: Pamětický Josef", s.notes)
+        self.assertEqual(s.warnings, [])
+
+    def test_failures_keep_previous_data(self):
+        prev = base_data(matches=[{"round": 1, "date": "2026-09-01", "time": "19:00", "home": "A", "away": "B",
+                                   "place": "", "venue": "", "score": None, "result": None}])
+        s = ut.Sync(prev, {}, FakeFetcher({}))
+        data = s.run()
+        self.assertEqual(data["matches"], prev["matches"])
+        self.assertEqual(data["standings"], prev["standings"])
+        self.assertEqual(s.pages_ok, 0)
+        self.assertGreaterEqual(len(s.warnings), 4)
+
+    def test_suspicious_drop_keeps_previous(self):
+        prev = base_data(roster={"members": [f"Hráč {i}" for i in range(10)], "captain": None})
+        s = ut.Sync(prev, {"venues": {"175880": {}, "285960": {}, "300552": {}}}, FakeFetcher(PAGES))
+        data = s.run()
+        self.assertEqual(data["roster"], prev["roster"], "z 10 hráčů na 3 = podezřelé, soupiska zůstává")
+        self.assertTrue(any("Soupisku" in w for w in s.warnings))
+
+    def test_new_season_archives_old(self):
+        prev = base_data(season={"id": "5987", "label": "2025/2026", "league": "3. liga C", "leagueId": "215048",
+                                 "leagueTeamId": "2464264", "final": True})
+        data = ut.Sync(prev, {"venues": {"175880": {}, "285960": {}}}, FakeFetcher(PAGES)).run()
+        self.assertEqual(data["season"]["id"], "6243")
+        self.assertEqual(data["history"][0]["season"], "2025/2026")
+        self.assertEqual(data["history"][0]["standings"], prev["standings"])
+
+    def test_island_roundtrip_is_script_safe(self):
+        html = '<script type="application/json" id="site-data">{}</script>'
+        out = ut.write_island(html, {"x": "</script><b>"})
+        self.assertEqual(out.count("</script>"), 1)
+        self.assertEqual(ut.read_island(out)[0], {"x": "</script><b>"})
+
+
+if __name__ == "__main__":
+    unittest.main()

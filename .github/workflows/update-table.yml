@@ -1,44 +1,50 @@
+# Roshambo Praha – automatická aktualizace webu ze sipky.org (verze 2.0)
 name: Aktualizace tabulky
 
 on:
   schedule:
-    # GitHub Actions umí plánovat jen v UTC, ne v českém čase.
-    # Cíl: každý den v 10:00 českého času.
-    # SEČ (zima, UTC+1) → 10:00 CET = 09:00 UTC
-    # SELČ (léto, UTC+2) → 10:00 CEST = 08:00 UTC
-    # Skript nic nezapíše, pokud se od poslední aktualizace nic
-    # nezměnilo, takže dvojí spuštění týž den nevadí.
-    - cron: '0 9 * * *'    # ~10:00 SEČ (zima) - každý den
-    - cron: '0 8 * * *'    # ~10:00 SELČ (léto) - každý den
-  workflow_dispatch: {}     # umožní i ruční spuštění přímo na GitHubu
+    # 4× denně (časy v UTC, minuta mimo celou hodinu kvůli frontě GitHubu):
+    # 6:37 · 12:37 · 18:37 · 23:37 českého zimního času (v létě o hodinu později).
+    # Večerní běh zachytí výsledky zápasů zadané hned po utkání.
+    - cron: '37 5,11,17,22 * * *'
+  workflow_dispatch: {}
 
 permissions:
   contents: write
 
+concurrency:            # dva běhy nikdy nepoběží současně
+  group: update-data
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10  # pojistka – dřív se běh dokázal zaseknout na 20+ minut
     steps:
-      - name: Checkout repozitáře
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Nastavení Pythonu
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Instalace závislostí
-        run: pip install requests beautifulsoup4
+        run: pip install --disable-pip-version-check --quiet requests beautifulsoup4
 
-      - name: Stažení a aktualizace tabulky
+      - name: Testy (při chybě se web nepřepíše)
+        if: hashFiles('scripts/test_update_table.py') != ''
+        run: python -m unittest discover -s scripts -p "test_*.py"
+
+      - name: Aktualizace dat ze sipky.org
         env:
           SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: python scripts/update_table.py
 
-      - name: Uložení změny (pokud nějaká je)
+      - name: Uložení změn
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Automatická aktualizace tabulky"
+          if git diff --cached --quiet; then echo "Beze změn."; exit 0; fi
+          git commit -m "Aktualizace dat ze sipky.org"
+          git pull --rebase --autostash
           git push

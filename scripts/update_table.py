@@ -1,746 +1,518 @@
 #!/usr/bin/env python3
 """
-Stáhne aktuální tabulku 3. ligy C (sezóna 2026/2027) ze sipky.org
-a aktualizuje tabulku v index.html na místě označeném ID atributy:
-  - <span id="current-season-meta">      ... krátký popisek (X. místo)
-  - <tbody id="current-season-tbody">    ... řádky tabulky
-  - <div id="current-season-legend">     ... vysvětlující věta pod tabulkou
+Roshambo Praha – automatická synchronizace webu se sipky.org (verze 2.0)
 
-Skript nic nemění, pokud sezóna ještě nezačala (na sipky.org zatím
-není žádná odehraná kola / tabulka).
+Při každém běhu:
+  1. zjistí aktuální sezónu, ligu a ID družstva (není potřeba nic měnit na začátku sezóny),
+  2. stáhne tabulku, rozpis s výsledky a hracími místy, statistiky hráčů celé ligy a soupisku,
+  3. nová hrací místa doplní o adresu a GPS z jejich stránky na sipky.org,
+  4. když začne nová sezóna, přesune tu skončenou do historie,
+  5. data zapíše do bloku <script id="site-data"> v index.html – stránka se z nich vykreslí sama.
+
+Každá část se aktualizuje nezávisle. Co se nepodaří stáhnout nebo nevypadá věrohodně, zůstane
+v poslední platné podobě a do přehledu běhu se zapíše varování. Když se nepodaří stáhnout vůbec nic,
+skript skončí chybou (běh na GitHubu zčervená), aby výpadek nezůstal bez povšimnutí.
 """
+from __future__ import annotations
 
-import re
-import os
-import sys
+import copy
 import json
-from decimal import Decimal, ROUND_HALF_UP
-from html import escape as html_escape
-from datetime import datetime, timezone, timedelta, date
+import logging
+import os
+import re
+import sys
+import time
+from datetime import date, datetime
+from pathlib import Path
 from urllib.parse import quote
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
 
-LEAGUE_URL = "https://www.sipky.org/?region=stc&page=ligova-skupina&league=228360"
-TEAM_MATCHES_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_team=2745352&played=1"
-# Statistika hráčů týmu. POZOR: na začátku každé nové sezóny je potřeba změnit
-# číslo season=... (aktuální 2026/2027 = 6243); team=339464 je stálé ID týmu.
-PLAYER_STATS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league_type=611&season=6243&league=&team=339464"
-# Rozpis zápasů Roshamba (data, časy, hrací místa). POZOR: na začátku nové sezóny změnit season=... a league=...
-SCHEDULE_URL = "https://www.sipky.org/?region=stc&page=rozpis-utkani&league_type=611&season=6243&league=228360&team=339464&round="
+# --------------------------------------------------------------------------- konfigurace
+TEAM_NAME = "Roshambo Praha"
+TEAM_ID = "339464"              # stálé ID družstva na sipky.org (mezi sezónami se nemění)
+REGION = "stc"
+LEAGUE_TYPE = "611"             # Hlavní ligová soutěž UŠO
+BASE_URL = "https://www.sipky.org/"
+INDEX_FILE = Path(os.environ.get("INDEX_FILE", "index.html"))
+TZ = ZoneInfo("Europe/Prague")
+FETCH_DEADLINE_S = 300          # strop na veškeré stahování v jednom běhu
+MAX_NEW_VENUES_PER_RUN = 5
 
-# Známá hrací místa: číslo místa na sipky.org (place=...) -> popisek, souřadnice a přesná adresa pro mapy.
-# Nové místo, které tu není, dostane odkaz na mapy podle názvu ze sipky.org (a ve výpisu se objeví upozornění).
-KNOWN_VENUES = {
-    "175880": ("Yondu Bar, Praha 8", 50.0916469, 14.4525528, "Yondu bar, Thámova 221/7, 186 00 Praha 8-Karlín", "ChIJY5DO2X-VC0cRKaM-Jd-H6uQ"),
-    "416008": ("DAHA bar, Kralupy n. Vlt.", 50.2435833, 14.3108675, "DAHA Bar, U Cukrovaru 1085, 278 01 Kralupy nad Vltavou", "ChIJv9UUagDDC0cRy2-awMk-Qrg"),
-    "285960": ("Stanice Ládví, Praha 8", 50.1272495, 14.4674053, "Stanice Ládví, Kyselova 1657/6, 182 00 Praha 8", "ChIJca0NY2frC0cRLenq0-cheTI"),
-    "283400": ("Bar Na zastávce, Praha 8", 50.1313201, 14.4306638, "BAR na zastávce, Čimická 269, 181 00 Praha 8-Bohnice", "ChIJKwUU8SHrC0cRkcMh_Bl-4yc"),
-    "300552": ("Základna bar, Kralupy", 50.2489163, 14.3152485, "Bar ZÁKLADNA, Hakenova 725, 278 01 Kralupy nad Vltavou", "ChIJAUa8eYHDC0cR-8Ydj6I30Ys"),
-    "374536": ("Na hřišti, Vraňany", 50.3158735, 14.3632078, "Hospoda Na hřišti, Vraňany 97, 277 07 Vraňany", "ChIJ4Rg1EZHcC0cRIhI7VnTEE3I"),
-    "279560": ("Restaurace U jezera, Zdiby", 50.1686630, 14.4289913, "Restaurace u Jezera, Soběslavovo nám. 3, 250 66 Zdiby", "ChIJ5X0RV0_qC0cRiNcxHstH_U8"),
-    "246280": ("Club Troja, Praha 8", 50.1302835, 14.4336183, "Club Troja, Bukolská 775, 181 00 Praha 8", "ChIJVa2RWyLrC0cR2OBTL8aA8N8"),
-    "419592": ("Squash Sport Čimice", 50.1408893, 14.4276854, "Squash Sport Čimice, Čimická 780/61, 181 00 Praha 8", "ChIJBVKPhOLqC0cRRGiU5rqY_F4"),
-}
-# Statistika VŠECH hráčů ligy (u každého hráče je odkaz na jeho družstvo s číslem league_team)
-LEAGUE_PLAYERS_URL = "https://www.sipky.org/?region=stc&page=statistika-hracu&league=228360"
-OUR_TEAM = "Roshambo Praha"
-INDEX_FILE = "index.html"
-SEASON_LABEL = "3. liga C"
-CURRENT_SEASON_LABEL = "2026/2027"
+STAT_KEYS = ("lkh", "zp", "zc", "zo", "zv", "lp", "lo", "lv",
+             "n95", "n95a", "n133", "n133a", "n170", "n170a", "z64", "z53", "z42", "z3")
+INT_KEYS = {"zc", "zo", "zv", "lo", "lv", "n95", "n133", "n170", "z64", "z53", "z42", "z3"}
+
+DATA_ISLAND = re.compile(r'(<script type="application/json" id="site-data">)(.*?)(</script>)', re.S)
+CONFIG_ISLAND = re.compile(r'<script type="application/json" id="site-config">(.*?)</script>', re.S)
+POSITION = re.compile(r"^\d+\.$")
+DATE = re.compile(r"(\d{1,2})\.(\d{1,2})\.(\d{4})")
+SCORE = re.compile(r"(\d+)\s*:\s*(\d+)")
+GPS = re.compile(r"GPS:\s*([NS])\s*(\d+)°\s*([\d.]+)'\s*,?\s*([EW])\s*(\d+)°\s*([\d.]+)'")
+
+log = logging.getLogger("roshambo-sync")
 
 
-def decode_smart(content):
-    """Stránka sipky.org je ve windows-1250, ale některé proxy služby
-    (např. ScraperAPI) ji před vrácením samy převedou na UTF-8. Zkusíme
-    proto nejdřív UTF-8 - pokud selže, je to opravdu windows-1250."""
+def page_url(**params: str) -> str:
+    query = "&".join(f"{k}={v}" for k, v in {"region": REGION, **params}.items())
+    return f"{BASE_URL}?{query}"
+
+
+# --------------------------------------------------------------------------- stahování
+class Fetcher:
+    """Stáhne stránku přímo, přes ScraperAPI nebo přes Jina Reader (v tomto pořadí).
+
+    GitHub Actions mají na sipky.org zablokované IP adresy, takže v praxi rozhoduje ScraperAPI.
+    Každá stránka se v rámci běhu stahuje nejvýš jednou a celé stahování má časový strop.
+    """
+
+    UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+          "(KHTML, like Gecko) Chrome/130.0 Safari/537.36")
+
+    def __init__(self, scraper_key: str | None, deadline_s: int = FETCH_DEADLINE_S) -> None:
+        self.session = requests.Session()
+        self.session.headers.update({"User-Agent": self.UA, "Accept-Language": "cs,en;q=0.8"})
+        self.scraper_key = scraper_key
+        self.deadline = time.monotonic() + deadline_s
+        self.cache: dict[str, str | None] = {}
+        self.requests = 0
+
+    def get(self, url: str) -> str | None:
+        if url not in self.cache:
+            self.cache[url] = self._fetch(url)
+        return self.cache[url]
+
+    def _fetch(self, url: str) -> str | None:
+        attempts = [("přímo", url, {}, (10, 20))]
+        if self.scraper_key:
+            proxied = f"https://api.scraperapi.com/?api_key={self.scraper_key}&url={quote(url, safe='')}"
+            attempts += [("ScraperAPI", proxied, {}, (10, 70))] * 2
+        attempts.append(("Jina", f"https://r.jina.ai/{url}", {"X-Return-Format": "html"}, (10, 40)))
+
+        for name, target, headers, timeout in attempts:
+            if time.monotonic() > self.deadline:
+                log.warning("Vypršel časový limit stahování, %s se přeskakuje.", url)
+                return None
+            try:
+                self.requests += 1
+                resp = self.session.get(target, headers=headers, timeout=timeout)
+                if resp.ok:
+                    html = decode(resp.content)
+                    if is_plausible(html):
+                        log.info("Staženo (%s): %s", name, url)
+                        return html
+                log.info("%s: HTTP %s pro %s", name, resp.status_code, url)
+            except requests.RequestException as exc:
+                log.info("%s: %s pro %s", name, type(exc).__name__, url)
+        return None
+
+
+def decode(content: bytes) -> str:
+    """sipky.org posílá windows-1250, proxy služby už často UTF-8."""
     try:
         return content.decode("utf-8")
     except UnicodeDecodeError:
         return content.decode("cp1250", errors="replace")
 
 
-def parse_html_standings(html):
-    soup = BeautifulSoup(html, "html.parser")
+def is_plausible(html: str) -> bool:
+    return len(html) > 1500 and "<table" in html.lower()
 
-    # Sipky.org sama mění nadpis nad tabulkou z "Tabulka - průběžné pořadí"
-    # na "Tabulka - konečné pořadí", jakmile je sezóna u konce - podle
-    # toho poznáme, jestli ještě probíhá, nebo už skončila.
-    is_final = "konečné pořadí" in html.lower()
 
-    standings_table = None
-    for table in soup.find_all("table"):
-        rows = table.find_all("tr")
-        for row in rows:
-            cells = row.find_all("td")
-            if cells and re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
-                standings_table = table
-                break
-        if standings_table:
+# --------------------------------------------------------------------------- parsery
+def _soup(html: str) -> BeautifulSoup:
+    return BeautifulSoup(html, "html.parser")
+
+
+def _int(value: str) -> int | str:
+    return int(value) if re.fullmatch(r"-?\d+", value.strip()) else value.strip()
+
+
+def parse_season(html: str) -> dict:
+    """ID a název sezóny, ligy a družstva z odkazů na stránce družstva."""
+    soup = _soup(html)
+    info: dict = {}
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        if f"team={TEAM_ID}" in href:
+            if "leagueTeamId" not in info and (m := re.search(r"league_team=(\d+)", href)):
+                info["leagueTeamId"] = m.group(1)
+                if lm := re.search(r"[?&]league=(\d+)", href):
+                    info["leagueId"] = lm.group(1)
+            if "id" not in info and (m := re.search(r"season=(\d+)", href)):
+                info["id"] = m.group(1)
+    if league_id := info.get("leagueId"):
+        link = soup.find("a", href=re.compile(rf"page=ligova-skupina.*league={league_id}\b"))
+        if link and link.get_text(strip=True):
+            info["league"] = link.get_text(strip=True)
+    for option in soup.find_all("option", selected=True):
+        if m := re.fullmatch(r"\s*(\d{4}/\d{4})\s*", option.get_text()):
+            info["label"] = m.group(1)
             break
+    return info
 
-    if standings_table is None:
-        return None, is_final
 
-    teams = []
-    for row in standings_table.find_all("tr"):
-        cells = row.find_all("td")
-        if not cells or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
+def parse_standings(html: str) -> tuple[list[dict], bool]:
+    """Tabulka ligové skupiny. Sloupce na sipky.org:
+    #, družstvo, kol, V, VP, R, PP, P, K, skóre (3 buňky), legy (3 buňky), body."""
+    final = "konečné pořadí" in html.lower()
+    rows = []
+    for tr in _soup(html).find_all("tr"):
+        cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+        if len(cells) < 16 or not POSITION.match(cells[0]):
             continue
+        link = tr.find_all("td")[1].find("a", href=True)
+        lt = re.search(r"league_team=(\d+)", link["href"]) if link else None
         try:
-            pos = cells[0].get_text(strip=True)
-            name = cells[1].get_text(strip=True)
-            a = cells[1].find("a", href=True)
-            m_lt = re.search(r"league_team=(\d+)", a["href"]) if a else None
-            lt = m_lt.group(1) if m_lt else ""
-            kol = cells[2].get_text(strip=True)
-            v = cells[3].get_text(strip=True)
-            r = cells[5].get_text(strip=True)
-            p = cells[7].get_text(strip=True)
-            skore_h = cells[9].get_text(strip=True)
-            skore_a = cells[11].get_text(strip=True)
-            legy_h = cells[12].get_text(strip=True)
-            legy_a = cells[14].get_text(strip=True)
-            body = cells[15].get_text(strip=True)
-        except IndexError:
-            continue
-        teams.append({
-            "pos": pos, "name": name, "lt": lt, "kol": kol, "v": v, "r": r, "p": p,
-            "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
-        })
-    return teams, is_final
-
-
-def parse_markdown_standings(md_text):
-    """Parsuje tabulku ze stránky převedené na markdown (přes Jina Reader).
-    Řádky standings tabulky mají přesně 16 sloupců; ostatní tabulky na
-    stránce (např. statistika hráčů) mají jiný počet, takže se samy
-    přeskočí."""
-    is_final = "konečné pořadí" in md_text.lower()
-    link_pattern = re.compile(r"\[([^\]]*)\]\([^)]*\)")
-    teams = []
-    for line in md_text.splitlines():
-        line = line.strip()
-        if not re.match(r"^\|\s*\d+\.\s*\|", line):
-            continue
-        m_lt = re.search(r"league_team=(\d+)", line)
-        lt = m_lt.group(1) if m_lt else ""
-        clean = link_pattern.sub(r"\1", line)
-        cells = [c.strip() for c in clean.split("|")]
-        # odstraň prázdné krajní buňky vzniklé úvodní/koncovou svislítkem
-        if cells and cells[0] == "":
-            cells = cells[1:]
-        if cells and cells[-1] == "":
-            cells = cells[:-1]
-        if len(cells) != 16:
-            continue
-        try:
-            pos = cells[0]
-            name = cells[1]
-            kol = cells[2]
-            v = cells[3]
-            r = cells[5]
-            p = cells[7]
-            skore_h = cells[9]
-            skore_a = cells[11]
-            legy_h = cells[12]
-            legy_a = cells[14]
-            body = cells[15]
-        except IndexError:
-            continue
-        teams.append({
-            "pos": pos, "name": name, "lt": lt, "kol": kol, "v": v, "r": r, "p": p,
-            "skore": f"{skore_h}:{skore_a}", "legy": f"{legy_h}:{legy_a}", "body": body,
-        })
-    return (teams if teams else None), is_final
-
-
-def fetch_standings():
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-        ),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "cs-CZ,cs;q=0.9,en-US;q=0.8,en;q=0.7",
-    })
-
-    # Pokus 1: přímý přístup (funguje z běžného prohlížeče, ale sipky.org
-    # blokuje datacentrové IP adresy GitHub Actions runnerů - proto 403).
-    try:
-        resp = session.get(LEAGUE_URL, timeout=20)
-        resp.raise_for_status()
-        html = decode_smart(resp.content)
-        teams, is_final = parse_html_standings(html)
-        if teams is not None:
-            return teams, is_final
-        # HTML se stáhlo, ale tabulka tam není -> sezóna asi nezačala
-        return None, is_final
-    except requests.RequestException:
-        pass
-
-    # Pokus 2: ScraperAPI (placená/bezplatná scraping služba s rotujícími
-    # IP adresami - spolehlivěji obchází ochranu proti botům). Použije se
-    # jen pokud je nastavený tajný klíč SCRAPERAPI_KEY.
-    api_key = os.environ.get("SCRAPERAPI_KEY")
-    if api_key:
-        try:
-            import urllib.parse
-            scraper_url = (
-                "https://api.scraperapi.com?api_key=" + api_key +
-                "&url=" + urllib.parse.quote(LEAGUE_URL, safe="")
-            )
-            resp = session.get(scraper_url, timeout=60)
-            resp.raise_for_status()
-            html = decode_smart(resp.content)
-            teams, is_final = parse_html_standings(html)
-            if teams is not None:
-                return teams, is_final
-            return None, is_final
-        except requests.RequestException:
-            pass
-
-    # Pokus 3: Jina AI Reader - přečte stránku ze své vlastní infrastruktury
-    # (jiná IP adresa než GitHub Actions) a vrátí obsah jako čistý text
-    # včetně tabulek v markdown formátu.
-    try:
-        jina_url = "https://r.jina.ai/" + LEAGUE_URL
-        resp = session.get(jina_url, timeout=45)
-        resp.raise_for_status()
-        teams, is_final = parse_markdown_standings(resp.text)
-        return teams, is_final
-    except requests.RequestException as e:
-        raise RuntimeError(
-            f"Nepodařilo se stáhnout stránku ani přímo, ani přes Jina Reader. "
-            f"Poslední chyba: {e}"
-        )
-
-
-def fetch_html_with_fallback(url, session):
-    """Stáhne stránku přímo, a když to selže, zkusí ScraperAPI (pokud je
-    nastavený klíč). Vrátí HTML text, nebo None při úplném selhání."""
-    try:
-        resp = session.get(url, timeout=20)
-        resp.raise_for_status()
-        return decode_smart(resp.content)
-    except requests.RequestException:
-        pass
-
-    api_key = os.environ.get("SCRAPERAPI_KEY")
-    if not api_key:
-        return None
-    try:
-        import urllib.parse
-        scraper_url = (
-            "https://api.scraperapi.com?api_key=" + api_key +
-            "&url=" + urllib.parse.quote(url, safe="")
-        )
-        resp = session.get(scraper_url, timeout=60)
-        resp.raise_for_status()
-        return decode_smart(resp.content)
-    except requests.RequestException:
-        return None
-
-
-def fetch_roshambo_results(session):
-    """Stáhne odehrané zápasy Roshambo Praha a pro každý určí, jestli šlo
-    o výhru/remízu/prohru. Vrátí slovník {"YYYY-MM-DD": "win"/"draw"/"loss"}.
-    Při jakémkoli problému vrátí prázdný slovník - tahle funkce nesmí shodit
-    zbytek skriptu, protože jde jen o doplňkovou vizuální informaci."""
-    try:
-        html = fetch_html_with_fallback(TEAM_MATCHES_URL, session)
-        if not html:
-            return {}
-        soup = BeautifulSoup(html, "html.parser")
-        date_re = re.compile(r"^(\d{1,2})\.(\d{1,2})\.(\d{4})$")
-        results = {}
-
-        for row in soup.find_all("tr"):
-            cells = row.find_all("td")
-            if not cells:
-                continue
-            texts = [c.get_text(strip=True) for c in cells]
-
-            date_idx = next((i for i, t in enumerate(texts) if date_re.match(t)), None)
-            if date_idx is None:
-                continue
-            if not any(OUR_TEAM in t for t in texts):
-                continue
-            if ":" not in texts:
-                continue
-
-            colon_idx = texts.index(":")
-            try:
-                skore_home = int(texts[colon_idx - 1])
-                skore_away = int(texts[colon_idx + 1])
-            except (ValueError, IndexError):
-                continue
-
-            rosh_idx = next((i for i, t in enumerate(texts) if OUR_TEAM in t), None)
-            if rosh_idx is None:
-                continue
-
-            is_home = rosh_idx < colon_idx
-            rosh_score, opp_score = (skore_home, skore_away) if is_home else (skore_away, skore_home)
-
-            if rosh_score > opp_score:
-                result = "win"
-            elif rosh_score < opp_score:
-                result = "loss"
-            else:
-                result = "draw"
-
-            d, mo, y = date_re.match(texts[date_idx]).groups()
-            iso = f"{y}-{int(mo):02d}-{int(d):02d}"
-            results[iso] = result
-
-        return results
-    except Exception:
-        return {}
-
-
-# Klíče statistik ve stejném pořadí jako sloupce na sipky.org (od sloupce LKH dál)
-STAT_KEYS = ["lkh", "zp", "zc", "zo", "zv", "lp", "lo", "lv",
-             "n95", "n95a", "n133", "n133a", "n170", "n170a",
-             "z64", "z53", "z42", "z3"]
-
-
-def fmt2(x):
-    """Zaokrouhlení na 2 desetinná místa (půl nahoru) s desetinnou čárkou."""
-    return str(Decimal(str(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)).replace(".", ",")
-
-
-def enrich_player(p):
-    """Dopočítá Úspěšnost (V/O*100) a Prospěšnost ((V/O)*V = V^2/O)."""
-    o, v = int(p["zo"]), int(p["zv"])
-    p["uspesnost"] = v / o * 100 if o else 0.0
-    p["prospesnost"] = (v / o) * v if o else 0.0
-    return p
-
-
-def fetch_player_stats(session):
-    """Stáhne KOMPLETNÍ statistiku hráčů Roshambo Praha pro aktuální sezónu
-    ze stránky 'statistika-hracu' (LKH, zápasy, legy, náhozy 95+/133+/170+,
-    zavření) a dopočítá Úspěšnost a Prospěšnost (V^2/O).
-    Vrátí seznam slovníků seřazený sestupně podle Prospěšnosti.
-    Při jakémkoli problému vrátí prázdný seznam - je to jen doplňková
-    informace, nesmí shodit zbytek skriptu."""
-    try:
-        html = fetch_html_with_fallback(PLAYER_STATS_URL, session)
-        if not html:
-            return []
-        soup = BeautifulSoup(html, "html.parser")
-
-        table = None
-        for t in soup.find_all("table"):
-            for row in t.find_all("tr"):
-                cells = row.find_all("td")
-                if cells and re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
-                    table = t
-                    break
-            if table:
-                break
-        if table is None:
-            return []
-
-        players = []
-        for row in table.find_all("tr"):
-            cells = row.find_all("td")
-            if not cells or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
-                continue
-            texts = [c.get_text(strip=True) for c in cells]
-            # sloupce: 0 Pořadí, 1 Hráč, 2 LKH, 3 % zápasů, 4 C, 5 O, 6 V,
-            # 7 % legů, 8 O, 9 V, 10-11 náhozy 95+, 12-13 133+, 14-15 170+, 16-19 zavření
-            try:
-                p = {"name": texts[1]}
-                for i, key in enumerate(STAT_KEYS):
-                    p[key] = texts[2 + i] if 2 + i < len(texts) else ""
-                if not p["zo"].isdigit() or not p["zv"].isdigit():
-                    continue
-                if int(p["zo"]) == 0:
-                    continue
-            except IndexError:
-                continue
-            players.append(enrich_player(p))
-
-        players.sort(key=lambda p: p["prospesnost"], reverse=True)
-        return players
-    except Exception:
-        return []
-
-
-def fetch_league_players(session):
-    """Stáhne statistiku VŠECH hráčů ligy jedním dotazem a každému hráči
-    přiřadí číslo jeho družstva (league_team) z odkazu v tabulce.
-    Při jakémkoli problému vrátí prázdný seznam (detail týmů je jen doplněk)."""
-    try:
-        html = fetch_html_with_fallback(LEAGUE_PLAYERS_URL, session)
-        if not html:
-            return []
-        soup = BeautifulSoup(html, "html.parser")
-        players = []
-        for row in soup.find_all("tr"):
-            cells = row.find_all("td")
-            if len(cells) < 7 or not re.match(r"^\d+\.$", cells[0].get_text(strip=True)):
-                continue
-            links = cells[1].find_all("a", href=True)
-            team_link = next((a for a in links if "league_team=" in a["href"]), None)
-            if team_link is None or not links or links[0] is team_link:
-                continue  # není to řádek hráče (např. řádek tabulky družstev)
-            name = links[0].get_text(strip=True)
-            lt = re.search(r"league_team=(\d+)", team_link["href"]).group(1)
-            texts = [c.get_text(strip=True) for c in cells]
-            p = {"name": name, "lt": lt}
-            for i, key in enumerate(STAT_KEYS):
-                p[key] = texts[2 + i] if 2 + i < len(texts) else ""
-            if not p["zo"].isdigit() or not p["zv"].isdigit() or int(p["zo"]) == 0:
-                continue
-            players.append(enrich_player(p))
-        return players
-    except Exception:
-        return []
-
-
-def read_existing_league_data(html):
-    """Přečte dosavadní data týmů ze stránky (záloha, kdyby se něco nestáhlo)."""
-    m = re.search(r'<script[^>]*\bid="league-teams-data"[^>]*>(.*?)</script>', html, re.DOTALL)
-    if not m:
-        return {}
-    try:
-        return json.loads(m.group(1))
-    except ValueError:
-        return {}
-
-
-def build_league_data(teams, league_players, existing=None):
-    """Pro každý tým z tabulky složí seznam jeho hráčů (řazeno podle
-    prospěšnosti). Když se hráči týmu nepodařilo stáhnout, ponechá se
-    předchozí stav ze stránky."""
-    existing = existing or {}
-    by_lt = {}
-    for p in league_players:
-        by_lt.setdefault(p["lt"], []).append(p)
-    data = {}
-    for t in teams:
-        lt = t.get("lt")
-        if not lt:
-            continue
-        plist = by_lt.get(lt)
-        if plist:
-            plist.sort(key=lambda p: p["prospesnost"], reverse=True)
-            players = [
-                {
-                    "n": p["name"], "lkh": p.get("lkh", ""), "zo": p["zo"], "zv": p["zv"],
-                    "usp": fmt2(p["uspesnost"]) + " %", "pro": fmt2(p["prospesnost"]),
-                }
-                for p in plist
-            ]
-            data[lt] = {"name": t["name"], "kol": t["kol"], "players": players}
-        elif lt in existing:
-            old = dict(existing[lt])
-            old["name"], old["kol"] = t["name"], t["kol"]
-            data[lt] = old
-        else:
-            data[lt] = {"name": t["name"], "kol": t["kol"], "players": []}
-    return data
-
-
-DAYS_CZ = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
-
-
-def fetch_schedule(session):
-    """Stáhne rozpis zápasů Roshamba ze sipky.org: pro každé kolo datum, čas
-    a hrací místo (název + číslo místa). Při problému vrátí prázdný seznam."""
-    try:
-        html = fetch_html_with_fallback(SCHEDULE_URL, session)
-        if not html:
-            return []
-        soup = BeautifulSoup(html, "html.parser")
-        out = {}
-        for a in soup.find_all("a", href=True):
-            if "page=hraci-misto" not in a["href"]:
-                continue
-            tr = a.find_parent("tr")
-            if tr is None:
-                continue
-            round_a = tr.find("a", href=re.compile(r"page=rozpis-utkani.*round=\d+"))
-            if round_a is None:
-                continue
-            kolo = re.search(r"round=(\d+)", round_a["href"]).group(1)
-            text = tr.get_text(" ", strip=True)
-            md = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{4})", text)
-            if not md:
-                continue
-            # čas bývá hned za datem, nebo na začátku následujícího řádku
-            mt = re.search(r"\d{1,2}\.\d{1,2}\.\d{4}\s+(\d{1,2}:\d{2})\b", text)
-            if not mt:
-                nxt = tr.find_next_sibling("tr")
-                if nxt is not None:
-                    mt = re.match(r"\s*(\d{1,2}:\d{2})\b", nxt.get_text(" ", strip=True))
-            m_place = re.search(r"place=(\d+)", a["href"])
-            out[kolo] = {
-                "kolo": kolo,
-                "d": int(md.group(1)), "m": int(md.group(2)), "y": int(md.group(3)),
-                "time": mt.group(1) if mt else "",
-                "venue": a.get_text(strip=True),
-                "place": m_place.group(1) if m_place else "",
-            }
-        return list(out.values())
-    except Exception:
-        return []
-
-
-def venue_cell(name, place):
-    """Buňka 'Místo' s odkazem na mapy (data pro výběr Waze / Google / Apple)."""
-    v = KNOWN_VENUES.get(place)
-    if v:
-        label, lat, lng, q, pid = v
-        url = "https://www.google.com/maps/search/?api=1&query=" + quote(q) + "&query_place_id=" + pid
-        attrs = f'data-place="{place}" data-lat="{lat}" data-lng="{lng}"'
-    else:
-        label = name
-        url = "https://www.google.com/maps/search/?api=1&query=" + quote(name)
-        attrs = f'data-place="{place}" data-q="{html_escape(name, quote=True)}"'
-    return (f'<td class="misto"><a class="map-link" {attrs} href="{html_escape(url, quote=True)}" '
-            f'target="_blank" rel="noopener" title="Otevřít v mapách">&#128205; {html_escape(label)}</a></td>')
-
-
-def apply_schedule(html, schedule):
-    """Podle rozpisu ze sipky.org opraví v tabulce zápasů datum, den, čas
-    a hrací místo (řádky se párují podle čísla kola). Vrací (html, změny)."""
-    if not schedule:
-        return html, []
-    by_kolo = {s["kolo"]: s for s in schedule}
-    changes = []
-
-    def cell_text(c):
-        return re.sub(r"<[^>]+>", "", c).replace("&#128205;", "").strip()
-
-    def fix(m):
-        row = m.group(0)
-        start = re.match(r"<tr[^>]*>", row).group(0)
-        cells = re.findall(r"<td[^>]*>.*?</td>", row, re.S)
-        if len(cells) < 8:
-            return row
-        kolo = cell_text(cells[0])
-        s = by_kolo.get(kolo)
-        if not s:
-            return row
-        old = [cell_text(c) for c in cells]
-        try:
-            day = date(s["y"], s["m"], s["d"])
+            rows.append({
+                "pos": int(cells[0].rstrip(".")), "name": cells[1], "lt": lt.group(1) if lt else "",
+                "body": int(cells[15]), "kol": int(cells[2]), "v": int(cells[3]),
+                "r": int(cells[5]), "p": int(cells[7]),
+                "legy": f"{cells[12]}:{cells[14]}", "skore": f"{cells[9]}:{cells[11]}",
+            })
         except ValueError:
-            return row
-        iso = day.isoformat()
-        cells[1] = f"<td>{DAYS_CZ[day.weekday()]}</td>"
-        cells[2] = f"<td>{s['d']}.{s['m']}.{s['y']}</td>"
-        if s["time"]:
-            cells[3] = f"<td>{s['time']}</td>"
-        if s["venue"]:
-            cells[7] = venue_cell(s["venue"], s["place"])
-            if s["place"] not in KNOWN_VENUES:
-                changes.append(f"kolo {kolo}: NOVÉ hrací místo '{s['venue']}' (není v KNOWN_VENUES, odkaz jen podle názvu)")
-        start = re.sub(r'data-date="[^"]*"', f'data-date="{iso}"', start, count=1)
-        new = [cell_text(c) for c in cells]
-        for i, what in ((2, "datum"), (3, "čas"), (7, "místo")):
-            if old[i] != new[i]:
-                changes.append(f"kolo {kolo}: {what} {old[i]} -> {new[i]}")
-        return start + "".join(cells) + "</tr>"
-
-    table_start = html.find('class="matches-table"')
-    if table_start < 0:
-        return html, []
-    table_end = html.find("</table>", table_start)
-    part = re.sub(r"<tr[^>]*data-date=[^>]*>.*?</tr>", fix, html[table_start:table_end], flags=re.S)
-    return html[:table_start] + part + html[table_end:], changes
+            continue
+        if len(rows) > 1 and rows[-1]["pos"] < rows[-2]["pos"]:   # začala další tabulka na stránce
+            rows.pop()
+            break
+    return rows, final
 
 
-def build_mini_stats_tbody(players, former_names=()):
-    """Řádky mini-tabulky statistiky hráčů. Každý řádek nese kompletní
-    statistiku v data-* atributech - stránka z nich po kliknutí na jméno
-    zobrazí detail a umožní porovnání dvou hráčů."""
-    rows = []
-    for p in players:
-        usp = fmt2(p["uspesnost"]) + " %"
-        prosp = fmt2(p["prospesnost"])
-        display = p["name"] + (" *" if p["name"] in former_names else "")
-        attrs = " ".join(
-            f'data-{k}="{html_escape(str(p.get(k, "")), quote=True)}"' for k in STAT_KEYS
-        )
-        rows.append(
-            f'<tr class="mini-player" tabindex="0" data-name="{html_escape(display, quote=True)}" '
-            f'data-pro="{prosp}" {attrs}>'
-            f'<td><span class="mp-chev">&#9656;</span>{html_escape(display)}</td>'
-            f'<td class="msu">{usp}</td><td>{prosp}</td></tr>'
-        )
-    return "\n".join(rows)
+def parse_schedule(html: str) -> list[dict]:
+    """Rozpis zápasů družstva: kolo, datum, čas, týmy, skóre a hrací místo."""
+    matches: dict[int, dict] = {}
+    for venue in _soup(html).find_all("a", href=re.compile(r"page=hraci-misto")):
+        tr = venue.find_parent("tr")
+        round_link = tr.find("a", href=re.compile(r"round=\d+")) if tr else None
+        if round_link is None:
+            continue
+        text = tr.get_text(" ", strip=True)
+        day = DATE.search(text)
+        cells = tr.find_all("td", recursive=False) or tr.find_all("td")
+        team_idx = [i for i, td in enumerate(cells) if td.find("a", href=re.compile(r"page=profil-druzstva"))]
+        if not day or len(team_idx) < 2:
+            continue
+        home, away = (cells[i].find("a", href=re.compile(r"page=profil-druzstva")).get_text(strip=True)
+                      for i in team_idx[:2])
+        between = " ".join(td.get_text(" ", strip=True) for td in cells[team_idx[0] + 1:team_idx[1]])
+        score = SCORE.search(between)
+
+        clock = re.search(r"\d{1,2}\.\d{1,2}\.\d{4}\s+(\d{1,2}:\d{2})\b", text)
+        if not clock and (nxt := tr.find_next_sibling("tr")):
+            clock = re.match(r"\s*(\d{1,2}:\d{2})\b", nxt.get_text(" ", strip=True))
+
+        rnd = int(re.search(r"round=(\d+)", round_link["href"]).group(1))
+        place = re.search(r"place=(\d+)", venue["href"])
+        d, m, y = (int(x) for x in day.groups())
+        match = {
+            "round": rnd, "date": date(y, m, d).isoformat(), "time": clock.group(1) if clock else "",
+            "home": home, "away": away, "place": place.group(1) if place else "",
+            "venue": venue.get_text(strip=True), "score": None, "result": None,
+        }
+        if score:
+            ours, theirs = (int(x) for x in score.groups())
+            if away == TEAM_NAME:
+                ours, theirs = theirs, ours
+            match["score"] = f"{score.group(1)}:{score.group(2)}"
+            match["result"] = "win" if ours > theirs else "loss" if ours < theirs else "draw"
+        matches[rnd] = match
+    return [matches[k] for k in sorted(matches)]
 
 
-def build_tbody(teams):
-    rows = []
-    for t in teams:
-        classes = []
-        if t["name"] == OUR_TEAM:
-            classes.append("us")
-        elif t["pos"] in ("1.", "2.", "3."):
-            classes.append("podium")
-        lt = t.get("lt", "")
-        attrs, chev = "", ""
-        if lt:  # řádek jde rozkliknout (detail týmu a jeho hráčů)
-            classes.append("team-row")
-            attrs = f' data-lt="{lt}" tabindex="0"'
-            chev = '<span class="mp-chev">&#9656;</span>'
-        cls = f' class="{" ".join(classes)}"' if classes else ""
-        rows.append(
-            f'<tr{cls}{attrs}><td class="pos">{t["pos"]}</td>'
-            f'<td class="team-name">{chev}{html_escape(t["name"])}</td>'
-            f'<td class="pts">{t["body"]}</td>'
-            f'<td>{t["kol"]}</td><td>{t["v"]}</td><td>{t["r"]}</td><td>{t["p"]}</td>'
-            f'<td>{t["legy"]}</td><td>{t["skore"]}</td></tr>'
-        )
-    return "\n            ".join(rows)
+def parse_players(html: str) -> list[dict]:
+    """Statistika hráčů (družstva nebo celé ligy). U celé ligy přidá číslo družstva 'lt'."""
+    players = []
+    for tr in _soup(html).find_all("tr"):
+        tds = tr.find_all("td")
+        if len(tds) < 7 or not POSITION.match(tds[0].get_text(strip=True)):
+            continue
+        person = tds[1].find("a", href=re.compile(r"osobni-profil"))
+        if person is None:
+            continue                                   # řádek tabulky družstev, ne hráč
+        team = tds[1].find("a", href=re.compile(r"league_team=\d+"))
+        values = [td.get_text(strip=True) for td in tds[2:2 + len(STAT_KEYS)]]
+        values += [""] * (len(STAT_KEYS) - len(values))
+        player = {"name": person.get_text(strip=True)}
+        player.update({k: (_int(v) if k in INT_KEYS else v) for k, v in zip(STAT_KEYS, values)})
+        if team:
+            player["lt"] = re.search(r"league_team=(\d+)", team["href"]).group(1)
+        if isinstance(player["zo"], int) and isinstance(player["zv"], int) and player["zo"] > 0:
+            players.append(player)
+    return players
 
 
-def czech_now_str():
-    # Přibližný český čas (bez ohledu na DST, jen pro info v textu)
-    cz = datetime.now(timezone.utc) + timedelta(hours=1)
-    return cz.strftime("%d.%m.%Y %H:%M")
+def parse_roster(html: str) -> tuple[list[str], str | None]:
+    """Soupiska (tabulka se sloupcem 'Souhlas s GDPR') a vedoucí družstva."""
+    soup = _soup(html)
+    members: list[str] = []
+    captain = None
+    for table in soup.find_all("table"):
+        if table.find("table"):
+            continue
+        text = table.get_text(" ", strip=True)
+        if "Vedoucí družstva" in text and captain is None:
+            flag = False
+            for tr in table.find_all("tr"):
+                if "Vedoucí družstva" in tr.get_text():
+                    flag = True
+                elif flag and (a := tr.find("a", href=re.compile(r"osobni-profil"))):
+                    captain = a.get_text(strip=True)
+                    break
+        if "Souhlas s GDPR" in text and not members:
+            for tr in table.find_all("tr"):
+                a = tr.find("a", href=re.compile(r"osobni-profil"))
+                if a and re.search(r"CZE\d+", tr.get_text()) and a.get_text(strip=True) not in members:
+                    members.append(a.get_text(strip=True))
+    return members, captain
 
 
-def update_index_html(teams, is_final, match_results=None, player_stats=None, league_data=None, schedule=None):
-    with open(INDEX_FILE, "r", encoding="utf-8") as f:
-        html = f.read()
+def parse_venue(html: str) -> dict:
+    """Adresa a GPS hracího místa (formát 'GPS: N 50° 5.486', E 14° 27.158'')."""
+    soup = _soup(html)
+    node = soup.find(string=GPS)                   # text "ulice, PSČ obec, GPS: ..." v jednom prvku
+    text = str(node) if node else soup.get_text(" ", strip=True)
+    venue: dict = {}
+    if m := GPS.search(text):
+        ns, lat_d, lat_m, ew, lng_d, lng_m = m.groups()
+        venue["lat"] = round((int(lat_d) + float(lat_m) / 60) * (1 if ns == "N" else -1), 6)
+        venue["lng"] = round((int(lng_d) + float(lng_m) / 60) * (1 if ew == "E" else -1), 6)
+        before = " ".join(text[:m.start()].split()).rstrip(" ,")
+        if a := re.search(r"([^,]{2,60}\d[^,]{0,20},\s*\d{3}\s?\d{2}\s[^,]{2,40})$", before):
+            venue["address"] = a.group(1).strip()
+    return venue
 
-    # rozpis (datum/čas/místo) nejdřív – výsledky zápasů se pak párují podle aktuálního data
-    html, schedule_changes = apply_schedule(html, schedule)
-    for c in schedule_changes:
-        print("Rozpis:", c)
 
-    us = next((t for t in teams if t["name"] == OUR_TEAM), None)
-    total = len(teams)
+# --------------------------------------------------------------------------- sestavení dat
+def our_position(standings: list[dict]) -> int | None:
+    return next((r["pos"] for r in standings if r["name"] == TEAM_NAME), None)
 
-    if is_final:
-        if us:
-            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · {us['pos']} místo"
-            inline_meta_text = f"{SEASON_LABEL} · {us['pos']} místo"
-            legend_text = (
-                f'Sezóna skončila — Roshambo Praha se umístilo na <b>{us["pos"]} místě</b> '
-                f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
-            )
+
+def archive_season(data: dict) -> dict:
+    pos, count = our_position(data.get("standings", [])), len(data.get("standings", []))
+    season = data.get("season", {})
+    return {
+        "season": season.get("label", ""), "league": season.get("league", ""), "final": True,
+        "note": f"{TEAM_NAME} skončilo na {pos}. místě z {count} týmů." if pos else "",
+        "standings": data.get("standings", []), "players": data.get("players", []),
+    }
+
+
+def next_label(label: str) -> str:
+    m = re.fullmatch(r"(\d{4})/(\d{4})", label or "")
+    return f"{int(m.group(1)) + 1}/{int(m.group(2)) + 1}" if m else label
+
+
+class Sync:
+    """Postupně aktualizuje jednotlivé části dat a eviduje, co se změnilo."""
+
+    def __init__(self, prev: dict, config: dict, fetcher: Fetcher) -> None:
+        self.prev = prev
+        self.data = copy.deepcopy(prev)
+        self.config = config
+        self.f = fetcher
+        self.report: list[tuple[str, str]] = []     # (část, stav)
+        self.warnings: list[str] = []
+        self.notes: list[str] = []
+        self.pages_ok = 0
+
+    def get(self, url: str) -> str | None:
+        html = self.f.get(url)
+        self.pages_ok += html is not None
+        return html
+
+    def warn(self, msg: str) -> None:
+        self.warnings.append(msg)
+
+    def set(self, key: str, value, label: str) -> None:
+        changed = self.data.get(key) != value
+        self.data[key] = value
+        self.report.append((label, "aktualizováno" if changed else "beze změny"))
+
+    def run(self) -> dict:
+        self.data.setdefault("season", {})
+        for key, default in (("history", []), ("venues", {}), ("leagueTeams", {}), ("roster", {})):
+            self.data.setdefault(key, default)
+        team_page = self.sync_season()
+        self.sync_standings()
+        self.sync_schedule()
+        self.sync_players(team_page)
+        self.sync_roster()
+        self.sync_venues()
+        return self.data
+
+    # -- sezóna ------------------------------------------------------------
+    def sync_season(self) -> str | None:
+        html = self.get(page_url(page="statistika-hracu", league_type=LEAGUE_TYPE, team=TEAM_ID))
+        found = parse_season(html) if html else {}
+        season = self.data["season"]
+        if not found.get("id") or not found.get("leagueId"):
+            self.warn("Nepodařilo se zjistit aktuální sezónu, použijí se dosavadní ID.")
+            self.report.append(("Sezóna", "dosavadní"))
+            return html
+        if season.get("id") and found["id"] != season["id"]:
+            self.data["history"].insert(0, archive_season(self.data))
+            self.notes.append(f"Nová sezóna {found.get('label') or next_label(season.get('label', ''))} – "
+                              f"sezóna {season.get('label')} přesunuta do historie.")
+            for key in ("standings", "matches", "players", "leagueTeams"):
+                self.data[key] = [] if key != "leagueTeams" else {}
+            season["final"] = False
+            found.setdefault("label", next_label(season.get("label", "")))
+        season.update({k: v for k, v in found.items() if v})
+        self.report.append(("Sezóna", f"{season.get('label', '?')} · {season.get('league', '?')}"))
+        return html
+
+    # -- tabulka -----------------------------------------------------------
+    def sync_standings(self) -> None:
+        html = self.get(page_url(page="ligova-skupina", league=self.data["season"]["leagueId"]))
+        rows, final = parse_standings(html) if html else ([], False)
+        if len(rows) < 6 or our_position(rows) is None:
+            self.warn("Tabulku se nepodařilo načíst, zůstává poslední platná.")
+            self.report.append(("Tabulka", "chyba – ponechána stará"))
+            return
+        self.data["season"]["final"] = final
+        self.set("standings", rows, "Tabulka")
+
+    # -- rozpis a výsledky ---------------------------------------------------
+    def sync_schedule(self) -> None:
+        s = self.data["season"]
+        html = self.get(page_url(page="rozpis-utkani", league_type=LEAGUE_TYPE, season=s.get("id", ""),
+                                 league=s["leagueId"], team=TEAM_ID, round=""))
+        matches = parse_schedule(html) if html else []
+        if len(matches) < max(5, len(self.data.get("matches", [])) // 2):   # málo zápasů = stránka se nenačetla celá
+            self.warn("Rozpis zápasů se nepodařilo načíst, zůstává poslední platný.")
+            self.report.append(("Rozpis a výsledky", "chyba – ponechán starý"))
+            return
+        old = {m["round"]: m for m in self.data.get("matches", [])}
+        for m in matches:
+            o = old.get(m["round"])
+            if o and (o["date"], o["time"], o.get("place")) != (m["date"], m["time"], m["place"]):
+                self.notes.append(f"Kolo {m['round']}: změna termínu nebo místa "
+                                  f"({o['date']} {o['time']}, {o.get('venue')} → {m['date']} {m['time']}, {m['venue']})")
+            if m["result"] and not (o and o.get("result")):
+                self.notes.append(f"Kolo {m['round']}: výsledek {m['home']} {m['score']} {m['away']}")
+        self.set("matches", matches, "Rozpis a výsledky")
+
+    # -- hráči -------------------------------------------------------------
+    def sync_players(self, team_page: str | None) -> None:
+        s = self.data["season"]
+        ours = parse_players(team_page) if team_page else []
+        html = self.get(page_url(page="statistika-hracu", league=s["leagueId"]))
+        league = parse_players(html) if html else []
+        if not ours:
+            ours = [p for p in league if p.get("lt") == s.get("leagueTeamId")]
+        for p in ours:
+            p.pop("lt", None)
+        if ours:
+            self.set("players", sorted(ours, key=lambda p: p["name"]), "Statistika našich hráčů")
         else:
-            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · konečné pořadí"
-            inline_meta_text = f"{SEASON_LABEL} · konečné pořadí"
-            legend_text = (
-                f'Sezóna {SEASON_LABEL} skončila. '
-                f'Naposledy aktualizováno automaticky {czech_now_str()}.'
-            )
-    else:
-        if us:
-            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžně {us['pos']} místo"
-            inline_meta_text = f"{SEASON_LABEL} · průběžně {us['pos']} místo"
-            legend_text = (
-                f'Průběžné pořadí — Roshambo Praha je na <b>{us["pos"]} místě</b> '
-                f'z {total} týmů. Naposledy aktualizováno automaticky {czech_now_str()}.'
-            )
-        else:
-            meta_text = f"Sezóna {CURRENT_SEASON_LABEL} · průběžné pořadí"
-            inline_meta_text = f"{SEASON_LABEL} · průběžné pořadí"
-            legend_text = (
-                f'Průběžné pořadí sezóny {SEASON_LABEL}. '
-                f'Naposledy aktualizováno automaticky {czech_now_str()}.'
-            )
+            self.warn("Statistiku našich hráčů se nepodařilo načíst.")
+            self.report.append(("Statistika našich hráčů", "chyba – ponechána stará"))
 
-    new_tbody = build_tbody(teams)
+        if not league:
+            self.warn("Statistiku hráčů ligy se nepodařilo načíst, soupisky soupeřů zůstávají.")
+            self.report.append(("Hráči soupeřů", "chyba – ponecháni staří"))
+            return
+        teams = {}
+        for row in self.data.get("standings", []):
+            members = [{"name": p["name"], "lkh": p["lkh"], "zo": p["zo"], "zv": p["zv"]}
+                       for p in league if p.get("lt") == row["lt"]]
+            if members or row["lt"] not in self.data["leagueTeams"]:
+                teams[row["lt"]] = {"name": row["name"], "players": members}
+            else:
+                teams[row["lt"]] = self.data["leagueTeams"][row["lt"]]
+        self.set("leagueTeams", teams, "Hráči soupeřů")
 
-    html = re.sub(
-        r'(<option[^>]*\bid="current-season-meta"[^>]*>)(.*?)(</option>)',
-        lambda m: m.group(1) + meta_text + m.group(3),
-        html, count=1, flags=re.DOTALL,
-    )
-    html = re.sub(
-        r'(<div[^>]*\bid="current-season-meta-inline"[^>]*>)(.*?)(</div>)',
-        lambda m: m.group(1) + inline_meta_text + m.group(3),
-        html, count=1, flags=re.DOTALL,
-    )
-    html = re.sub(
-        r'(<tbody[^>]*\bid="current-season-tbody"[^>]*>)(.*?)(</tbody>)',
-        lambda m: m.group(1) + "\n            " + new_tbody + "\n          " + m.group(3),
-        html, count=1, flags=re.DOTALL,
-    )
-    html = re.sub(
-        r'(<div[^>]*\bid="current-season-legend"[^>]*>)(.*?)(</div>)',
-        lambda m: m.group(1) + legend_text + m.group(3),
-        html, count=1, flags=re.DOTALL,
-    )
+    # -- soupiska ----------------------------------------------------------
+    def sync_roster(self) -> None:
+        lt = self.data["season"].get("leagueTeamId")
+        html = self.get(page_url(page="profil-druzstva", league_team=lt)) if lt else None
+        members, captain = parse_roster(html) if html else ([], None)
+        if len(members) < max(3, len(self.data.get("roster", {}).get("members", [])) // 2):
+            self.warn("Soupisku se nepodařilo načíst, tým zůstává beze změny.")
+            self.report.append(("Soupiska", "chyba – ponechána stará"))
+            return
+        old = set(self.data.get("roster", {}).get("members", []))
+        for name in members:
+            if old and name not in old:
+                self.notes.append(f"Nový hráč na soupisce: {name}")
+        for name in sorted(old - set(members)):
+            self.notes.append(f"Ze soupisky odešel: {name}")
+        self.set("roster", {"members": members, "captain": captain}, "Soupiska")
 
-    if match_results:
-        for iso, result in match_results.items():
-            pattern = re.compile(r'(<tr data-date="' + re.escape(iso) + r'")([^>]*)(>)')
-
-            def repl(m, result=result):
-                attrs = re.sub(r'\s*data-result="[^"]*"', '', m.group(2))
-                return m.group(1) + attrs + f' data-result="{result}"' + m.group(3)
-
-            html = pattern.sub(repl, html, count=1)
-
-    if player_stats:
-        new_mini_tbody = build_mini_stats_tbody(player_stats)
-        html = re.sub(
-            r'(<tbody[^>]*\bid="current-season-mini-stats-tbody"[^>]*>)(.*?)(</tbody>)',
-            lambda m: m.group(1) + "\n" + new_mini_tbody + "\n" + m.group(3),
-            html, count=1, flags=re.DOTALL,
-        )
-
-    if league_data:
-        payload = json.dumps(league_data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-        html = re.sub(
-            r'(<script[^>]*\bid="league-teams-data"[^>]*>)(.*?)(</script>)',
-            lambda m: m.group(1) + payload + m.group(3),
-            html, count=1, flags=re.DOTALL,
-        )
-
-    with open(INDEX_FILE, "w", encoding="utf-8") as f:
-        f.write(html)
+    # -- hrací místa -------------------------------------------------------
+    def sync_venues(self) -> None:
+        known = set(self.config.get("venues", {})) | set(self.data["venues"])
+        missing = sorted({m["place"] for m in self.data.get("matches", []) if m.get("place")} - known)
+        added = 0
+        for place in missing[:MAX_NEW_VENUES_PER_RUN]:
+            html = self.get(page_url(page="hraci-misto", place=place))
+            venue = parse_venue(html) if html else {}
+            if "lat" in venue:
+                label = next(m["venue"] for m in self.data["matches"] if m["place"] == place)
+                self.data["venues"][place] = {"label": label, **venue}
+                self.notes.append(f"Nové hrací místo: {label} ({venue.get('address', 'bez adresy')})")
+                added += 1
+            else:
+                self.warn(f"Hrací místo {place} se nepodařilo dohledat, mapa ho najde jen podle názvu.")
+        self.report.append(("Hrací místa", f"{added} nových" if missing else "beze změny"))
 
 
-def main():
-    teams, is_final = fetch_standings()
-    if not teams:
-        print("Sezóna zatím nemá odehraná kola — tabulka se nemění.")
-        sys.exit(0)
+# --------------------------------------------------------------------------- index.html
+def read_island(html: str) -> tuple[dict, dict]:
+    data = DATA_ISLAND.search(html)
+    config = CONFIG_ISLAND.search(html)
+    if not data:
+        raise SystemExit(f"V {INDEX_FILE} chybí blok <script id=\"site-data\">.")
+    return json.loads(data.group(2)), json.loads(config.group(1)) if config else {}
 
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-        ),
-    })
-    match_results = fetch_roshambo_results(session)
-    player_stats = fetch_player_stats(session)
-    league_players = fetch_league_players(session)
 
-    with open(INDEX_FILE, "r", encoding="utf-8") as f:
-        existing = read_existing_league_data(f.read())
-    league_data = build_league_data(teams, league_players, existing)
+def write_island(html: str, data: dict) -> str:
+    payload = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return DATA_ISLAND.sub(lambda m: m.group(1) + payload + m.group(3), html, count=1)
 
-    schedule = fetch_schedule(session)
-    print(f"Rozpis ze sipky.org: {len(schedule)} zápasů.")
 
-    update_index_html(teams, is_final, match_results, player_stats, league_data, schedule)
-    stav = "KONEČNÉ" if is_final else "průběžné"
-    s_hraci = sum(1 for d in league_data.values() if d["players"])
-    print(
-        f"Tabulka aktualizována ({stav}), {len(teams)} týmů, "
-        f"{len(match_results)} výsledků zápasů, {len(player_stats)} hráčů ve statistice."
-    )
-    print(
-        f"Detail týmů: {len(league_players)} hráčů celé ligy, "
-        f"soupisky načteny u {s_hraci} z {len(league_data)} týmů."
-    )
+def without_timestamp(data: dict) -> dict:
+    return {k: v for k, v in data.items() if k != "updated"}
+
+
+def write_summary(sync: Sync, changed: bool) -> None:
+    lines = [f"### Roshambo Praha – synchronizace ({datetime.now(TZ):%d. %m. %Y %H:%M})", "",
+             "| Část | Stav |", "|---|---|", *[f"| {a} | {b} |" for a, b in sync.report], ""]
+    lines.append("**Web byl aktualizován.**" if changed else "Žádné změny, web zůstává.")
+    if sync.notes:
+        lines += ["", "**Změny:**", *[f"- {n}" for n in sync.notes]]
+    if sync.warnings:
+        lines += ["", "**Varování:**", *[f"- {w}" for w in sync.warnings]]
+    text = "\n".join(lines)
+    print(text)
+    if summary := os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(summary, "a", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+    if os.environ.get("GITHUB_ACTIONS"):
+        for w in sync.warnings:
+            print(f"::warning::{w}")
+
+
+def main() -> int:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    html = INDEX_FILE.read_text(encoding="utf-8")
+    prev, config = read_island(html)
+    sync = Sync(prev, config, Fetcher(os.environ.get("SCRAPERAPI_KEY")))
+    data = sync.run()
+
+    changed = without_timestamp(data) != without_timestamp(prev)
+    if changed:
+        data["updated"] = datetime.now(TZ).isoformat(timespec="minutes")
+        INDEX_FILE.write_text(write_island(html, data), encoding="utf-8")
+    write_summary(sync, changed)
+
+    if sync.pages_ok == 0:
+        print("::error::Ze sipky.org se nepodařilo stáhnout žádnou stránku (zkontroluj ScraperAPI).")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

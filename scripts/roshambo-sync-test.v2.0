@@ -107,6 +107,11 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(s, {"leagueTeamId": "2745352", "leagueId": "228360", "id": "6243",
                              "league": "3. liga C", "label": "2026/2027"})
 
+    def test_season_from_select_only(self):
+        """Stránka bez sezóny v adrese: číslo sezóny jen ve vybrané položce seznamu sezón."""
+        page = SEASON_PAGE.replace("season=6243&", "")
+        self.assertEqual(ut.parse_season(page)["id"], "6243")
+
     def test_venue_gps(self):
         v = ut.parse_venue(VENUE)
         self.assertAlmostEqual(v["lat"], 50.131320, places=5)
@@ -172,6 +177,14 @@ class SyncTests(unittest.TestCase):
         data = s.run()
         self.assertEqual(data["roster"], prev["roster"], "z 10 hráčů na 3 = podezřelé, soupiska zůstává")
         self.assertTrue(any("Soupisku" in w for w in s.warnings))
+
+    def test_new_season_detected_by_team_id(self):
+        prev = base_data(season={"label": "2025/2026", "league": "3. liga C", "leagueId": "215048",
+                                 "leagueTeamId": "2464264", "final": True})
+        pages = dict(PAGES, **{"page=statistika-hracu&league_type=611&team=": SEASON_PAGE.replace("season=6243&", "").replace(' selected', '')})
+        data = ut.Sync(prev, {"venues": {"175880": {}, "285960": {}, "300552": {}}}, FakeFetcher(pages)).run()
+        self.assertEqual(data["history"][0]["season"], "2025/2026")
+        self.assertEqual(data["season"]["leagueTeamId"], "2745352")
 
     def test_new_season_archives_old(self):
         prev = base_data(season={"id": "5987", "label": "2025/2026", "league": "3. liga C", "leagueId": "215048",
